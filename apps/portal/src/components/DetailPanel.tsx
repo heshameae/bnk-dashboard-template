@@ -80,6 +80,8 @@ function warnings(node: TableNode, edges: Edge[]): { tone: 'warn' | 'note' | 'go
         ? { tone: 'good', text: `Grain proven ${g.as_of}: ${n(g.rows)} rows, ${n(g.distinct_key)} distinct keys.` }
         : { tone: 'warn', text: `Proof shows ${n(g.rows)} rows against ${n(g.distinct_key)} distinct keys.` }
     );
+  } else if (node.layer === 'model' && node.status === 'draft') {
+    out.push({ tone: 'warn', text: 'Draft. Written by /build-model draft and not deployed. A data engineer runs its proof, /build-model finalize reviews it, and step 7 makes it live.' });
   } else if (node.layer === 'model') {
     out.push({ tone: 'warn', text: 'No proof on file. A data engineer runs the proof pack before this view is used.' });
   }
@@ -337,6 +339,7 @@ export function DetailPanel({
             <span className="chip chip--lg" data-role={node.role}><Icon size={15} /></span>
             <span className="panel__title">{node.name}</span>
             <span className="panel__kind">{ROLE_LABEL[node.role]}</span>
+            {node.status === 'draft' && <span className="tag" data-tone="draft">draft</span>}
             <span style={{ flex: 1 }} />
             <button className="icon-btn" title="More"><I.More /></button>
           </div>

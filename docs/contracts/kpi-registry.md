@@ -1,12 +1,12 @@
 # Contract: `catalog/kpi-registry.yaml`
 
-The recipe book. One entry per number; shared by every dashboard. Recipes are written DRAFT at step 3, become CONFIRMED at step 6, and are read by `/spec`, `semantic-query`, `/verify` and the Catalog page. A recipe names exactly one clean table and never joins. A recipe is a definition only; the number finance vouches for lives beside it in `catalog/acceptance.yaml` (`docs/contracts/acceptance.md`).
+The recipe book. One entry per number; shared by every dashboard. The file is created by `/build-model draft` on the first dashboard and grows from there; it is never authored by hand from scratch. Recipes are written DRAFT at step 3, become CONFIRMED at step 6, and are read by `/spec`, `semantic-query`, `/verify` and the Catalog page. A recipe names exactly one clean table and never joins. A recipe is a definition only; the number finance vouches for lives beside it in `catalog/acceptance.yaml` (`docs/contracts/acceptance.md`).
 
 ```yaml
 kpis:
   - id: kpi.casa_balance             # kpi.<snake_case>, unique, never reused after deletion
     status: CONFIRMED                # DRAFT | CONFIRMED | RETIRED
-    meaning: "Total CASA balance at close of the last business day"   # copied verbatim from business-context §3
+    meaning: "Total CASA balance at close of the last business day"   # copied verbatim from the business-context numbers table
     owner: head_of_treasury          # a role
     view: v_balances_daily           # exactly one clean table from bi_model/
     formula: SUM(balance_amount)     # SQL over that view's columns only

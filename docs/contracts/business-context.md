@@ -1,36 +1,48 @@
 # Contract: `dashboards/<name>/business-context.md`
 
-Written at step 2 by `/business-context` from meeting notes or from the form the business filled in (`docs/templates/business-context-request.md`, same sections in their words). Fixed headings, always in this order, so `/model` reads it without guessing. Acceptance values are NOT captured here; finance supplies them at step 11 and `/verify` writes them into `catalog/acceptance.yaml`.
+The ask, in the business's own words, in fixed headings. Written by `/business-context` (step 2) from meeting notes or from the request form. Read by `/build-model`, `/ask-leap-bi`, `/spec` and the portal. Nobody else writes it, except the business owner's read-back, which sets `status: confirmed` by hand.
+
+The request form (`docs/templates/business-context-request.md`) has the same sections in the same order, so a filled form maps onto this file one to one. Every section is always present; one the business left empty says `not given`.
 
 ```markdown
-# <Dashboard name> — business context
-owner: <business owner, role>        requested: 2026-09-03        status: draft | confirmed
+# Business context: <Dashboard name>
+owner: <business owner, role>        requested: <date>        status: draft | confirmed
 
-## 1. Who it is for
-Roles that open it, how often, on what device. One line per role.
+## 1. Who will use it
+Their words. Who opens it, how often, what they do with it.
 
-## 2. Questions it must answer
-Numbered. Each one a question a person would ask out loud.
+## 2. Questions it should answer
+Numbered, in their order.
 
-## 3. KPIs in their words
-| # | Name they use | Meaning, verbatim | Owner | Compare to | Slice by | Recipe |
-|---|---------------|-------------------|-------|------------|----------|--------|
-| 1 | CASA balance | "total CASA balance at close of the last business day, dormant excluded" | Head of Treasury | previous business day | branch, segment | new |
+## 3. The numbers
+| # | Name they use | Meaning, verbatim | Compare to | Break down by | Leave out | Owner | Recipe |
+|---|---------------|-------------------|------------|---------------|-----------|-------|--------|
+| 1 | CASA balance | "Total CASA balance at close of the last business day, dormant accounts excluded" | the day before | branch, customer segment | dormant accounts (status D) | Head of Treasury | new |
 
-`Recipe` is `new`, or `reuse kpi.<id>` when a CONFIRMED recipe already carries this exact meaning; `/model draft` and `/ask-leap-bi` read it. When every row reuses, the model exists and the dashboard goes from here to step 8.
+## 4. Filters on the page
+Their words: what the page filters by, and what it shows when it first opens.
 
-## 4. What to leave out
-Explicit exclusions, in their words. A blank row here is a question for section 6, never a silent default.
+## 5. Where the data comes from
+Their words: systems, reports, files, and who owns them. Names only; the data team maps them at step 1.
 
-## 5. Sources they named
-Systems and reports they mentioned ("the CBS balance report", "the finance Excel"). Names only; the data team maps them at step 1.
+## 6. Who is allowed to see it
+Their words: who sees everything, who sees only their part, which numbers stay bank-wide.
 
-## 6. Open questions
-At most seven. Each with who answers it.
+## 7. Notes from the business
+Anything else they wrote, verbatim: quirks in the data, definitions people disagree on.
+
+## 8. Open questions
+At most seven. Each with who answers it and by when.
 ```
 
+## The numbers table
+- `Meaning, verbatim` is the business's sentence, in quotes, never reworded. At step 3 the recipe's `meaning` is copied from it character for character.
+- `Compare to`, `Break down by` and `Leave out` are their words too. An empty `Leave out` cell means they said nothing, which is a question for section 8, never a silent "nothing excluded". "Nothing left out" is a valid answer when they wrote it.
+- `Owner` is a role, not a person's name. It defaults to the requester until the read-back names someone else.
+- `Recipe` is filled by the skill, not the business: `new`, or `reuse kpi.<id>` when a CONFIRMED recipe in `catalog/kpi-registry.yaml` already carries this exact meaning. On the first dashboard the registry does not exist yet, so every row is `new`; `/build-model draft` creates the file. When every row reuses, the model already exists and the dashboard goes from here to step 8.
+- A cell the skill cannot fill is `?`, and every `?` has a matching question in section 8.
+
 ## Rules
-- Section 3 `Meaning, verbatim` is the business's sentence, quoted. The recipe's `meaning` is copied from it unchanged at step 3.
-- Every KPI row names an owner (a role, not a person's name) and a `Compare to`. A blank `Compare to` becomes an open question.
-- Section 4 must contain at least one line per KPI or an explicit "nothing excluded" confirmed by the owner.
-- The file is `status: confirmed` only after the business owner has read it back. `/model draft` runs on `draft` too, but marks every recipe it writes DRAFT regardless.
+- Their words everywhere. The skill sorts and copies; it does not summarise, paraphrase or fill gaps.
+- No acceptance values here. Finance supplies them at step 11 into `catalog/acceptance.yaml`. A number the business quotes goes to section 8 as "finance to confirm at verify".
+- `status: confirmed` only after the business owner has read the file back. `/build-model draft` runs on `draft` too, and marks every recipe it writes DRAFT regardless.

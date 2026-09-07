@@ -2,22 +2,28 @@
 //   sources/*.yaml            -> the raw layer the DEs hand over
 //   catalog/data-dictionary.yaml -> the clean tables we build (generated at step 7)
 //   catalog/kpi-registry.yaml    -> the recipes that read them
+//   bi_model/*.sql               -> clean tables drafted but not yet deployed (status: draft)
+// A clean table is `live` when the data dictionary lists it and `draft` until then.
 // Nothing here invents a fact. Run: npm run graph -w @bank-dashboards/portal
 import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
 
+import { existsSync } from 'node:fs';
+
 const here = dirname(fileURLToPath(import.meta.url));
-const repo = join(here, '..', '..', '..');
-const read = (p) => parse(readFileSync(join(repo, p), 'utf8'));
+const root = join(here, '..', '..', '..');
+// --sample renders docs/sample (arbitrary values, every shape filled) instead of the real files.
+const sample = process.argv.includes('--sample');
+const repo = sample ? join(root, 'docs', 'sample') : root;
+const read = (p) => (existsSync(join(repo, p)) ? parse(readFileSync(join(repo, p), 'utf8')) : null);
+const list = (dir, ext) => (existsSync(join(repo, dir)) ? readdirSync(join(repo, dir)).filter((f) => f.endsWith(ext)) : []);
 
-const sources = readdirSync(join(repo, 'sources'))
-  .filter((f) => f.endsWith('.yaml'))
-  .map((f) => read(join('sources', f)));
-
-const dictionary = read('catalog/data-dictionary.yaml');
-const registry = read('catalog/kpi-registry.yaml');
+// Every input is optional: the repo starts empty and the files appear step by step.
+const sources = list('sources', '.yaml').map((f) => read(join('sources', f))).filter(Boolean);
+const dictionary = read('catalog/data-dictionary.yaml') ?? { views: [], generated_at: null };
+const registry = read('catalog/kpi-registry.yaml') ?? { kpis: [] };
 
 const rawTables = sources.map((s) => ({
   id: s.table,
@@ -66,6 +72,7 @@ for (const s of sources) {
 const views = (dictionary.views ?? []).map((v) => ({
   id: v.name,
   layer: 'model',
+  status: 'live',
   name: v.name,
   kind: v.name.startsWith('dim_') ? 'dimension' : 'fact',
   description: '',
@@ -83,6 +90,42 @@ const views = (dictionary.views ?? []).map((v) => ({
     isRls: c.name === v.rls,
   })),
 }));
+
+// Drafts: a view file in bi_model/ that the dictionary does not list yet. Step 3 writes the
+// file; step 7 deploys it and regenerates the dictionary. Until then the portal shows it as a
+// draft, with its columns read from the SELECT list's aliases. Facts come from the six-line
+// header (docs/CONVENTIONS.md); nothing is inferred beyond that.
+const live = new Set(views.map((v) => v.id));
+const header = (text, key) => {
+  const m = text.match(new RegExp(`^--\\s*${key}:\\s*(.*)$`, 'mi'));
+  return m ? m[1].trim() : '';
+};
+for (const f of list('bi_model', '.sql')) {
+  const sql = readFileSync(join(repo, 'bi_model', f), 'utf8');
+  const name = header(sql, 'view') || f.replace(/\.sql$/, '');
+  if (live.has(name)) continue;
+  const rlsLine = header(sql, 'RLS');
+  const rls = /^none\b/i.test(rlsLine) || rlsLine === '' ? 'none' : rlsLine.split(/\s/)[0];
+  const columns = [...sql.matchAll(/\bAS\s+([a-z_][a-z0-9_]*)\s*(?:,|\n|$)/gi)]
+    .map((m) => m[1])
+    .filter((c, i, a) => a.indexOf(c) === i && !/^(select|from|where|left|join|on)$/i.test(c))
+    .map((c) => ({ name: c, type: '', from: '', description: '', isRls: c === rls }));
+  views.push({
+    id: name,
+    layer: 'model',
+    status: 'draft',
+    name,
+    kind: name.startsWith('dim_') ? 'dimension' : 'fact',
+    description: '',
+    grain: header(sql, 'grain'),
+    grainProof: null,
+    rls,
+    refresh: header(sql, 'refresh'),
+    sources: header(sql, 'sources').split(',').map((s) => s.trim()).filter(Boolean),
+    usedBy: [],
+    columns,
+  });
+}
 
 // Lineage: every raw table a clean view reads.
 const modelEdges = [];
@@ -124,9 +167,10 @@ const graph = {
   kpis,
 };
 
+graph.from = sample ? 'docs/sample' : 'repo';
 mkdirSync(join(here, '..', 'src', 'data'), { recursive: true });
 writeFileSync(join(here, '..', 'src', 'data', 'graph.json'), JSON.stringify(graph, null, 2) + '\n');
 console.log(
-  `graph.json: ${rawTables.length} raw tables, ${rawEdges.length} relationships, ` +
-  `${views.length} clean tables, ${modelEdges.length} lineage edges, ${kpis.length} recipes`
+  `graph.json (${graph.from}): ${rawTables.length} raw tables, ${rawEdges.length} relationships, ` +
+  `${views.length} clean tables (${views.filter((v) => v.status === 'draft').length} draft), ${modelEdges.length} lineage edges, ${kpis.length} recipes`
 );

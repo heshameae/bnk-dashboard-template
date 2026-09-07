@@ -165,6 +165,16 @@ export function Canvas({
         </div>
       )}
 
+      {nodes.length === 0 && (
+        <div className="canvas__empty">
+          <p className="canvas__empty-title">Nothing here yet.</p>
+          <p className="canvas__empty-text">
+            This layer fills in from the repo's files. Sources appear after <code>/import-schema</code>; clean tables and recipes after <code>/build-model draft</code>.
+            To see a filled example, run <code>npm run graph -- --sample</code>.
+          </p>
+        </div>
+      )}
+
       <div
         className="canvas__world"
         style={{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.k})` }}
@@ -205,6 +215,7 @@ export function Canvas({
               <span className="node__badge">
                 <Icon size={12} />
                 {ROLE_BADGE[n.role]}
+                {n.status === 'draft' && <span className="tag" data-tone="draft">draft</span>}
               </span>
               <button
                 className="node__card"

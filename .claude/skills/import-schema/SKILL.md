@@ -1,42 +1,49 @@
 ---
 name: import-schema
-description: Turn the data team's dictionary and table profile into one sources/<TABLE>.yaml per raw table, with a gap report.
+description: Turn the data team's schema export (Excel or CSV) into one sources/<TABLE>.yaml per raw table, validate the files against the export, and rebuild the portal graph.
 disable-model-invocation: true
 ---
 
 # /import-schema
 
-Step 1 of `docs/WORKFLOW.md`: file the data team's handover as one `sources/<TABLE>.yaml` per raw table so `/model` can read grain, keys and dates without guessing. Contract: `docs/contracts/sources.md`.
+Step 1. The data team's export becomes the only description of raw tables the repo reads. The export layout and every parsing rule are in `docs/contracts/sources.md`; the steps below refer to its rules by number. Read it first.
 
-## Arguments
-`/import-schema <path or pasted text>` — a folder, a file, or text pasted into the prompt. Any format the data team uses: an `ALL_TAB_COLUMNS` CSV, a stats export (`NUM_ROWS`, `NUM_DISTINCT`, min/max dates), a constraints export, a Word or markdown profile. `/import-schema <TABLE>` re-files one table from the same handover folder.
+## Run it
+`/import-schema <file or folder>`
+- An `.xlsx` workbook. When `packages/import-schema` exists, `npm run import-schema -- <file>` converts it to one CSV per sheet. Until it exists, ask for the sheets saved as CSV, or save them yourself, and point at the folder.
+- A folder of `.csv`, one per sheet. Sheet names do not matter. A sheet is recognised by its headers: one with a column-name header is the columns sheet; one with a PK or FK header is the keys sheet; any other sheet is listed in the report and ignored.
+
+The export is copied unchanged to `sources/_handover/<YYYY-MM-DD>-<SYSTEM>-schema.<ext>` before anything else (contract, "Where the export lives"). It is never edited, because every value in every file must trace back to a cell in it.
 
 ## Reads
-- The handover material given in the argument.
-- Existing `sources/*.yaml`, to update rather than duplicate.
-- Oracle metadata (`ALL_TAB_COLUMNS`, `ALL_CONSTRAINTS`, `ALL_CONS_COLUMNS`, `ALL_TABLES`, `ALL_TAB_COL_STATISTICS`) only when a read-only account is configured; every query is a `SELECT` on catalog views. Row data is read only through the proof queries in `docs/proofs.md` §1, and only on that read-only account. Say which of the two modes is active in the first line of output.
+- The export.
+- Existing `sources/*.yaml`, so a re-run updates a file instead of duplicating it.
+- `docs/contracts/sources.md`.
 
 ## Writes
-- `sources/<TABLE>.yaml`, upper-case table name as in Oracle, one file per table.
+- `sources/<TABLE>.yaml`, one per table, upper-case name as in Oracle.
+- `sources/_import-report.md`.
+- `apps/portal/src/data/graph.json`, through the portal's build script (step 6).
 
 ## Steps
-1. Inventory the handover: list every table it mentions and which facts it carries per table (columns, types, nullability, comments, keys, row count, distinct counts, date range, last load). Completion: a table × facts matrix printed, with a dash for every fact the handover lacks.
-2. For each table write the YAML in the contract's field order. Copy `description` from the data team's comment; a blank comment becomes `description: ""`. Copy every column in their order with their type. Completion: every column in the handover appears in the file; no column has an invented description.
-3. Set `grain` and `key`. `grain` is the data team's sentence, starting "one row per"; when they gave none, write the sentence the `key` implies. The counts prove it: `profile.rows` equal to `profile.distinct_key` means the sentence is true. Unequal counts mean the `key` is wrong, so try the key the data team's own uniqueness constraint implies, and record what you tried in `notes`. Completion: every file has `grain` and `key`, and either the two counts are equal or `notes` says which counts came back and what is unexplained.
-4. Fill `profile` with the numbers given, dated with `profiled_at`. Omit a missing number; never estimate or zero it. Completion: every number in the file traces to a line in the handover.
-5. Fill `relationships` from constraints (`status: proven`) or from the data team's words (`status: stated`). Completion: every FK in the handover appears; every stated join is marked `stated`.
-6. Print the gap report. Completion: the four lists below are printed, each possibly empty, followed by the ask when any list is non-empty.
-   - tables whose `profile.rows` and `profile.distinct_key` are absent or unequal
-   - tables without a `key`
-   - tables with a date column but no `date_min`/`date_max`
-   - tables whose `last_load` is older than their `refresh` allows, or missing
-   Then the four-item ask from `docs/contracts/sources.md`, addressed to the data team, listing only the items still missing.
+1. **Inventory.** Print one line per sheet: recognised as columns, keys, or ignored, with its row count. Then one row per table found on either sheet: column count, PK from the flags, PK from the keys sheet, FK text. Done when every table on either sheet is in this list. The two PK sources are printed side by side so a disagreement (rule 2) is seen before any file is written.
+2. **Write the files**, one per table with columns, in the contract's field order, applying rules 1 to 8 exactly. Every `description` is a cell copied verbatim; a blank cell writes `""`. `grain` comes from `key` (rule 7). `profile` is written only from numbers the export carries; this export carries none, so it is omitted. Done when every table with columns has a file.
+3. **Parse the FK text** (rule 3). Print each FK cell next to what was parsed from it, or `unparsed` with the text moved to `notes`. Done when every FK cell is printed with its outcome. A join guessed from unparsed text would be a fact nobody stated.
+4. **Validate the files against the export.** Re-read every file written with a YAML parser (`node -e` with the `yaml` package). Print one line per check with its count:
+   - files written equals tables with columns minus tables skipped
+   - every column row of the export appears in exactly one file, in the export's order
+   - every `key` column and every `relationships[].column` exists in that file's `columns`
+   - every `relationships[].references` names a table that has a file, or is listed as a question
+   - every `description` string in the files appears verbatim in the export
+   - no file has a `profile` block
+   Done when every line reads PASS. A FAIL stops here with the file and the cell named. This step exists because the parse was done by hand: a file that drifts from the export poisons every step after it.
+5. **Write the report** `sources/_import-report.md` (rule 9): the handover file name, files written, tables skipped, questions for the data team, then the contract's ask for anything still missing.
+6. **Rebuild the portal graph:** `npm run graph -w @bank-dashboards/portal`. Print its output line. Done when the raw-table count it prints equals the files written. A mismatch stops here; the portal must never show a table the repo does not have.
 
 ## Stops when
-- The handover names a table but carries no column list for it: write nothing for that table, list it in the gap report.
-- A read-only account is not configured and the user asks to "just query it": stop and print the ask instead. Row access outside the read-only account is an incident (`CLAUDE.md`).
+- No sheet has a header row matching either recognised shape: print the header cells and stop. Guessing which column is which writes wrong files silently.
+- There are no PK flags and no keys sheet: write the files with `key: []`, list every table as a question, and stop before step 6 with "no keys; grain cannot be declared". A table without a key cannot be modeled.
+- The user asks to query Oracle for what the export lacks: stop and print the ask instead. Row access outside a configured read-only account is an incident (`CLAUDE.md`).
 
-## Hands over to
-Step 2 (`/business-context`) for a new dashboard, or step 3 (`/model draft`) when the business context already exists. A table whose counts are absent or unequal is unusable by `/model` until the data team answers.
-
-Example, marked as such: the sample world's `sources/CBS_ACCT_BAL_DLY.yaml` shows a fully proven file.
+## After it
+Nothing runs. The user decides: `/business-context <dashboard> <input>` for a new dashboard, or `/build-model draft <dashboard>` when the business context exists. A table listed under questions is usable by the draft (its grain is declared) but blocks the finalize until the data team answers.

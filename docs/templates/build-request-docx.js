@@ -104,7 +104,7 @@ function build(d, file) {
 build({ name: '', who: '', date: '', audience: '', questions: [], numbers: null, filters: '', sources: '', rls: '', anythingElse: '' },
   'business-context-request.docx');
 
-// --- 2. the same form filled in, the way a business owner actually writes (kept in step with dashboards/cashboard/business-context.md)
+// --- 2. the same form filled in, the way a business owner actually writes (kept in step with docs/sample/dashboards/cashboard/business-context.md)
 build({
   name: 'Cashboard',
   who: 'Head of Treasury',

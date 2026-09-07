@@ -5,7 +5,7 @@ The pivot artifact. Written at step 9 by `/spec` from the design export and the 
 ```yaml
 dashboard: cashboard              # folder name
 title: "Cash position"
-audience: treasury                # a role from business-context §1
+audience: treasury                # a role from business-context section 1
 status: READY                     # READY | BLOCKED (BLOCKED iff any widget has kpi: null)
 filters:                          # page-level; RLS narrows the values each user sees
   - { dimension: branch_code }

@@ -1,6 +1,6 @@
 -- view: dim_branch
 -- grain: one row per branch
--- RLS: none — reference data, no balances
+-- RLS: none, reference data, no balances
 -- sources: CBS_BRNCH
 -- refresh: daily with CBS_BRNCH
 -- proof: bi_model/proofs/dim_branch.md (2026-09-04)

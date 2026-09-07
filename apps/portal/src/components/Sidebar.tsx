@@ -44,6 +44,7 @@ function Group({
           >
             <span className="chip" data-role={t.role}><Icon size={12} /></span>
             <span className="row__name">{t.name}</span>
+            {t.status === 'draft' && <span className="tag" data-tone="draft">draft</span>}
             <span className="row__meta">{t.columns.length}</span>
           </button>
         );
@@ -76,7 +77,9 @@ export function Sidebar({
     );
   }, [nodes, q]);
 
+  const systems = [...new Set(nodes.map((t) => t.system).filter(Boolean))] as string[];
   const draftCount = kpis.filter((k) => k.status === 'DRAFT').length;
+  const draftTables = nodes.filter((t) => t.status === 'draft').length;
 
   return (
     <nav className="sidebar">
@@ -144,8 +147,8 @@ export function Sidebar({
       <div className="sidebar__foot">
         <I.Clock size={14} />
         {layer === 'raw'
-          ? `${nodes.length} source tables from CBS`
-          : `${nodes.length} clean tables · ${draftCount} draft recipes`}
+          ? `${nodes.length} source tables${systems.length ? ' from ' + systems.join(', ') : ''}`
+          : `${nodes.length} clean tables (${draftTables} draft) · ${draftCount} draft recipes`}
       </div>
     </nav>
   );

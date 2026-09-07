@@ -15,4 +15,4 @@ widgets:
 interactions:
   - { click: w3, sets_filter: customer_segment }
 blocked:
-  - { widget: w5, needs: "a recipe for average daily net inflow; no transaction view exists yet (business-context §6, question 1)", back_to: 3 }
+  - { widget: w5, needs: "a recipe for average daily net inflow; no transaction view exists yet (business-context section 8, question 1)", back_to: 3 }

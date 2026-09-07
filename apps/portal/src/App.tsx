@@ -43,9 +43,16 @@ export default function App() {
   };
 
   const drafts = kpis.filter((k) => k.status === 'DRAFT');
+  const draftTables = nodes.filter((t) => t.status === 'draft');
   const banner =
-    layer === 'model' && drafts.length > 0
-      ? { text: `${drafts.length} recipes are still DRAFT. The business confirms them before merge.`, action: 'Open Catalog' }
+    layer === 'model' && (drafts.length > 0 || draftTables.length > 0)
+      ? {
+          text: [
+            draftTables.length > 0 ? `${draftTables.length} clean tables are drafts, not deployed.` : '',
+            drafts.length > 0 ? `${drafts.length} recipes are still DRAFT. The business confirms them before merge.` : '',
+          ].filter(Boolean).join(' '),
+          action: 'Open Catalog',
+        }
       : null;
 
   const pillTitle = recipe ? recipe.id : node?.name ?? label;

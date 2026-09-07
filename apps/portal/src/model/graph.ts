@@ -40,6 +40,8 @@ export interface TableNode {
   name: string;
   /** What the node is, which decides its colour and badge. */
   role: 'fact' | 'dimension' | 'reference' | 'master' | 'calendar';
+  /** Clean tables only: `draft` until the data dictionary lists the view (step 7), then `live`. */
+  status?: 'draft' | 'live';
   schema?: string;
   system?: string;
   description: string;
@@ -129,6 +131,7 @@ const rawEdges: Edge[] = (raw.rawEdges as any[]).map((e) => ({
 const views: TableNode[] = (raw.views as any[]).map((v) => ({
   id: v.id,
   layer: 'model' as const,
+  status: (v.status === 'draft' ? 'draft' : 'live') as 'draft' | 'live',
   name: v.name,
   role: v.name === 'dim_date' ? 'calendar' : v.kind === 'dimension' ? 'dimension' : 'fact',
   description: v.description,

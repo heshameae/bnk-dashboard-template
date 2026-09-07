@@ -46,4 +46,4 @@ run_by: <DE role>   run_at: 2026-09-04 10:12   environment: replica (read-only)
 
 Sample rows: (five rows, columns as in the view)
 ```
-`/model finalize` reads this file; a row that is not PASS blocks the PR.
+`/build-model finalize` reads this file; a row that is not PASS blocks the PR.

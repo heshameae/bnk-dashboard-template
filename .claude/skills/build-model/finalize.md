@@ -1,4 +1,4 @@
-# /model finalize <dashboard> — step 5
+# /build-model finalize <dashboard> (step 5)
 
 Purpose: turn proof results into a reviewed PR. The data engineer's numbers decide; the human review decides truth; lint decides form.
 
@@ -19,7 +19,7 @@ Purpose: turn proof results into a reviewed PR. The data engineer's numbers deci
 4. **Run the view checklist.** Answer the eight checks of `docs/review/view-checklist.md` for each view, one line each, quoting the proof row or the SQL line that proves it.
    Done when: eight answers per view, every one `yes`; a `no` sends that view back to step 3 with the check number.
 
-5. **Run the recipe questions.** Answer the three questions of `docs/review/recipe-checklist.md` for each DRAFT recipe of this dashboard: quote the §3 sentence next to `meaning`, quote the grain sentence next to the aggregation class, quote the §4 line next to `excludes`.
+5. **Run the recipe questions.** Answer the three questions of `docs/review/recipe-checklist.md` for each DRAFT recipe of this dashboard: quote the numbers-table sentence next to `meaning`, quote the grain sentence next to the aggregation class, quote the `Leave out` cell next to `excludes`.
    Done when: three answers per recipe, every one `yes`.
 
 6. **Check policies.** For each view named by a recipe, confirm `security/rls-policies.yaml` has an entry whose `column` equals the header's `RLS:` line and whose `# TODO confirm with /rls` marker has been removed by `/rls`.
@@ -33,9 +33,9 @@ Purpose: turn proof results into a reviewed PR. The data engineer's numbers deci
 
 ## Stops when
 - A proof result file is missing or a check is not `PASS` (step 2): the view goes back to step 3; the PR is not opened.
-- A recipe's `meaning` differs from business-context §3 by one character: the recipe is not reviewed until it matches.
+- A recipe's `meaning` differs from the business-context numbers table by one character: the recipe is not reviewed until it matches.
 - A view has no confirmed policy entry (step 6).
 - Lint fails (step 7).
 
-## Hands over to
-Step 6, the business owner: reads each DRAFT recipe on the Catalog page rendered from the PR branch and confirms or corrects its meaning; `confirmed: { by, at }` is written and `status` becomes CONFIRMED. You merge only when every recipe on the page is CONFIRMED; the merge is the handover to the DEs' pipeline (step 7).
+## After it
+Nothing runs. The user shares the Catalog page rendered from the PR branch with the business owner, who reads each DRAFT recipe and confirms or corrects its meaning; `confirmed: { by, at }` is written and `status` becomes CONFIRMED. The user merges only when every recipe on the page is CONFIRMED. The merge is what hands the views to the data team's pipeline (step 7).

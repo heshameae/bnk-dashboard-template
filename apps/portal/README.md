@@ -22,7 +22,7 @@ npm run dev   -w @bank-dashboards/portal   # http://localhost:5173
 ## What the Model Explorer reads
 
 Nothing in the app is typed by hand and nothing is fetched from Oracle. `scripts/build-graph.mjs`
-reads four kinds of file and writes `src/data/graph.json`, which the app imports at build time.
+reads four kinds of file and writes `src/data/graph.json`, which the app imports at build time. Every input is optional: on an empty repo the graph is empty. Pass `-- --sample` to render `docs/sample/` instead.
 
 | What you see on screen | Where it is read from |
 |---|---|
@@ -31,6 +31,7 @@ reads four kinds of file and writes `src/data/graph.json`, which the app imports
 | Column names, types, nullability, distinct counts, null percentages, meanings | the `columns:` list of the same file |
 | Solid and dotted lines on the Sources graph | the `relationships:` list, with its `status:` |
 | The BI model tables, their grain proof, RLS column and refresh | `catalog/data-dictionary.yaml` |
+| A clean table drafted at step 3 but not deployed, shown with a `draft` badge | the six-line header of `bi_model/<view>.sql`, when the dictionary does not list it |
 | Which source tables a clean table reads (the Reads panel) | the `sources:` list of that view |
 | The recipes, their meaning, formula, filters, exclusions and owner | `catalog/kpi-registry.yaml` |
 | CONFIRMED and DRAFT badges, and the banner that says a build is blocked | the `status:` of each recipe |

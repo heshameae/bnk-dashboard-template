@@ -17,7 +17,7 @@ const STEPS = [
     does: 'Writes one file per raw table with the grain sentence, the key, the profile numbers and every column. Marks the grain proven only when row count equals distinct key count.',
     hands: 'sources/<TABLE>.yaml, plus a gap report naming every table that is not yet proven.',
     skill: { cmd: '/import-schema', status: 'todo' },
-    files: ['sources/CBS_ACCT_BAL_DLY.yaml', 'sources/CBS_ACCT.yaml'],
+    files: ['docs/sample/sources/CBS_ACCT_BAL_DLY.yaml', 'docs/sample/sources/CBS_ACCT.yaml'],
     rule: 'A table whose grain is not proven cannot be modelled. Naming the gap is the deliverable.',
     trap: 'A column list looks like enough. It cannot tell you whether a row is one account-day or one transaction, and that single fact is the difference between a right balance and one nineteen times too big.',
     clarify: [
@@ -38,7 +38,7 @@ const STEPS = [
     does: 'Writes the ask under fixed headings: who it is for, the questions it must answer, each number\'s meaning in the business\'s own words with an owner and a comparison, and what to leave out.',
     hands: 'dashboards/<name>/business-context.md, read by step 3 without guessing.',
     skill: { cmd: '/business-context', status: 'todo' },
-    files: ['docs/templates/business-context-request.md', 'dashboards/cashboard/business-context.md'],
+    files: ['docs/templates/business-context-request.md', 'docs/sample/dashboards/cashboard/business-context.md'],
     rule: 'Every recipe\'s meaning line is copied from this file. Nothing gets invented later that was not written down here.',
     trap: 'Acceptance values do not belong here. Finance supplies them at step 11, against a model that already exists, so the check is independent of the ask.',
     clarify: [
@@ -59,8 +59,8 @@ const STEPS = [
     gets: 'business-context.md, every sources/*.yaml, and whatever clean tables and recipes already exist.',
     does: 'Reuses an existing view or confirmed recipe before writing a new one. Drafts one clean table per subject at one grain, one DRAFT recipe per number, and a proof pack of read-only queries for someone with database access.',
     hands: 'Draft bi_model/*.sql, DRAFT recipes, bi_model/proofs/*.sql, and a policy stub. Goes to a data engineer.',
-    skill: { cmd: '/model draft', status: 'todo' },
-    files: ['bi_model/v_balances_daily.sql', 'bi_model/dim_date.sql', 'catalog/kpi-registry.yaml', 'bi_model/proofs/v_balances_daily.sql'],
+    skill: { cmd: '/build-model draft', status: 'todo' },
+    files: ['docs/sample/bi_model/v_balances_daily.sql', 'docs/sample/bi_model/dim_date.sql', 'docs/sample/catalog/kpi-registry.yaml', 'docs/sample/bi_model/proofs/v_balances_daily.sql'],
     rule: 'A recipe names exactly one clean table and never joins. Joins and renames live in the view, once.',
     trap: 'Designing tables to match the page. That is the extract habit from the old tools. Views are shaped by subject and grain; the design only ever feeds back as a blocked item at step 9.',
     clarify: [
@@ -77,11 +77,11 @@ const STEPS = [
   {
     n: 4, id: 'prove', title: 'Prove the drafts', owner: 'de', ownerNote: 'a data engineer, or a read-only replica account',
     lede: 'A data engineer runs the proof pack on raw data and pastes the numbers back. Nobody outside their team ever touches raw.',
-    gets: 'bi_model/proofs/<view>.sql. A few short read-only queries per view.',
+    gets: 'docs/sample/bi_model/proofs/<view>.sql. A few short read-only queries per view.',
     does: 'Runs each proof and records the results next to it: rows against distinct keys, raw row count against view row count, one day\'s raw total against the view\'s total, and five sample rows.',
-    hands: 'bi_model/proofs/<view>.md. The numbers stay in the pull request as evidence.',
+    hands: 'docs/sample/bi_model/proofs/<view>.md. The numbers stay in the pull request as evidence.',
     skill: { cmd: 'their SQL client, read-only', status: 'bank' },
-    files: ['bi_model/proofs/v_balances_daily.md', 'bi_model/proofs/dim_date.md'],
+    files: ['docs/sample/bi_model/proofs/v_balances_daily.md', 'docs/sample/bi_model/proofs/dim_date.md'],
     rule: 'A fact view proves three things: grain, fan-out, conservation. A dimension proves it is one row per key, plus whatever it derives.',
     trap: 'Skipping a check because the view "obviously" works. The three checks are the only reason anyone should believe the grain sentence.',
     clarify: [
@@ -97,8 +97,8 @@ const STEPS = [
     gets: 'The proof results and the drafts.',
     does: 'Corrects keys and joins, stamps each view header with its grain sentence and its restricted column, adds the row-level-security policy, runs the lint, opens the pull request.',
     hands: 'An open pull request: views with headers, DRAFT recipes, the proof evidence, the policy entries.',
-    skill: { cmd: '/model finalize · /rls · registry-lint', status: 'todo' },
-    files: ['.github/PULL_REQUEST_TEMPLATE.md', 'security/rls-policies.yaml', '.github/CODEOWNERS'],
+    skill: { cmd: '/build-model finalize · /rls · registry-lint', status: 'todo' },
+    files: ['.github/PULL_REQUEST_TEMPLATE.md', 'docs/sample/security/rls-policies.yaml', '.github/CODEOWNERS'],
     rule: 'Eight checks per view, three questions per recipe. A view with no policy entry cannot be queried at all.',
     trap: 'Letting the lint stand in for the review. It can tell you a column exists; it cannot tell you the meaning is the business\'s sentence.',
     clarify: [
@@ -117,7 +117,7 @@ const STEPS = [
     does: 'Reads and confirms, or corrects. No tool and no SQL; words only.',
     hands: 'Recipes move from DRAFT to CONFIRMED, with who confirmed and when. You merge.',
     skill: { cmd: 'the Catalog page', status: 'todo' },
-    files: ['catalog/kpi-registry.yaml'],
+    files: ['docs/sample/catalog/kpi-registry.yaml'],
     rule: 'A confirmed recipe is the unit of trust in the platform. It is confirmed once, not once per dashboard.',
     trap: 'Merging with a draft recipe still on the page. The confirmation is the whole point of the step.',
     clarify: [
@@ -134,7 +134,7 @@ const STEPS = [
     does: 'Creates or replaces the views in the reporting schema, then documents them: columns, verified grain, refresh time, restricted column, and which recipes use each view.',
     hands: 'Live clean tables and catalog/data-dictionary.yaml.',
     skill: { cmd: '/data-dictionary (in CI)', status: 'todo' },
-    files: ['catalog/data-dictionary.yaml'],
+    files: ['docs/sample/catalog/data-dictionary.yaml'],
     rule: 'Deployment happens from git only. Nothing in a Claude session ever writes to the database.',
     trap: 'Treating slowness as a modelling problem. Performance lives here: an index, a materialized view, or Oracle keeping the hot tables in memory. Same SQL, same views.',
     clarify: [
@@ -152,7 +152,7 @@ const STEPS = [
     does: 'Composes the page from kit components and tags each chart with the recipe it shows. Layout, not arithmetic.',
     hands: 'The design export. Read once at step 9 and never again.',
     skill: { cmd: 'Open Design + chart kit', status: 'ok' },
-    files: ['dashboards/cashboard/design-export/src/Cashboard.tsx'],
+    files: ['docs/sample/dashboards/cashboard/design-export/src/Cashboard.tsx'],
     rule: 'A card carrying a real recipe id binds itself at step 9. A card with only a label blocks.',
     trap: 'Inventing a number in the design because it would look good. It becomes a blocked item and a trip back to step 3.',
     clarify: [
@@ -170,7 +170,7 @@ const STEPS = [
     does: 'Writes one line per chart: this chart shows this recipe, by this slice, with this comparison. A chart whose number is not a recipe yet makes the contract blocked.',
     hands: 'dashboards/<name>/spec.yaml. Ready goes to the build; blocked goes back to step 3 with the missing number named.',
     skill: { cmd: '/spec', status: 'ok' },
-    files: ['dashboards/cashboard/spec.yaml'],
+    files: ['docs/sample/dashboards/cashboard/spec.yaml'],
     rule: 'The contract holds no formula, no column and no view name. It names recipes.',
     trap: 'Fixing a blocked item by writing arithmetic into the page. That is how the old tools ended up with numbers nobody could trace.',
     clarify: [
@@ -188,7 +188,7 @@ const STEPS = [
     does: 'Generates the app. For every recipe, one function writes the SQL and adds the user\'s row filter, so no dashboard carries its own arithmetic.',
     hands: 'A running app on a development URL, plus the compiled SQL saved for review.',
     skill: { cmd: '/build', status: 'todo' },
-    files: ['dashboards/cashboard/queries.sql', 'security/test-users.yaml'],
+    files: ['docs/sample/dashboards/cashboard/queries.sql', 'docs/sample/security/test-users.yaml'],
     rule: 'One function adds the row filter, and it fails closed: no entitlements means no rows, never all rows.',
     trap: 'Hand-editing a generated page. The next build overwrites it, and the contract stops describing what is live.',
     clarify: [
@@ -206,7 +206,7 @@ const STEPS = [
     does: 'Compiles each number for the given date and compares. Checks that two entitled users see different totals, that bank-wide equals the unfiltered total, and that an unentitled user sees nothing.',
     hands: 'dashboards/<name>/verify.md, and a live dashboard when it is green.',
     skill: { cmd: '/verify (in CI)', status: 'todo' },
-    files: ['dashboards/cashboard/verify.md', 'catalog/acceptance.yaml'],
+    files: ['docs/sample/dashboards/cashboard/verify.md', 'docs/sample/catalog/acceptance.yaml'],
     rule: 'Finance\'s number is written beside the recipe in catalog/acceptance.yaml, never inside it, so every future build re-checks it automatically.',
     trap: 'Accepting close enough. The tolerance belongs to the number\'s format and is decided once, not argued per release.',
     clarify: [

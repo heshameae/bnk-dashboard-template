@@ -1,6 +1,6 @@
 ---
 name: data-dictionary
-description: Regenerate catalog/data-dictionary.yaml from the live BI_MODEL schema or from view SQL text — step 7, run by CI after the DEs' pipeline deploys bi_model/.
+description: Regenerate catalog/data-dictionary.yaml from the live BI_MODEL schema, or from the view SQL text when there is no connection. Step 7, run by CI after the data team's pipeline deploys bi_model/.
 disable-model-invocation: true
 ---
 
@@ -8,17 +8,17 @@ disable-model-invocation: true
 
 The only writer of `catalog/data-dictionary.yaml`: the clean tables as they are live. Shape and rules: `docs/contracts/data-dictionary.md`. Header format: `docs/CONVENTIONS.md`. Every database access is a `SELECT` on `ALL_*` metadata through the read-only account.
 
-## Arguments
+## Run it
 `/data-dictionary [--source BI_MODEL|static]`
 - `BI_MODEL`: column facts come from Oracle metadata. Default when a read-only connection is configured.
 - `static`: no connection; column facts are parsed from the view SQL text. The output file records which one ran.
 
 ## Reads
-- `bi_model/*.sql` — the six-line header gives `grain`, `rls`, `sources`, `refresh`, `proof`; the SELECT list gives column order.
-- `bi_model/proofs/<view>.md` — the `grain` row feeds `grain_proof`.
-- `catalog/kpi-registry.yaml` — computes `used_by`.
-- `security/rls-policies.yaml` — the header's `RLS:` must equal the policy entry.
-- `sources/<TABLE>.yaml` — column types in `static` mode.
+- `bi_model/*.sql`: the six-line header gives `grain`, `rls`, `sources`, `refresh`, `proof`; the SELECT list gives column order.
+- `bi_model/proofs/<view>.md`: the `grain` row feeds `grain_proof`.
+- `catalog/kpi-registry.yaml`: computes `used_by`.
+- `security/rls-policies.yaml`: the header's `RLS:` must equal the policy entry.
+- `sources/<TABLE>.yaml`: column types in `static` mode.
 - Oracle `ALL_TAB_COLUMNS`, `ALL_COL_COMMENTS` for owner `BI_MODEL`, in `BI_MODEL` mode.
 
 ## Writes
@@ -39,5 +39,5 @@ The only writer of `catalog/data-dictionary.yaml`: the clean tables as they are 
 - A view in `bi_model/` is absent from `BI_MODEL` under `--source BI_MODEL` → write nothing; the deploy has not happened (step 7 is the DEs' pipeline).
 - A recipe in `used_by` names a column the view does not expose → name recipe and column; write nothing.
 
-## Hands over to
-Step 8 (You: design the page). The Catalog page and `/spec` read the new dictionary; the registry rendered on that page is the KPI list the designer picks from.
+## After it
+Nothing runs. The Catalog page and `/spec` read the new dictionary; the recipes rendered on that page are the list the designer picks from at step 8.

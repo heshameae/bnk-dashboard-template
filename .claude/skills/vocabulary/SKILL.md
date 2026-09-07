@@ -1,6 +1,6 @@
 ---
 name: vocabulary
-description: The platform's words — clean table, recipe, grain, key, proof, fan-out, conservation, policy, entitlement, spec, acceptance — each defined once with the file that owns it. Use when one of them is used loosely, two are confused, or a new term is about to be coined.
+description: The platform's words (clean table, recipe, grain, key, proof, fan-out, conservation, policy, entitlement, spec, acceptance), each defined once with the file that owns it. Use when one is used loosely, two are confused, or a new term is about to be coined.
 ---
 
 # Vocabulary

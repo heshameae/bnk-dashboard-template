@@ -1,6 +1,6 @@
 -- view: dim_date
 -- grain: one row per calendar day
--- RLS: none — calendar
+-- RLS: none, calendar
 -- sources: CBS_CALENDAR
 -- refresh: yearly with CBS_CALENDAR
 -- proof: bi_model/proofs/dim_date.md (2026-09-04)

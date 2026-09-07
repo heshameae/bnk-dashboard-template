@@ -10,7 +10,7 @@
 ```sql
 -- view: v_balances_daily
 -- grain: one row per account per snapshot_date (business days only)
--- RLS: branch_code            | or:  -- RLS: none — reference data
+-- RLS: branch_code            | or:  -- RLS: none, reference data
 -- sources: CBS_ACCT_BAL_DLY, CBS_ACCT, CBS_PROD, CBS_CUST
 -- refresh: daily after CBS load, ~02:30
 -- proof: bi_model/proofs/v_balances_daily.md (2026-09-04)

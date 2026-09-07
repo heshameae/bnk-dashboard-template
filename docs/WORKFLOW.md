@@ -6,9 +6,9 @@ Every handover between steps is a file in git. No emails, no tickets. Step numbe
 |---|------|-------|--------------|------------|
 | 1 | Intake sources | Data engineers (you file it) | `/import-schema` | `sources/<TABLE>.yaml` |
 | 2 | Capture the ask | You + Claude | `/business-context` | `dashboards/<name>/business-context.md` |
-| 3 | Draft the model | You + Claude | `/model draft` | draft `bi_model/*.sql`, DRAFT recipes, `bi_model/proofs/*.sql` |
+| 3 | Draft the model | You + Claude | `/build-model draft` | draft `bi_model/*.sql`, DRAFT recipes, `bi_model/proofs/*.sql` |
 | 4 | Prove the drafts | Data engineers | their SQL client, read-only | `bi_model/proofs/<view>.md` |
-| 5 | Finalize & review | You + Claude | `/model finalize`, `/rls`, CI registry-lint | an open PR (judgment moment 1) |
+| 5 | Finalize & review | You + Claude | `/build-model finalize`, `/rls`, CI registry-lint | an open PR (judgment moment 1) |
 | 6 | Confirm meanings | Business | Catalog page (PR preview) | PR merged; recipes CONFIRMED |
 | 7 | Deploy & document | DDT (the DEs' pipeline) | CI runs `/data-dictionary` | `BI_MODEL` live, `data-dictionary.yaml` |
 | 8 | Design the page | You | Open Design + chart kit | `dashboards/<name>/design-export/` |

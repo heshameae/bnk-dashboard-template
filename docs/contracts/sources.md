@@ -39,6 +39,10 @@ One workbook, two sheets. CSV twins of the same two sheets are accepted too.
 
 Anything else on either sheet is kept in `notes`, never dropped.
 
+## Where the export lives
+
+The workbook is committed unchanged under `sources/_handover/<YYYY-MM-DD>-<SYSTEM>-schema.xlsx`, one file per handover, never edited and never overwritten: a corrected export is a new dated file. The report names the file it was built from. This is what makes "every value traces to a cell" checkable a year later; a workbook in a mailbox is not evidence. A handover that carries sample values or anything the bank classes as sensitive stays in the same folder, gitignored, with its name and SHA-256 recorded in the report instead.
+
 ## How `/import-schema` reads it
 
 The reading is done by a deterministic parser (`packages/import-schema`), not by the model, so the same workbook always gives the same files. The parser's fixtures are messy real-shaped inputs, and every rule below is a test.
@@ -51,7 +55,7 @@ The reading is done by a deterministic parser (`packages/import-schema`), not by
 6. A blank definition becomes `description: ""`. No description is ever written by us.
 7. `grain` is the data team's sentence when they gave one, else the sentence the key implies: key `[ACCT_NO, BAL_DT]` gives "one row per ACCT_NO per BAL_DT", and the modeler rewrites it in business words at step 3.
 8. A table on `keys` with no rows on `columns`: no file, one report line. A key or FK column that is not in the column list: the file is written, the report lists it. Duplicate column rows: the first wins, the report lists it.
-9. Every value in a file traces to a cell. The report, `sources/_import-report.md`, has three lists: files written, tables skipped, questions for the data team. Re-running on a corrected workbook rewrites the files and the report.
+9. Every value in a file traces to a cell of the named handover. The report, `sources/_import-report.md`, opens with the handover file name and date, then three lists: files written, tables skipped, questions for the data team. Re-running on a corrected workbook rewrites the files and the report.
 
 ## Rules
 - `grain` is a sentence beginning "one row per". It is proven only when `profile.rows == profile.distinct_key` for the listed `key`. Unequal counts mean the `key` is wrong, not that the table is unusable: correct the key until they match, or say in `notes` what the extra rows are.
