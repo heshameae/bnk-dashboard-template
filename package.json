@@ -1,0 +1,17 @@
+{
+  "name": "bank-dashboards",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "lint:registry": "node packages/registry-lint/bin/lint.js",
+    "data-dictionary": "node packages/semantic-query/bin/data-dictionary.js",
+    "verify": "node packages/semantic-query/bin/verify.js",
+    "docs:app": "node docs/build-architecture.js"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true
+  }
+}

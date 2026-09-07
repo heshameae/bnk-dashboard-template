@@ -1,0 +1,29 @@
+# Roles and policies. Entitlement VALUES live in BI_SECURITY.ENTITLEMENTS, not here. Contract: docs/contracts/rls-policies.md
+roles:
+  head_office:    { groups: [GRP-BI-HQ],      note: "bank-wide" }
+  finance:        { groups: [GRP-BI-FINANCE], note: "bank-wide, read-only" }
+  region_head:    { groups: [GRP-BI-REGION],  note: "their regions' branches, granted as branch rows" }
+  branch_manager: { groups: [GRP-BI-BRANCH],  note: "their branches" }
+
+dimensions:
+  branch_code:
+    values_from: dim_branch.branch_code
+    label: dim_branch.branch_name
+    parent: dim_branch.region_code
+
+policies:
+  v_balances_daily:
+    column: branch_code
+    head_office: all
+    finance: all
+    region_head: by_entitlement
+    branch_manager: by_entitlement
+    default: none
+  dim_branch:
+    column: none
+    reason: "reference data; no balances"
+  dim_date:
+    column: none
+    reason: "calendar"
+
+exemptions: []

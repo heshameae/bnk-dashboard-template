@@ -1,0 +1,7 @@
+node_modules/
+apps/portal/src/dashboards/**/generated/
+.env
+dist/
+.playwright-mcp/
+*.tsbuildinfo
+.DS_Store

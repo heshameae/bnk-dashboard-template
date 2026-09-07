@@ -1,0 +1,12 @@
+table: CBS_BRNCH
+system: CBS
+schema: RAW_CBS
+description: "Branch reference"
+grain: "one row per branch"
+key: [BR_CD]
+profile: { profiled_at: 2026-09-03, rows: 212, distinct_key: 212, last_load: 2026-09-03T02:05:00+04:00, refresh: "daily 02:00, full refresh" }
+columns:
+  - { name: BR_CD,   type: VARCHAR2(6),  nullable: false, description: "Branch code" }
+  - { name: BR_NM,   type: VARCHAR2(60), nullable: false, description: "Branch name" }
+  - { name: REGN_CD, type: VARCHAR2(4),  nullable: false, description: "Region code", distinct: 7 }
+  - { name: REGN_NM, type: VARCHAR2(40), nullable: false, description: "Region name" }

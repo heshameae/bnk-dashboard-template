@@ -1,0 +1,63 @@
+# The recipe book. One entry per number. Contract: docs/contracts/kpi-registry.md
+kpis:
+  - id: kpi.casa_balance
+    status: CONFIRMED
+    meaning: "Total CASA balance at close of the last business day, dormant accounts excluded"
+    owner: head_of_treasury
+    view: v_balances_daily
+    formula: SUM(balance_amount)
+    aggregation: balance-last-day
+    filters:
+      - product_family = 'CASA'
+      - account_status <> 'D'
+    excludes: "dormant accounts (account_status = 'D')"
+    dimensions: [branch_code, customer_segment]
+    compare: previous_business_day
+    format: aed_millions
+    introduced_by: cashboard
+    confirmed: { by: head_of_treasury, at: 2026-09-05 }
+
+  - id: kpi.total_balance
+    status: CONFIRMED
+    meaning: "Total ledger balance across all products at close of the last business day"
+    owner: head_of_treasury
+    view: v_balances_daily
+    formula: SUM(balance_amount)
+    aggregation: balance-last-day
+    filters: []
+    excludes: "nothing; confirmed by head_of_treasury"
+    dimensions: [branch_code, customer_segment, product_family]
+    compare: previous_business_day
+    format: aed_millions
+    introduced_by: cashboard
+    confirmed: { by: head_of_treasury, at: 2026-09-05 }
+
+  - id: kpi.casa_accounts
+    status: DRAFT
+    meaning: "Number of CASA accounts with a positive balance at close of the last business day"
+    owner: head_of_treasury
+    view: v_balances_daily
+    formula: COUNT(DISTINCT account_id)
+    aggregation: balance-last-day
+    filters:
+      - product_family = 'CASA'
+      - balance_amount > 0
+    excludes: "zero and negative balances"
+    dimensions: [branch_code, customer_segment]
+    compare: previous_month
+    format: integer
+    introduced_by: cashboard
+
+  - id: kpi.casa_share
+    status: DRAFT
+    meaning: "CASA balance as a share of total ledger balance, last business day"
+    owner: head_of_treasury
+    view: v_balances_daily
+    formula: kpi.casa_balance / kpi.total_balance
+    aggregation: ratio
+    filters: []
+    excludes: "inherits both recipes' exclusions"
+    dimensions: [branch_code, customer_segment]
+    compare: previous_month
+    format: percent_1dp
+    introduced_by: cashboard

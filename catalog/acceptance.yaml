@@ -1,0 +1,12 @@
+# Finance's numbers: one row per recipe, the value they would bet on for one date. Contract: docs/contracts/acceptance.md
+# Written at step 11 by /verify from finance's answer. Re-checked on every build. Owned by finance (CODEOWNERS).
+- kpi: kpi.casa_balance
+  value: 41260000000
+  as_of: 2026-08-31
+  source: "finance daily position report"
+  given_by: head_of_finance_reporting
+- kpi: kpi.total_balance
+  value: 63900412000.55
+  as_of: 2026-08-31
+  source: "finance daily position report"
+  given_by: head_of_finance_reporting

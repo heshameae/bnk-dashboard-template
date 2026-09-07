@@ -1,0 +1,14 @@
+# Sketch. Secrets are a read-only Oracle account on the replica; nothing here writes.
+name: ci
+on: [pull_request, push]
+jobs:
+  registry-lint:
+    runs-on: ubuntu-latest
+    steps: [ { uses: actions/checkout@v4 }, { run: npm ci }, { run: npm run lint:registry } ]
+  data-dictionary:          # after DDT deploys bi_model/ (their pipeline calls this workflow)
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps: [ { uses: actions/checkout@v4 }, { run: npm ci }, { run: npm run data-dictionary -- --source BI_MODEL --readonly } ]
+  verify:                    # on any dashboards/** change; two test users; finance's numbers from catalog/acceptance.yaml
+    runs-on: ubuntu-latest
+    steps: [ { uses: actions/checkout@v4 }, { run: npm ci }, { run: npm run verify -- --all } ]

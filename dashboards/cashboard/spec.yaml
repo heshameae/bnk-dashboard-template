@@ -1,0 +1,18 @@
+# Written by /spec from design-export/ + kpi-registry.yaml. Contract: docs/contracts/spec.md
+dashboard: cashboard
+title: "Cash position"
+audience: treasury
+status: BLOCKED
+filters:
+  - { dimension: branch_code }
+  - { dimension: customer_segment }
+widgets:
+  - { id: w1, kind: kpi-card, kpi: kpi.casa_balance, show: [value, compare] }
+  - { id: w2, kind: line,     kpi: kpi.casa_balance, by: snapshot_date, range: last_90_business_days }
+  - { id: w3, kind: bar,      kpi: kpi.casa_balance, by: customer_segment, sort: desc }
+  - { id: w4, kind: kpi-card, kpi: kpi.casa_accounts }
+  - { id: w5, kind: kpi-card, kpi: null, designer_label: "Avg daily net inflow" }
+interactions:
+  - { click: w3, sets_filter: customer_segment }
+blocked:
+  - { widget: w5, needs: "a recipe for average daily net inflow; no transaction view exists yet (business-context §6, question 1)", back_to: 3 }

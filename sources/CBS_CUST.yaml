@@ -1,0 +1,12 @@
+table: CBS_CUST
+system: CBS
+schema: RAW_CBS
+description: "Customer master"
+grain: "one row per customer"
+key: [CUST_ID]
+profile: { profiled_at: 2026-09-03, rows: 412908, distinct_key: 412908, last_load: 2026-09-03T02:05:00+04:00, refresh: "daily 02:00, full refresh" }
+columns:
+  - { name: CUST_ID, type: VARCHAR2(12), nullable: false, description: "Customer id" }
+  - { name: SEG_CD,  type: VARCHAR2(20), nullable: true,  description: "Segment: RETAIL, SME, CORPORATE, PRIVATE", null_pct: 2.3 }
+  - { name: CUST_TYP, type: CHAR(1),     nullable: false, description: "I individual, C company" }
+notes: "CBS_CUST_ADDR is one row per address; joining it to accounts fans out. Use this table only."

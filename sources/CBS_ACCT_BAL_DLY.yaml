@@ -1,0 +1,24 @@
+table: CBS_ACCT_BAL_DLY
+system: CBS
+schema: RAW_CBS
+description: "Daily ledger and available balance per account, business days only"
+grain: "one row per account per business day"
+key: [ACCT_NO, BAL_DT]
+profile:
+  profiled_at: 2026-09-03
+  rows: 48213977
+  distinct_key: 48213977
+  date_column: BAL_DT
+  date_min: 2026-06-01
+  date_max: 2026-09-02
+  last_load: 2026-09-03T02:10:00+04:00
+  refresh: "daily 02:00; rolling four months, month-ends kept in CBS_ACCT_BAL_ME"
+columns:
+  - { name: ACCT_NO,      type: VARCHAR2(20), nullable: false, description: "Account number",                 distinct: 730514 }
+  - { name: BAL_DT,       type: DATE,         nullable: false, description: "Balance date; business days only" }
+  - { name: LDGR_BAL_AMT, type: "NUMBER(18,2)", nullable: true,  description: "Ledger balance, AED equivalent",  null_pct: 0.01 }
+  - { name: AVL_BAL_AMT,  type: "NUMBER(18,2)", nullable: true,  description: "Available balance, AED equivalent" }
+  - { name: CCY_CD,       type: CHAR(3),      nullable: false, description: "Account currency" }
+relationships:
+  - { column: ACCT_NO, references: CBS_ACCT.ACCT_NO, status: proven }
+notes: "No rows on weekends or bank holidays; the calendar is CBS_CALENDAR."

@@ -1,0 +1,11 @@
+table: CBS_CALENDAR
+system: CBS
+schema: RAW_CBS
+description: "Bank calendar with business-day flag"
+grain: "one row per calendar day"
+key: [CAL_DT]
+profile: { profiled_at: 2026-09-03, rows: 4018, distinct_key: 4018, date_column: CAL_DT, date_min: 2020-01-01, date_max: 2030-12-31, last_load: 2026-01-02T02:05:00+04:00, refresh: "yearly, by finance ops" }
+columns:
+  - { name: CAL_DT,     type: DATE,    nullable: false, description: "Calendar date" }
+  - { name: IS_BUS_DAY, type: CHAR(1), nullable: false, description: "Y on business days (Mon–Fri excluding bank holidays)" }
+  - { name: HOL_NM,     type: VARCHAR2(60), nullable: true, description: "Holiday name", null_pct: 96.9 }

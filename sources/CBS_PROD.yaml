@@ -1,0 +1,11 @@
+table: CBS_PROD
+system: CBS
+schema: RAW_CBS
+description: "Product reference"
+grain: "one row per product code"
+key: [PROD_CD]
+profile: { profiled_at: 2026-09-03, rows: 84, distinct_key: 84, last_load: 2026-09-03T02:05:00+04:00, refresh: "daily 02:00, full refresh" }
+columns:
+  - { name: PROD_CD,   type: VARCHAR2(8),  nullable: false, description: "Product code" }
+  - { name: PROD_NM,   type: VARCHAR2(60), nullable: false, description: "Product name" }
+  - { name: PROD_FMLY, type: VARCHAR2(20), nullable: false, description: "CASA, TD, LOAN, CARD", distinct: 4 }

@@ -1,0 +1,8 @@
+# Separation of duties. Reviews are requested automatically. Later lines win, so the generic folder rule comes first.
+/bi_model/                                  @bank/bi-engineers @bank/data-engineers
+/catalog/kpi-registry.yaml                  @bank/bi-engineers
+/catalog/acceptance.yaml                    @bank/finance
+/security/                                  @bank/security
+/security/rls-policies.yaml                 @bank/security @bank/data-owners
+/packages/semantic-query/src/rls/           @bank/security @bank/platform
+/dashboards/                                @bank/bi-engineers

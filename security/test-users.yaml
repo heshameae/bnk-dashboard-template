@@ -1,0 +1,9 @@
+# Fixtures for /build and /verify. Real identities never appear here.
+users:
+  - { id: test.branch.a, groups: [GRP-BI-BRANCH], entitlements: { branch_code: [DXB01] } }
+  - { id: test.branch.b, groups: [GRP-BI-BRANCH], entitlements: { branch_code: [DXB07, DXB09] } }
+  - { id: test.region,   groups: [GRP-BI-REGION], entitlements: { branch_code: [DXB01, DXB07, DXB09, DXB12] } }
+  - { id: test.hq,       groups: [GRP-BI-HQ] }
+  - { id: test.none,     groups: [] }
+expect:
+  restricted_recipe: "test.branch.a != test.branch.b; test.hq == unfiltered; test.none == no rows"

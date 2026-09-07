@@ -1,0 +1,45 @@
+# /model draft <dashboard> — step 3
+
+Purpose: one clean table per subject, one DRAFT recipe per KPI row, one proof file per view. Nothing runs against the database in this mode.
+
+## Steps
+
+1. **Load the inputs.** Read `dashboards/<dashboard>/business-context.md`, every `sources/*.yaml`, every `bi_model/*.sql` header, and `catalog/kpi-registry.yaml`.
+   Done when: every §3 KPI row is listed with its meaning, owner, compare-to and slice-by, and every source file's `grain`, `key`, profile counts and `relationships` are in a table you can point at.
+
+2. **Reuse before drafting.** For each §3 row, search the registry for a CONFIRMED recipe whose `meaning` matches the row's verbatim meaning, and search `bi_model/` for a view at the grain the row needs.
+   Done when: each row is marked `reuse recipe <id>`, `reuse view <name>`, or `new`, with the reason in one line.
+
+3. **Assign subjects and grains.** Group the `new` rows by subject (balances, transactions, customers, ...). For each subject decide the one grain the clean table will have, using `docs/grain-and-joins.md`: a snapshot subject is "one row per <entity> per <snapshot date>", a flow subject is "one row per <event>".
+   Done when: every `new` row belongs to exactly one subject, and each subject has a grain sentence starting with "one row per".
+
+4. **Check the sources.** For each subject list the raw tables it needs and the join keys from `relationships`. A raw table with no `sources/<TABLE>.yaml`, or a join whose target column is not the target table's `key`, goes into the gap report and blocks that subject. A table whose `profile` is absent, or whose counts are unequal, does not block: its grain is declared by the data team's key, so the subject is drafted, and every view and recipe built on it is listed as `unproven` in the report. Finalize (step 5) refuses those until the proofs exist.
+   Done when: every subject is `ready` (all sources proven), `ready-unproven` (at least one source declared only), or `blocked` with the table and the missing fact named.
+
+5. **Make sure the calendar exists.** Any `balance-last-day` or `compare: previous_business_day` recipe needs `bi_model/dim_date.sql`. If it is missing, draft it from the calendar source (`docs/CONVENTIONS.md`, "Dates") as one more view in this run.
+   Done when: `bi_model/dim_date.sql` exists with a six-line header, or no recipe in this run needs business days.
+
+6. **Draft each ready view** as `bi_model/<view>.sql`, named per `docs/CONVENTIONS.md`: header of six lines (`view`, `grain`, `RLS`, `sources`, `refresh` copied from the sources' `profile.refresh`, `proof: bi_model/proofs/<view>.md (pending)`), then `CREATE OR REPLACE VIEW bi_model.<view> AS SELECT ...`. Rename every raw column once to a business word; join only to one-row-per-key tables; a join that can lose rows is a `LEFT JOIN` with `COALESCE(..., 'UNKNOWN')`; the view keeps rows and exposes status columns so recipes can exclude. No `SUM`, ratio or window function in a fact view.
+   Done when: each view file has the six header lines in order, every column in the SELECT is renamed, every joined table is one row per its join key, and the view contains no aggregate.
+
+7. **Draft one recipe per `new` row** in `catalog/kpi-registry.yaml`, per `docs/contracts/kpi-registry.md`: `status: DRAFT`; `meaning` copied from §3 character for character; `owner` from §3 as a role; `view` = the subject's clean table; `formula` over that view's columns; `aggregation` from the grain (snapshot → `balance-last-day`, flow → `additive`, a share of two recipes → `ratio` with `formula: kpi.a / kpi.b` on the same view); `filters` implementing the §4 exclusion for that row; `excludes` in the owner's words (or the explicit "nothing; confirmed by <role>" line from §4); `dimensions` from "Slice by" as view columns; `compare` from "Compare to"; `format` chosen from the meaning; `introduced_by: <dashboard>`. No number goes in a recipe; finance's value arrives at step 11 in `catalog/acceptance.yaml`.
+   Done when: every `new` row has exactly one recipe, and each recipe passes lint rules 1–4 and 6 of the contract by inspection (columns exist on the view, class fits the grain, ratio shape, compare and format present, excludes filled).
+
+8. **Write the proof pack.** For each drafted view write `bi_model/proofs/<view>.sql` in the shape of `docs/proofs.md` §2: the view's SELECT verbatim in a `WITH v AS (...)`, then the `grain`, `fan_out` and `conservation` checks with the window and the day chosen from the source's `date_max`, then the five-sample-rows query.
+   Done when: every drafted view has a proof file whose three check names match the result-file template exactly, and the conservation day is a business day inside the source's date range.
+
+9. **Stub the policy.** For each drafted view add an entry to `security/rls-policies.yaml` per `docs/contracts/rls-policies.md`: a view exposing customer or balance figures gets the column the business slices access by (`column: <col>` and `default: none`, every existing role listed as `by_entitlement` unless the role's note says bank-wide); a reference or calendar view gets `column: none` with a `reason`. Mark each new entry with the comment `# TODO confirm with /rls`. Make the view header's `-- RLS:` line match.
+   Done when: every drafted view has a policy entry and its header `RLS:` line equals the entry's `column`.
+
+10. **Report and hand over.** Print one table: view · grain · sources · recipes · proof file · status (`ready` / `blocked`). Below it the gap report (blocked subjects, unproven sources, missing relationships) and the four-item ask from `docs/contracts/sources.md` when a gap needs the data team.
+    Done when: the table lists every subject from step 3 and the handover line names the proof files a data engineer runs.
+
+## Stops when
+- `business-context.md` is missing or has a §3 row with an empty meaning: stop and name the row; step 2 owns the fix.
+- A subject needs a raw table with no `sources/<TABLE>.yaml`: the subject is `blocked`, the other subjects still get drafted. A table that is declared but not proven never blocks a draft; it blocks finalize.
+- A §3 row needs two clean tables at once: stop on that row and propose the widened view, never a joining recipe.
+
+## Hands over to
+Step 4, a data engineer: run every `bi_model/proofs/<view>.sql` read-only on the replica and paste the results into `bi_model/proofs/<view>.md` in the template of `docs/proofs.md`. Then `/model finalize <dashboard>`.
+
+Example (illustration only; the skill assumes none of these names): a §3 row "Total CASA balance at close of the last business day" over `CBS_ACCT_BAL_DLY` (one row per account per business day) becomes `v_balances_daily`, recipe `kpi.casa_balance` with `aggregation: balance-last-day`, proof `bi_model/proofs/v_balances_daily.sql`.

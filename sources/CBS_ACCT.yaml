@@ -1,0 +1,28 @@
+table: CBS_ACCT
+system: CBS
+schema: RAW_CBS
+description: "Account master"
+grain: "one row per account"
+key: [ACCT_NO]
+profile:
+  profiled_at: 2026-09-03
+  rows: 731442
+  distinct_key: 731442
+  date_column: OPEN_DT
+  date_min: 1998-03-12
+  date_max: 2026-09-02
+  last_load: 2026-09-03T02:05:00+04:00
+  refresh: "daily 02:00, full refresh"
+columns:
+  - { name: ACCT_NO,  type: VARCHAR2(20), nullable: false, description: "Account number" }
+  - { name: CUST_ID,  type: VARCHAR2(12), nullable: false, description: "Primary customer",        distinct: 412908 }
+  - { name: BR_CD,    type: VARCHAR2(6),  nullable: false, description: "Owning branch",            distinct: 212 }
+  - { name: PROD_CD,  type: VARCHAR2(8),  nullable: false, description: "Product code",             distinct: 84 }
+  - { name: ACCT_STS, type: CHAR(1),      nullable: false, description: "A active, D dormant, C closed" }
+  - { name: OPEN_DT,  type: DATE,         nullable: false, description: "" }
+  - { name: CLOSE_DT, type: DATE,         nullable: true,  description: "", null_pct: 91.4 }
+relationships:
+  - { column: CUST_ID, references: CBS_CUST.CUST_ID, status: proven }
+  - { column: BR_CD,   references: CBS_BRNCH.BR_CD,  status: proven }
+  - { column: PROD_CD, references: CBS_PROD.PROD_CD, status: proven }
+notes: "Closed accounts keep their last balance row; recipes exclude by status, views keep the rows."
