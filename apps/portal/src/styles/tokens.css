@@ -1,0 +1,70 @@
+/* Design tokens, measured off the reference design's running stylesheet (captured 2026-09-07).
+   The names are ours, the values were measured rather than invented, so change one here
+   rather than overriding it downstream. One home for colour, radius, spacing and shadow. */
+:root {
+  /* Text */
+  --text-primary: #101112;
+  --text-secondary: #505155;
+  --text-tertiary: #898a8d;
+  --text-muted: #a2a4a7;
+
+  /* Surfaces */
+  --surface: #ffffff;
+  --surface-subtle: #fbfbfb;
+  --surface-sunken: #f6f7f7;
+  --surface-hover: #f1f2f3;
+  --surface-active: #eeeff1;
+
+  /* Borders */
+  --border-hairline: #0000000f;
+  --border-light: #e6e7ea;
+  --border: #d9dade;
+
+  /* Accent */
+  --accent: #266df0;
+  --accent-strong: #215bc4;
+  --accent-ring: #266df033;
+  --accent-tint: #266df01a;
+  --accent-wash: #266df00d;
+  --accent-bg: #e5eeff;
+  --accent-bg-strong: #d6e5ff;
+  --accent-soft: #80acff;
+
+  /* Type washes: the solid hue at 10% alpha, the tint that sits under a node's type
+     badge. Same value as --accent-tint for blue; the rest follow the pattern. */
+  --wash-blue:   #266df01a;
+  --wash-purple: #864aff1a;
+  --wash-amber:  #f5a3001a;
+  --wash-cyan:   #00b9eb1a;
+  --wash-lime:   #aabf2a1a;
+  --wash-pink:   #fa4b941a;
+
+  /* Canvas */
+  --canvas-bg: #fbfbfb;
+  --canvas-dot: rgba(0, 0, 0, 0.14);
+
+  /* Semantic */
+  --red: #eb3b3b;    --red-strong: #ba2525;    --red-bg: #ffebeb;    --red-bg-strong: #ffdcdb;
+  --green: #02ad6e;  --green-strong: #007d53;  --green-bg: #e0fced;  --green-bg-strong: #cbf7e1;
+  --amber: #f5a300;  --amber-strong: #874d00;  --amber-bg: #fff3cc;  --amber-bg-strong: #ffe59e;
+  --orange: #f97514; --orange-strong: #c95908; --orange-bg: #feeee1; --orange-bg-strong: #fee0c8;
+  --purple: #864aff; --purple-strong: #6238b5; --purple-bg: #f5f0ff; --purple-bg-strong: #e8ddfe;
+  --cyan: #00b9eb;   --cyan-strong: #056c87;   --cyan-bg: #ddf7ff;   --cyan-bg-strong: #d0eff7;
+  --pink: #fa4b94;   --pink-strong: #b81c5d;   --pink-bg: #feecf3;   --pink-bg-strong: #fdddea;
+  --lime: #aabf2a;   --lime-strong: #536300;   --lime-bg: #f4fbcb;   --lime-bg-strong: #e9f797;
+
+  /* Radius */
+  --r-4: 4px; --r-6: 6px; --r-8: 8px; --r-9: 9px;
+  --r-10: 10px; --r-12: 12px; --r-14: 14px; --r-16: 16px; --r-full: 999px;
+
+  /* Shadow */
+  --shadow-card: inset 0 0 0 1px #0000, 0 0 2px 0 #1c28402e, 0 1px 3px 0 #0000000a;
+  --shadow-raised: inset 0 0 0 1px #0000, 0 0 0 1px #1c28400a, 0 4px 8px -4px #1c28401f, 0 4px 12px -2px #18294b29;
+  --shadow-overlay: 0 8px 28px -6px #1c28401f, 0 18px 88px -4px #1c284029, 0 0 1px 0 #1c284029;
+
+  /* Chrome */
+  --sidebar-w: 275px;
+  --panel-w: 400px;
+  --topbar-h: 49px;
+  --tabbar-h: 45px;
+}

@@ -1,0 +1,745 @@
+{
+  "generatedAt": "2026-09-07T06:54:14.393Z",
+  "dictionaryGeneratedAt": "2026-09-06T03:12:00+04:00",
+  "rawTables": [
+    {
+      "id": "CBS_ACCT",
+      "layer": "raw",
+      "name": "CBS_ACCT",
+      "schema": "RAW_CBS",
+      "system": "CBS",
+      "description": "Account master",
+      "grain": "one row per account",
+      "key": [
+        "ACCT_NO"
+      ],
+      "notes": "Closed accounts keep their last balance row; recipes exclude by status, views keep the rows.",
+      "profile": {
+        "profiled_at": "2026-09-03",
+        "rows": 731442,
+        "distinct_key": 731442,
+        "date_column": "OPEN_DT",
+        "date_min": "1998-03-12",
+        "date_max": "2026-09-02",
+        "last_load": "2026-09-03T02:05:00+04:00",
+        "refresh": "daily 02:00, full refresh"
+      },
+      "columns": [
+        {
+          "name": "ACCT_NO",
+          "type": "VARCHAR2(20)",
+          "nullable": false,
+          "description": "Account number",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": true
+        },
+        {
+          "name": "CUST_ID",
+          "type": "VARCHAR2(12)",
+          "nullable": false,
+          "description": "Primary customer",
+          "distinct": 412908,
+          "nullPct": null,
+          "isKey": false
+        },
+        {
+          "name": "BR_CD",
+          "type": "VARCHAR2(6)",
+          "nullable": false,
+          "description": "Owning branch",
+          "distinct": 212,
+          "nullPct": null,
+          "isKey": false
+        },
+        {
+          "name": "PROD_CD",
+          "type": "VARCHAR2(8)",
+          "nullable": false,
+          "description": "Product code",
+          "distinct": 84,
+          "nullPct": null,
+          "isKey": false
+        },
+        {
+          "name": "ACCT_STS",
+          "type": "CHAR(1)",
+          "nullable": false,
+          "description": "A active, D dormant, C closed",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": false
+        },
+        {
+          "name": "OPEN_DT",
+          "type": "DATE",
+          "nullable": false,
+          "description": "",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": false
+        },
+        {
+          "name": "CLOSE_DT",
+          "type": "DATE",
+          "nullable": true,
+          "description": "",
+          "distinct": null,
+          "nullPct": 91.4,
+          "isKey": false
+        }
+      ]
+    },
+    {
+      "id": "CBS_ACCT_BAL_DLY",
+      "layer": "raw",
+      "name": "CBS_ACCT_BAL_DLY",
+      "schema": "RAW_CBS",
+      "system": "CBS",
+      "description": "Daily ledger and available balance per account, business days only",
+      "grain": "one row per account per business day",
+      "key": [
+        "ACCT_NO",
+        "BAL_DT"
+      ],
+      "notes": "No rows on weekends or bank holidays; the calendar is CBS_CALENDAR.",
+      "profile": {
+        "profiled_at": "2026-09-03",
+        "rows": 48213977,
+        "distinct_key": 48213977,
+        "date_column": "BAL_DT",
+        "date_min": "2026-06-01",
+        "date_max": "2026-09-02",
+        "last_load": "2026-09-03T02:10:00+04:00",
+        "refresh": "daily 02:00; rolling four months, month-ends kept in CBS_ACCT_BAL_ME"
+      },
+      "columns": [
+        {
+          "name": "ACCT_NO",
+          "type": "VARCHAR2(20)",
+          "nullable": false,
+          "description": "Account number",
+          "distinct": 730514,
+          "nullPct": null,
+          "isKey": true
+        },
+        {
+          "name": "BAL_DT",
+          "type": "DATE",
+          "nullable": false,
+          "description": "Balance date; business days only",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": true
+        },
+        {
+          "name": "LDGR_BAL_AMT",
+          "type": "NUMBER(18,2)",
+          "nullable": true,
+          "description": "Ledger balance, AED equivalent",
+          "distinct": null,
+          "nullPct": 0.01,
+          "isKey": false
+        },
+        {
+          "name": "AVL_BAL_AMT",
+          "type": "NUMBER(18,2)",
+          "nullable": true,
+          "description": "Available balance, AED equivalent",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": false
+        },
+        {
+          "name": "CCY_CD",
+          "type": "CHAR(3)",
+          "nullable": false,
+          "description": "Account currency",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": false
+        }
+      ]
+    },
+    {
+      "id": "CBS_BRNCH",
+      "layer": "raw",
+      "name": "CBS_BRNCH",
+      "schema": "RAW_CBS",
+      "system": "CBS",
+      "description": "Branch reference",
+      "grain": "one row per branch",
+      "key": [
+        "BR_CD"
+      ],
+      "notes": "",
+      "profile": {
+        "profiled_at": "2026-09-03",
+        "rows": 212,
+        "distinct_key": 212,
+        "last_load": "2026-09-03T02:05:00+04:00",
+        "refresh": "daily 02:00, full refresh"
+      },
+      "columns": [
+        {
+          "name": "BR_CD",
+          "type": "VARCHAR2(6)",
+          "nullable": false,
+          "description": "Branch code",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": true
+        },
+        {
+          "name": "BR_NM",
+          "type": "VARCHAR2(60)",
+          "nullable": false,
+          "description": "Branch name",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": false
+        },
+        {
+          "name": "REGN_CD",
+          "type": "VARCHAR2(4)",
+          "nullable": false,
+          "description": "Region code",
+          "distinct": 7,
+          "nullPct": null,
+          "isKey": false
+        },
+        {
+          "name": "REGN_NM",
+          "type": "VARCHAR2(40)",
+          "nullable": false,
+          "description": "Region name",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": false
+        }
+      ]
+    },
+    {
+      "id": "CBS_CALENDAR",
+      "layer": "raw",
+      "name": "CBS_CALENDAR",
+      "schema": "RAW_CBS",
+      "system": "CBS",
+      "description": "Bank calendar with business-day flag",
+      "grain": "one row per calendar day",
+      "key": [
+        "CAL_DT"
+      ],
+      "notes": "",
+      "profile": {
+        "profiled_at": "2026-09-03",
+        "rows": 4018,
+        "distinct_key": 4018,
+        "date_column": "CAL_DT",
+        "date_min": "2020-01-01",
+        "date_max": "2030-12-31",
+        "last_load": "2026-01-02T02:05:00+04:00",
+        "refresh": "yearly, by finance ops"
+      },
+      "columns": [
+        {
+          "name": "CAL_DT",
+          "type": "DATE",
+          "nullable": false,
+          "description": "Calendar date",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": true
+        },
+        {
+          "name": "IS_BUS_DAY",
+          "type": "CHAR(1)",
+          "nullable": false,
+          "description": "Y on business days (Mon–Fri excluding bank holidays)",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": false
+        },
+        {
+          "name": "HOL_NM",
+          "type": "VARCHAR2(60)",
+          "nullable": true,
+          "description": "Holiday name",
+          "distinct": null,
+          "nullPct": 96.9,
+          "isKey": false
+        }
+      ]
+    },
+    {
+      "id": "CBS_CUST",
+      "layer": "raw",
+      "name": "CBS_CUST",
+      "schema": "RAW_CBS",
+      "system": "CBS",
+      "description": "Customer master",
+      "grain": "one row per customer",
+      "key": [
+        "CUST_ID"
+      ],
+      "notes": "CBS_CUST_ADDR is one row per address; joining it to accounts fans out. Use this table only.",
+      "profile": {
+        "profiled_at": "2026-09-03",
+        "rows": 412908,
+        "distinct_key": 412908,
+        "last_load": "2026-09-03T02:05:00+04:00",
+        "refresh": "daily 02:00, full refresh"
+      },
+      "columns": [
+        {
+          "name": "CUST_ID",
+          "type": "VARCHAR2(12)",
+          "nullable": false,
+          "description": "Customer id",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": true
+        },
+        {
+          "name": "SEG_CD",
+          "type": "VARCHAR2(20)",
+          "nullable": true,
+          "description": "Segment: RETAIL, SME, CORPORATE, PRIVATE",
+          "distinct": null,
+          "nullPct": 2.3,
+          "isKey": false
+        },
+        {
+          "name": "CUST_TYP",
+          "type": "CHAR(1)",
+          "nullable": false,
+          "description": "I individual, C company",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": false
+        }
+      ]
+    },
+    {
+      "id": "CBS_PROD",
+      "layer": "raw",
+      "name": "CBS_PROD",
+      "schema": "RAW_CBS",
+      "system": "CBS",
+      "description": "Product reference",
+      "grain": "one row per product code",
+      "key": [
+        "PROD_CD"
+      ],
+      "notes": "",
+      "profile": {
+        "profiled_at": "2026-09-03",
+        "rows": 84,
+        "distinct_key": 84,
+        "last_load": "2026-09-03T02:05:00+04:00",
+        "refresh": "daily 02:00, full refresh"
+      },
+      "columns": [
+        {
+          "name": "PROD_CD",
+          "type": "VARCHAR2(8)",
+          "nullable": false,
+          "description": "Product code",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": true
+        },
+        {
+          "name": "PROD_NM",
+          "type": "VARCHAR2(60)",
+          "nullable": false,
+          "description": "Product name",
+          "distinct": null,
+          "nullPct": null,
+          "isKey": false
+        },
+        {
+          "name": "PROD_FMLY",
+          "type": "VARCHAR2(20)",
+          "nullable": false,
+          "description": "CASA, TD, LOAN, CARD",
+          "distinct": 4,
+          "nullPct": null,
+          "isKey": false
+        }
+      ]
+    }
+  ],
+  "rawEdges": [
+    {
+      "id": "CBS_ACCT.CUST_ID->CBS_CUST.CUST_ID",
+      "layer": "raw",
+      "from": "CBS_ACCT",
+      "fromColumn": "CUST_ID",
+      "to": "CBS_CUST",
+      "toColumn": "CUST_ID",
+      "status": "proven",
+      "cardinality": "many-to-one"
+    },
+    {
+      "id": "CBS_ACCT.BR_CD->CBS_BRNCH.BR_CD",
+      "layer": "raw",
+      "from": "CBS_ACCT",
+      "fromColumn": "BR_CD",
+      "to": "CBS_BRNCH",
+      "toColumn": "BR_CD",
+      "status": "proven",
+      "cardinality": "many-to-one"
+    },
+    {
+      "id": "CBS_ACCT.PROD_CD->CBS_PROD.PROD_CD",
+      "layer": "raw",
+      "from": "CBS_ACCT",
+      "fromColumn": "PROD_CD",
+      "to": "CBS_PROD",
+      "toColumn": "PROD_CD",
+      "status": "proven",
+      "cardinality": "many-to-one"
+    },
+    {
+      "id": "CBS_ACCT_BAL_DLY.ACCT_NO->CBS_ACCT.ACCT_NO",
+      "layer": "raw",
+      "from": "CBS_ACCT_BAL_DLY",
+      "fromColumn": "ACCT_NO",
+      "to": "CBS_ACCT",
+      "toColumn": "ACCT_NO",
+      "status": "proven",
+      "cardinality": "many-to-one"
+    }
+  ],
+  "views": [
+    {
+      "id": "v_balances_daily",
+      "layer": "model",
+      "name": "v_balances_daily",
+      "kind": "fact",
+      "description": "",
+      "grain": "one row per account per snapshot_date (business days only)",
+      "grainProof": {
+        "rows": 48213977,
+        "distinct_key": 48213977,
+        "as_of": "2026-09-02",
+        "from": "bi_model/proofs/v_balances_daily.md"
+      },
+      "rls": "branch_code",
+      "refresh": "daily after CBS load, ~02:30",
+      "sources": [
+        "CBS_ACCT_BAL_DLY",
+        "CBS_ACCT",
+        "CBS_PROD",
+        "CBS_CUST"
+      ],
+      "usedBy": [
+        "kpi.casa_balance",
+        "kpi.total_balance",
+        "kpi.casa_accounts",
+        "kpi.casa_share"
+      ],
+      "columns": [
+        {
+          "name": "snapshot_date",
+          "type": "DATE",
+          "from": "CBS_ACCT_BAL_DLY.BAL_DT",
+          "description": "Business day of the balance",
+          "isRls": false
+        },
+        {
+          "name": "account_id",
+          "type": "VARCHAR2(20)",
+          "from": "CBS_ACCT_BAL_DLY.ACCT_NO",
+          "description": "Account number",
+          "isRls": false
+        },
+        {
+          "name": "customer_id",
+          "type": "VARCHAR2(12)",
+          "from": "CBS_ACCT.CUST_ID",
+          "description": "Primary customer",
+          "isRls": false
+        },
+        {
+          "name": "branch_code",
+          "type": "VARCHAR2(6)",
+          "from": "CBS_ACCT.BR_CD",
+          "description": "Owning branch (RLS)",
+          "isRls": true
+        },
+        {
+          "name": "product_family",
+          "type": "VARCHAR2(20)",
+          "from": "CBS_PROD.PROD_FMLY",
+          "description": "CASA, TD, LOAN, CARD",
+          "isRls": false
+        },
+        {
+          "name": "customer_segment",
+          "type": "VARCHAR2(20)",
+          "from": "CBS_CUST.SEG_CD",
+          "description": "RETAIL, SME, CORPORATE, PRIVATE, UNKNOWN",
+          "isRls": false
+        },
+        {
+          "name": "account_status",
+          "type": "CHAR(1)",
+          "from": "CBS_ACCT.ACCT_STS",
+          "description": "A active, D dormant, C closed",
+          "isRls": false
+        },
+        {
+          "name": "balance_amount",
+          "type": "NUMBER(18,2)",
+          "from": "CBS_ACCT_BAL_DLY.LDGR_BAL_AMT",
+          "description": "Ledger balance, AED equivalent",
+          "isRls": false
+        },
+        {
+          "name": "available_amount",
+          "type": "NUMBER(18,2)",
+          "from": "CBS_ACCT_BAL_DLY.AVL_BAL_AMT",
+          "description": "Available balance, AED equivalent",
+          "isRls": false
+        },
+        {
+          "name": "currency",
+          "type": "CHAR(3)",
+          "from": "CBS_ACCT_BAL_DLY.CCY_CD",
+          "description": "Account currency",
+          "isRls": false
+        }
+      ]
+    },
+    {
+      "id": "dim_branch",
+      "layer": "model",
+      "name": "dim_branch",
+      "kind": "dimension",
+      "description": "",
+      "grain": "one row per branch",
+      "grainProof": {
+        "rows": 212,
+        "distinct_key": 212,
+        "as_of": "2026-09-04",
+        "from": "bi_model/proofs/dim_branch.md"
+      },
+      "rls": "none",
+      "refresh": "daily with CBS_BRNCH",
+      "sources": [
+        "CBS_BRNCH"
+      ],
+      "usedBy": [],
+      "columns": [
+        {
+          "name": "branch_code",
+          "type": "VARCHAR2(6)",
+          "from": "CBS_BRNCH.BR_CD",
+          "description": "",
+          "isRls": false
+        },
+        {
+          "name": "branch_name",
+          "type": "VARCHAR2(60)",
+          "from": "CBS_BRNCH.BR_NM",
+          "description": "",
+          "isRls": false
+        },
+        {
+          "name": "region_code",
+          "type": "VARCHAR2(4)",
+          "from": "CBS_BRNCH.REGN_CD",
+          "description": "",
+          "isRls": false
+        },
+        {
+          "name": "region_name",
+          "type": "VARCHAR2(40)",
+          "from": "CBS_BRNCH.REGN_NM",
+          "description": "",
+          "isRls": false
+        }
+      ]
+    },
+    {
+      "id": "dim_date",
+      "layer": "model",
+      "name": "dim_date",
+      "kind": "dimension",
+      "description": "",
+      "grain": "one row per calendar day",
+      "grainProof": {
+        "rows": 4018,
+        "distinct_key": 4018,
+        "as_of": "2026-09-04",
+        "from": "bi_model/proofs/dim_date.md"
+      },
+      "rls": "none",
+      "refresh": "yearly with CBS_CALENDAR",
+      "sources": [
+        "CBS_CALENDAR"
+      ],
+      "usedBy": [],
+      "columns": [
+        {
+          "name": "date_key",
+          "type": "DATE",
+          "from": "CBS_CALENDAR.CAL_DT",
+          "description": "",
+          "isRls": false
+        },
+        {
+          "name": "is_business_day",
+          "type": "NUMBER(1)",
+          "from": "CBS_CALENDAR.IS_BUS_DAY",
+          "description": "",
+          "isRls": false
+        },
+        {
+          "name": "month_start",
+          "type": "DATE",
+          "from": "derived",
+          "description": "",
+          "isRls": false
+        },
+        {
+          "name": "is_last_business_day_of_month",
+          "type": "NUMBER(1)",
+          "from": "derived",
+          "description": "",
+          "isRls": false
+        },
+        {
+          "name": "holiday_name",
+          "type": "VARCHAR2(60)",
+          "from": "CBS_CALENDAR.HOL_NM",
+          "description": "",
+          "isRls": false
+        }
+      ]
+    }
+  ],
+  "modelEdges": [
+    {
+      "id": "CBS_ACCT_BAL_DLY=>v_balances_daily",
+      "layer": "model",
+      "from": "CBS_ACCT_BAL_DLY",
+      "to": "v_balances_daily",
+      "kind": "lineage"
+    },
+    {
+      "id": "CBS_ACCT=>v_balances_daily",
+      "layer": "model",
+      "from": "CBS_ACCT",
+      "to": "v_balances_daily",
+      "kind": "lineage"
+    },
+    {
+      "id": "CBS_PROD=>v_balances_daily",
+      "layer": "model",
+      "from": "CBS_PROD",
+      "to": "v_balances_daily",
+      "kind": "lineage"
+    },
+    {
+      "id": "CBS_CUST=>v_balances_daily",
+      "layer": "model",
+      "from": "CBS_CUST",
+      "to": "v_balances_daily",
+      "kind": "lineage"
+    },
+    {
+      "id": "CBS_BRNCH=>dim_branch",
+      "layer": "model",
+      "from": "CBS_BRNCH",
+      "to": "dim_branch",
+      "kind": "lineage"
+    },
+    {
+      "id": "CBS_CALENDAR=>dim_date",
+      "layer": "model",
+      "from": "CBS_CALENDAR",
+      "to": "dim_date",
+      "kind": "lineage"
+    }
+  ],
+  "kpis": [
+    {
+      "id": "kpi.casa_balance",
+      "status": "CONFIRMED",
+      "meaning": "Total CASA balance at close of the last business day, dormant accounts excluded",
+      "owner": "head_of_treasury",
+      "view": "v_balances_daily",
+      "formula": "SUM(balance_amount)",
+      "aggregation": "balance-last-day",
+      "filters": [
+        "product_family = 'CASA'",
+        "account_status <> 'D'"
+      ],
+      "excludes": "dormant accounts (account_status = 'D')",
+      "dimensions": [
+        "branch_code",
+        "customer_segment"
+      ],
+      "format": "aed_millions",
+      "introducedBy": "cashboard"
+    },
+    {
+      "id": "kpi.total_balance",
+      "status": "CONFIRMED",
+      "meaning": "Total ledger balance across all products at close of the last business day",
+      "owner": "head_of_treasury",
+      "view": "v_balances_daily",
+      "formula": "SUM(balance_amount)",
+      "aggregation": "balance-last-day",
+      "filters": [],
+      "excludes": "nothing; confirmed by head_of_treasury",
+      "dimensions": [
+        "branch_code",
+        "customer_segment",
+        "product_family"
+      ],
+      "format": "aed_millions",
+      "introducedBy": "cashboard"
+    },
+    {
+      "id": "kpi.casa_accounts",
+      "status": "DRAFT",
+      "meaning": "Number of CASA accounts with a positive balance at close of the last business day",
+      "owner": "head_of_treasury",
+      "view": "v_balances_daily",
+      "formula": "COUNT(DISTINCT account_id)",
+      "aggregation": "balance-last-day",
+      "filters": [
+        "product_family = 'CASA'",
+        "balance_amount > 0"
+      ],
+      "excludes": "zero and negative balances",
+      "dimensions": [
+        "branch_code",
+        "customer_segment"
+      ],
+      "format": "integer",
+      "introducedBy": "cashboard"
+    },
+    {
+      "id": "kpi.casa_share",
+      "status": "DRAFT",
+      "meaning": "CASA balance as a share of total ledger balance, last business day",
+      "owner": "head_of_treasury",
+      "view": "v_balances_daily",
+      "formula": "kpi.casa_balance / kpi.total_balance",
+      "aggregation": "ratio",
+      "filters": [],
+      "excludes": "inherits both recipes' exclusions",
+      "dimensions": [
+        "branch_code",
+        "customer_segment"
+      ],
+      "format": "percent_1dp",
+      "introducedBy": "cashboard"
+    }
+  ]
+}
