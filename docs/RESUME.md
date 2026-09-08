@@ -1,4 +1,4 @@
-# Resume note (updated 2026-09-07)
+# Resume note (updated 2026-09-08)
 
 ## Done
 - Scaffold: CLAUDE.md, README.md, docs/WORKFLOW.md (11 steps), docs/CONVENTIONS.md, docs/rls.md, docs/proofs.md, docs/grain-and-joins.md, docs/review/*, docs/contracts/* (sources, business-context, kpi-registry, acceptance, spec, rls-policies, data-dictionary).
@@ -22,8 +22,18 @@
 - The request form (`docs/templates/`) is free text except the numbers table; blank and filled `.docx` are built by `build-request-docx.js`.
 - `catalog/kpi-registry.yaml` is created by `/build-model draft` on the first dashboard; `/business-context` treats a missing registry as "every row new".
 
+## Decisions on 2026-09-08
+- `packages/import-schema` built: dependency-free xlsx and csv reader, the parser (rules 1 to 9), a validator that re-reads the handover and the files and prints PASS/FAIL per check, `node --test` fixtures. Commands: `npm run import-schema -- inventory|import|validate`. `import` ends by validating; `validate` runs alone against the newest handover.
+- The parsing rules moved out of `docs/contracts/sources.md` into `packages/import-schema/README.md`: a contract holds a file shape, a parser holds its process. The contract points there.
+- `/import-schema` rewritten: the model runs the commands and carries the questions; it never reads a cell or writes a file. `system` is given on the command line, never derived.
+- `packages/business-context` built: a `.docx` reader (`text`) and a checker (`check`) that proves `business-context.md` is in the business's words (every sentence a substring of the input), the table complete, `?` cells questioned, `reuse` exact, section 8 capped at seven. Tests use the filled example form in `docs/templates/`.
+- `/business-context` rewritten: exact-match rule for `reuse` (a close sentence is `new` plus a question), "not sure" and an empty Leave out become `?`, relayed answers go into a dated notes file before the cell, a confirmed file is never overwritten, the checker runs last.
+- Contract `business-context.md`: question line format `N. <question> Owner: <role>, by <date>`, the meet-again line, the exact-match reuse rule.
+- `packages/registry-lint` started with the view checks (`npm run lint:registry -- views`): header shape, renamed once, sources line equals tables read, every join on the joined table's full key from `sources/`, no aggregate/window/GROUP BY/WHERE in a fact view, RLS line matches the policy file, one raw column one business name across views. Sample world is the PASS fixture. `/build-model draft` runs it as step 10, before the graph rebuild. The registry, acceptance, policy and spec rules are still not implemented; the runner says so.
+- `npm test` at the root runs every workspace's tests; CI job `packages` runs them.
+
 ## Not done
-0. `packages/import-schema`: the deterministic Excel/CSV parser behind `/import-schema`, with messy fixtures as tests. First code to write. Until it exists the skill reads CSVs (one per sheet) and validates its own output against them.
+0. `/import-schema` and `/business-context` have not been run on a real input yet. The sample `docs/sample/dashboards/cashboard/business-context.md` predates the checker and would fail it (reworded cells); it is read by nothing. `/import-schema` Expect header synonyms and FK shapes to need adding in `packages/import-schema/src/recognise.js` and `src/fk.js`, each with a fixture row.
 0b. Portal (2026-09-07): `build-graph.mjs` now also reads `bi_model/*.sql` headers, so a view drafted at step 3 shows in the Model Explorer with a `draft` badge until the dictionary lists it. Verified with a throwaway view; tsc clean.
 1. The app: `docs/architecture.template.html`, then `node docs/build-architecture.js`. **Moved to the bank machine on purpose.** Spec: `docs/HANDOFF-architecture-app.md`; content: `docs/steps.js`.
 2. Contract gaps still open (none blocks a demo):

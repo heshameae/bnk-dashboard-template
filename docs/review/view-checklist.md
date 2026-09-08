@@ -1,6 +1,6 @@
 # View review: eight checks, in the PR, by a human
 
-Run on every file in `bi_model/` a PR adds or changes. Each check is yes or the PR waits.
+Run on every file in `bi_model/` a PR adds or changes. Each check is yes or the PR waits. Checks 1 (the header shape), 3, 4, 5 (the join and the WHERE, not the counts), 7 and 8 are also run by `npm run lint:registry -- views`; a PR with a FAIL line is not reviewed. Checks 2 and 6 are yours alone.
 
 1. **Grain sentence** in the header is true: the proof file's `grain` row is PASS with today's numbers. Dimensions included, since a duplicate key there multiplies every fact that joins to it.
 2. **One subject**: the view answers one grain; a balances view has no transaction columns.

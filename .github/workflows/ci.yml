@@ -2,6 +2,9 @@
 name: ci
 on: [pull_request, push]
 jobs:
+  packages:                 # import-schema (step 1 parser) and business-context (step 2 checker)
+    runs-on: ubuntu-latest
+    steps: [ { uses: actions/checkout@v4 }, { run: npm ci }, { run: npm test } ]
   registry-lint:
     runs-on: ubuntu-latest
     steps: [ { uses: actions/checkout@v4 }, { run: npm ci }, { run: npm run lint:registry } ]

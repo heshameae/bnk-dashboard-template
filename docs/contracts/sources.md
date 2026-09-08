@@ -6,7 +6,7 @@ A table's grain is **declared** by its key (the data team's primary key) and **p
 
 ```yaml
 table: CBS_ACCT_BAL_DLY          # exact raw name, upper case as in Oracle
-system: CBS                      # source system code
+system: CBS                      # source system code, given when the import runs; the export carries none
 schema: RAW_CBS                  # Oracle schema the DEs expose (read-only)
 description: "Daily ledger balance per account"     # data team's words; "" when they gave none
 grain: "one row per account per calendar day"       # a sentence with 'one row per'; derived from key until the data team gives one
@@ -41,21 +41,11 @@ Anything else on either sheet is kept in `notes`, never dropped.
 
 ## Where the export lives
 
-The workbook is committed unchanged under `sources/_handover/<YYYY-MM-DD>-<SYSTEM>-schema.xlsx`, one file per handover, never edited and never overwritten: a corrected export is a new dated file. The report names the file it was built from. This is what makes "every value traces to a cell" checkable a year later; a workbook in a mailbox is not evidence. A handover that carries sample values or anything the bank classes as sensitive stays in the same folder, gitignored, with its name and SHA-256 recorded in the report instead.
+The workbook is committed unchanged under `sources/_handover/<YYYY-MM-DD>-<SYSTEM>-schema.xlsx` (a csv export as the folder `<YYYY-MM-DD>-<SYSTEM>-schema/`), one per handover, never edited and never overwritten: a corrected export is a new dated file. The report names the file it was built from. This is what makes "every value traces to a cell" checkable a year later; a workbook in a mailbox is not evidence. A handover that carries sample values or anything the bank classes as sensitive stays in the same folder, gitignored, with its name and SHA-256 recorded in the report instead.
 
-## How `/import-schema` reads it
+## How the export is read
 
-The reading is done by a deterministic parser (`packages/import-schema`), not by the model, so the same workbook always gives the same files. The parser's fixtures are messy real-shaped inputs, and every rule below is a test.
-
-1. Identifiers are upper-cased and trimmed. A blank schema or table cell inherits the row above, which is what a merged cell looks like once exported.
-2. `key` comes from the Y flags on `columns` and from the PK list on `keys`. When both exist they must agree. When they disagree the file carries the `keys` list and `notes` records the disagreement; the report lists it as a question.
-3. FK text is parsed for these shapes: `COL -> TABLE.COL`, `COL references TABLE(COL)`, `COL = TABLE.COL`, `TABLE.COL`, and a comma-separated run of them. Anything else is kept verbatim in `notes` with no relationship written, and the report lists it.
-4. A relationship that came from the export is `status: stated`. Only constraints or a matched-count query make it `proven`.
-5. Types are kept as written with spacing normalised: `VARCHAR2 (20)` becomes `VARCHAR2(20)`.
-6. A blank definition becomes `description: ""`. No description is ever written by us.
-7. `grain` is the data team's sentence when they gave one, else the sentence the key implies: key `[ACCT_NO, BAL_DT]` gives "one row per ACCT_NO per BAL_DT", and the modeler rewrites it in business words at step 3.
-8. A table on `keys` with no rows on `columns`: no file, one report line. A key or FK column that is not in the column list: the file is written, the report lists it. Duplicate column rows: the first wins, the report lists it.
-9. Every value in a file traces to a cell of the named handover. The report, `sources/_import-report.md`, opens with the handover file name and date, then three lists: files written, tables skipped, questions for the data team. Re-running on a corrected workbook rewrites the files and the report.
+By `packages/import-schema`, a deterministic parser, never by the model: the same export always gives the same files, byte for byte. Its rules (identifiers, keys, the FK text shapes, types, blanks, grain, what is skipped, the report) and the checks its validator runs on the written files are in `packages/import-schema/README.md`, each one a test. Every value in a file traces to a cell of the named handover. The report, `sources/_import-report.md`, names the handover and its SHA-256, then lists files written, tables skipped and questions for the data team. Re-running on a corrected export rewrites the files and the report.
 
 ## Rules
 - `grain` is a sentence beginning "one row per". It is proven only when `profile.rows == profile.distinct_key` for the listed `key`. Unequal counts mean the `key` is wrong, not that the table is unusable: correct the key until they match, or say in `notes` what the extra rows are.

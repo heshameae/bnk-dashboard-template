@@ -40,7 +40,9 @@ Be exact about this; it has caused confusion before.
 | `docs/contracts/*` | The file shapes every skill reads and writes. The source of truth when a skill and a contract disagree. |
 | `docs/sample/` | The **sample world**: one dashboard (the Cashboard) with arbitrary values, showing what every file looks like part-way through the flow. Same tree as the root. No skill reads it. The root folders `sources/`, `bi_model/`, `catalog/`, `security/`, `dashboards/` start empty and are filled only by the skills. |
 | `apps/portal` | The Model Explorer is built and reads `sources/` and `catalog/` only. Dashboards, Catalog, Explore and Admin tabs are not built. |
-| `packages/semantic-query`, `packages/registry-lint` | READMEs only. No code. `package.json` scripts and `.github/workflows/ci.yml` point at files that do not exist yet. |
+| `packages/import-schema`, `packages/business-context` | Built, with tests. Step 1's parser and validator; step 2's `.docx` reader and checker. |
+| `packages/registry-lint` | The view checks are built and tested (`npm run lint:registry -- views`). The registry, acceptance, policy and spec rules are not. |
+| `packages/semantic-query` | README only. No code. `package.json` scripts and `.github/workflows/ci.yml` point at files that do not exist yet. |
 | `docs/architecture.html` | Never built; `docs/HANDOFF-architecture-app.md` describes it. Superseded by the portal. |
 
 There is no Oracle connection on this machine and none is assumed anywhere. The data team's Excel is the only source of truth about raw tables until they send counts.
@@ -72,7 +74,7 @@ dashboards/<name>/  steps 2, 8 to 11 · business-context.md, design-export/, spe
 bi_model/           steps 3 to 7 · clean tables as SQL; proofs/ holds the evidence
 catalog/            kpi-registry.yaml (recipes), data-dictionary.yaml (generated), acceptance.yaml (finance)
 security/           rls-policies.yaml, test-users.yaml, entitlements.sql
-packages/           semantic-query (recipe + user to SQL), registry-lint (CI checks), import-schema (Excel to YAML; to build)
+packages/           import-schema (step 1 parser + validator; built), business-context (step 2 docx reader + checker; built), registry-lint (view checks built; registry rules to build), semantic-query (recipe + user to SQL)
 apps/portal/        React; Model Explorer built, other tabs to build
 docs/               WORKFLOW.md, contracts/, templates/ (the form the business fills), review/, rls.md, proofs.md, CONVENTIONS.md, sample/ (the filled example, read by nothing)
 .claude/skills/     one skill per step, plus ask-leap-bi (the map) and vocabulary

@@ -1,0 +1,13 @@
+Schema export for BI,,,,,,,
+Schema Name,Table Name,Column Name,Data Type,PK,Nullable,Business Definition,Remarks
+raw_cbs,cbs_acct_bal_dly,acct_no,VARCHAR2 (20),Y,N,Account number,
+,,BAL_DT,DATE,N,N,"Balance date, calendar",
+,,LDGR_BAL_AMT,"NUMBER (18, 2)",N,Y,"Ledger balance, account currency",masked in UAT
+,,ldgr_bal_amt,NUMBER(18,2),N,Y,duplicate row,
+,,CCY_CD,CHAR(3),N,N,,
+RAW_CBS,CBS_ACCT,ACCT_NO,VARCHAR2(20),Y,N,Account number,
+,,CUST_ID,NUMBER(12),N,N,Customer id,
+,,BRNCH_CD,VARCHAR2(6),N,Y,Branch code,
+RAW_CBS,CBS_BRNCH,BRNCH_CD,VARCHAR2(6),Y,N,Branch code,
+,,BRNCH_NM,VARCHAR2(80),N,Y,Branch name,
+RAW_CBS,CBS_NOKEY,ROW_ID,NUMBER,,,Surrogate,

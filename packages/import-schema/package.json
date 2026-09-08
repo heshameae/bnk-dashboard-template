@@ -1,0 +1,10 @@
+{
+  "name": "@bank-dashboards/import-schema",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Deterministic parser: the data team's schema export (xlsx or csv) to sources/<TABLE>.yaml, plus the validator that checks the files against the export.",
+  "bin": { "import-schema": "src/cli.js" },
+  "scripts": { "test": "node --test test/*.test.js" },
+  "dependencies": { "yaml": "^2.6.1" }
+}

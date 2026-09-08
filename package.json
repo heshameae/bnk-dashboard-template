@@ -6,6 +6,9 @@
     "apps/*"
   ],
   "scripts": {
+    "import-schema": "node packages/import-schema/src/cli.js",
+    "business-context": "node packages/business-context/src/cli.js",
+    "test": "npm test --workspaces --if-present",
     "lint:registry": "node packages/registry-lint/bin/lint.js",
     "data-dictionary": "node packages/semantic-query/bin/data-dictionary.js",
     "verify": "node packages/semantic-query/bin/verify.js",

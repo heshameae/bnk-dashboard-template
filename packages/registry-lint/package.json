@@ -1,0 +1,10 @@
+{
+  "name": "@bank-dashboards/registry-lint",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "CI checks on the model as text: the view files today (header, renames, joins to keys, no metric math, RLS), the registry rules next.",
+  "bin": { "registry-lint": "bin/lint.js" },
+  "scripts": { "test": "node --test test/*.test.js" },
+  "dependencies": { "yaml": "^2.6.1" }
+}

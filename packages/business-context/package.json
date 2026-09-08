@@ -1,0 +1,10 @@
+{
+  "name": "@bank-dashboards/business-context",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Step 2 tooling: the request form (.docx) as text, and the checker that proves business-context.md is in the business's words.",
+  "bin": { "business-context": "src/cli.js" },
+  "scripts": { "test": "node --test test/*.test.js" },
+  "dependencies": { "yaml": "^2.6.1", "@bank-dashboards/import-schema": "0.0.0" }
+}

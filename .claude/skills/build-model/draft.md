@@ -31,10 +31,13 @@ Purpose: one clean table per subject, one DRAFT recipe per KPI row, one proof fi
 9. **Stub the policy.** For each drafted view add an entry to `security/rls-policies.yaml` per `docs/contracts/rls-policies.md`: a view exposing customer or balance figures gets the column the business slices access by (`column: <col>` and `default: none`, every existing role listed as `by_entitlement` unless the role's note says bank-wide); a reference or calendar view gets `column: none` with a `reason`. Mark each new entry with the comment `# TODO confirm with /rls`. Make the view header's `-- RLS:` line match.
    Done when: every drafted view has a policy entry and its header `RLS:` line equals the entry's `column`.
 
-10. **Rebuild the portal graph:** `npm run graph -w @bank-dashboards/portal`. Every view drafted in this run is not in `catalog/data-dictionary.yaml` yet, so the portal shows it with a `draft` badge; every recipe shows `DRAFT`. Print the script's output line.
+10. **Lint the drafts.** `npm run lint:registry -- views`. Print its output.
+    Done when: every line reads `PASS`. A `FAIL` names the view and the check (header, rename, sources line, join off the key, metric math or a WHERE in a fact view, RLS mismatch, one raw column with two names); fix the view file and run again. This runs before anyone reads the SQL, so a data engineer never spends a proof run on a view that code could reject.
+
+11. **Rebuild the portal graph:** `npm run graph -w @bank-dashboards/portal`. Every view drafted in this run is not in `catalog/data-dictionary.yaml` yet, so the portal shows it with a `draft` badge; every recipe shows `DRAFT`. Print the script's output line.
     Done when: the clean-table count it prints includes every view drafted in this run.
 
-11. **Report.** Print one table: view · grain · sources · recipes · proof file · status (`ready` / `ready-unproven` / `blocked`). Below it the gap report (blocked subjects, unproven sources, unparsed relationships) and the contract's ask when a gap needs the data team. End with the list of proof files a data engineer must run.
+12. **Report.** Print one table: view · grain · sources · recipes · proof file · status (`ready` / `ready-unproven` / `blocked`). Below it the gap report (blocked subjects, unproven sources, unparsed relationships) and the contract's ask when a gap needs the data team. End with the list of proof files a data engineer must run.
     Done when: the table lists every subject from step 3 and every proof file is named.
 
 ## Stops when

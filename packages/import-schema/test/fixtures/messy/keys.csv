@@ -1,0 +1,5 @@
+﻿Table,Primary Key,Foreign Keys
+CBS_ACCT_BAL_DLY,"ACCT_NO, BAL_DT",ACCT_NO -> CBS_ACCT.ACCT_NO
+CBS_ACCT,ACCT_NO,"CUST_ID references CBS_CUST(CUST_ID); BRNCH_CD = CBS_BRNCH.BRNCH_CD, joins to products somehow"
+CBS_BRNCH,BRNCH_CD,
+CBS_PROD,PROD_CD,

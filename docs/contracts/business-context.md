@@ -32,17 +32,18 @@ Their words: who sees everything, who sees only their part, which numbers stay b
 Anything else they wrote, verbatim: quirks in the data, definitions people disagree on.
 
 ## 8. Open questions
-At most seven. Each with who answers it and by when.
+1. <question> Owner: <role>, by <date>
+At most seven, ranked: meaning gaps, exclusion gaps, the rest. When more remain, the last line is "And N more gaps in the table; meet again before step 3."
 ```
 
 ## The numbers table
 - `Meaning, verbatim` is the business's sentence, in quotes, never reworded. At step 3 the recipe's `meaning` is copied from it character for character.
 - `Compare to`, `Break down by` and `Leave out` are their words too. An empty `Leave out` cell means they said nothing, which is a question for section 8, never a silent "nothing excluded". "Nothing left out" is a valid answer when they wrote it.
 - `Owner` is a role, not a person's name. It defaults to the requester until the read-back names someone else.
-- `Recipe` is filled by the skill, not the business: `new`, or `reuse kpi.<id>` when a CONFIRMED recipe in `catalog/kpi-registry.yaml` already carries this exact meaning. On the first dashboard the registry does not exist yet, so every row is `new`; `/build-model draft` creates the file. When every row reuses, the model already exists and the dashboard goes from here to step 8.
-- A cell the skill cannot fill is `?`, and every `?` has a matching question in section 8.
+- `Recipe` is filled by the skill, not the business: `new`, or `reuse kpi.<id>` when a CONFIRMED recipe in `catalog/kpi-registry.yaml` carries the same meaning, the same sentence character for character. A close sentence is `new` plus a question; the business says whether it is the same number, never the skill. On the first dashboard the registry does not exist yet, so every row is `new`; `/build-model draft` creates the file. When every row reuses, the model already exists and the dashboard goes from here to step 8.
+- A cell the skill cannot fill is `?`: a blank, or anything the business marked "not sure". Every `?` has a question in section 8 naming the number, or the "meet again" line covers it.
 
 ## Rules
-- Their words everywhere. The skill sorts and copies; it does not summarise, paraphrase or fill gaps.
+- Their words everywhere. The skill sorts and copies; it does not summarise, paraphrase or fill gaps. `packages/business-context` checks it: every sentence in the file must appear in the input files, case and spacing aside.
 - No acceptance values here. Finance supplies them at step 11 into `catalog/acceptance.yaml`. A number the business quotes goes to section 8 as "finance to confirm at verify".
 - `status: confirmed` only after the business owner has read the file back. `/build-model draft` runs on `draft` too, and marks every recipe it writes DRAFT regardless.
