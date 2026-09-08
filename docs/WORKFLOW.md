@@ -2,6 +2,8 @@
 
 Every handover between steps is a file in git. No emails, no tickets. Step numbers are flat; there are no sub-steps.
 
+The one-page picture of all of this, for sharing with the team, is `docs/workflow-diagram.html` (open it in a browser).
+
 | # | Step | Owner | Skill / tool | Hands over |
 |---|------|-------|--------------|------------|
 | 1 | Intake sources | Data engineers (you file it) | `/import-schema` | `sources/<TABLE>.yaml` |

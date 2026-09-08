@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Factory Workflow</title>
+<style>
+  :root {
+    color-scheme: light;
+    --text-primary: #101112; --text-secondary: #505155; --text-tertiary: #898a8d; --text-muted: #a2a4a7;
+    --surface: #ffffff; --surface-sunken: #f6f7f7; --surface-active: #eeeff1;
+    --border-light: #e6e7ea; --border: #d9dade;
+    --accent: #266df0; --accent-strong: #215bc4; --accent-bg: #e5eeff; --accent-bg-strong: #d6e5ff; --wash-blue: #266df01a;
+    --green: #02ad6e; --green-strong: #007d53; --green-bg: #e0fced; --green-bg-strong: #cbf7e1; --wash-green: #02ad6e1a;
+    --purple: #864aff; --purple-strong: #6238b5; --purple-bg: #f5f0ff; --purple-bg-strong: #e8ddfe; --wash-purple: #864aff1a;
+    --cyan: #00b9eb; --cyan-strong: #056c87; --cyan-bg: #ddf7ff; --cyan-bg-strong: #d0eff7; --wash-cyan: #00b9eb1a;
+    --red: #eb3b3b; --red-strong: #ba2525; --red-bg: #ffebeb;
+    --amber-strong: #874d00; --amber-bg: #fff3cc;
+    --canvas-bg: #fbfbfb;
+    --r-4: 4px; --r-8: 8px; --r-10: 10px; --r-14: 14px; --r-full: 999px;
+    --shadow-card: 0 0 2px 0 #1c28402e, 0 1px 3px 0 #0000000a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--surface); color: var(--text-primary);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 15px; line-height: 1.4; -webkit-font-smoothing: antialiased;
+  }
+  .top { padding: 18px 24px 14px; border-bottom: 1px solid var(--border-light); display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .top h1 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+  .top p { margin: 0; font-size: 14px; color: var(--text-tertiary); }
+  .top p b { color: var(--text-secondary); font-weight: 500; }
+
+  .canvas {
+    position: relative; overflow: hidden; background-color: var(--canvas-bg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23000' fill-opacity='0.14'/%3E%3C/svg%3E");
+    background-size: 10px 10px;
+  }
+  .world { position: absolute; left: 0; top: 0; width: 1552px; height: 1004px; transform-origin: 0 0; }
+  .edges { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+
+  .col { position: absolute; top: 24px; }
+  .col__t { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+  .col__s { font-size: 12.5px; color: var(--text-tertiary); margin-left: 8px; }
+  .band { position: absolute; left: 24px; right: 24px; border-top: 1px solid var(--border); }
+  .band__t { position: absolute; top: 14px; left: 8px; font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+  .band__s { position: absolute; top: 15px; left: 236px; font-size: 12.5px; color: var(--text-tertiary); }
+
+  .node { position: absolute; isolation: isolate; }
+  .node[data-role='de']   { --role-fill: var(--accent-bg); --role-edge: var(--accent-bg-strong); --role-ink: var(--accent-strong); --role-wash: var(--wash-blue); }
+  .node[data-role='biz']  { --role-fill: var(--green-bg);  --role-edge: var(--green-bg-strong);  --role-ink: var(--green-strong);  --role-wash: var(--wash-green); }
+  .node[data-role='us']   { --role-fill: var(--purple-bg); --role-edge: var(--purple-bg-strong); --role-ink: var(--purple-strong); --role-wash: var(--wash-purple); }
+  .node[data-role='run']  { --role-fill: var(--cyan-bg);   --role-edge: var(--cyan-bg-strong);   --role-ink: var(--cyan-strong);   --role-wash: var(--wash-cyan); }
+  .node[data-role='file'] { --role-fill: var(--surface-active); --role-edge: var(--border); --role-ink: var(--text-secondary); --role-wash: #0000000a; }
+  .node__badge {
+    position: absolute; top: -22px; left: 0; z-index: -1;
+    height: 38px; padding: 3px 8px 0 8px;
+    border-radius: var(--r-10) var(--r-10) 0 0;
+    background-color: var(--surface);
+    background-image: linear-gradient(var(--role-wash), var(--role-wash));
+    border: 1px solid var(--role-wash);
+    color: var(--role-ink); font-size: 11.5px; font-weight: 500; line-height: 16px; white-space: nowrap;
+  }
+  .node__card {
+    position: relative; z-index: 1; width: 100%; height: 100%;
+    padding: 6px; border-radius: var(--r-14);
+    background: var(--surface); box-shadow: var(--shadow-card);
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .node__head { display: flex; align-items: center; gap: 7px; padding: 4px 6px 0 4px; min-width: 0; }
+  .node__chip {
+    width: 24px; height: 24px; flex: none; display: grid; place-items: center;
+    border-radius: 30%; background: var(--role-fill); border: 1px solid var(--role-edge); color: var(--role-ink);
+    font-size: 13px; font-weight: 600;
+  }
+  .node__title { font-size: 14px; font-weight: 500; letter-spacing: -0.14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .node__title code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
+  .node__foot { margin-top: auto; padding: 0 10px 2px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: var(--text-tertiary); min-width: 0; }
+  .node__foot span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .tag {
+    flex: none; height: 19px; padding: 0 6px; border-radius: var(--r-4);
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11.5px; font-weight: 500; white-space: nowrap;
+    background: var(--surface-active); color: var(--text-secondary);
+  }
+  .tag[data-tone='rls'] { background: var(--red-bg); color: var(--red-strong); }
+  .tag[data-tone='draft'] { background: var(--amber-bg); color: var(--amber-strong); }
+  .tag--edge { position: absolute; transform: translate(-50%, -50%); background: var(--surface); box-shadow: 0 0 0 1px var(--border-light); color: var(--text-tertiary); }
+
+  .pill {
+    position: absolute; height: 30px; padding: 0 12px; border-radius: var(--r-full);
+    display: flex; align-items: center; gap: 6px; transform: translateX(-50%);
+    background: var(--surface); box-shadow: inset 0 0 0 1px var(--border);
+    font-size: 13px; font-weight: 500; color: var(--text-primary);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .pill i { width: 6px; height: 6px; border-radius: 50%; background: var(--purple); }
+
+  .legend {
+    position: absolute; z-index: 3; top: 118px; left: 1248px;
+    padding: 9px 11px; border-radius: var(--r-10);
+    background: var(--surface); box-shadow: var(--shadow-card);
+    display: flex; flex-direction: column; gap: 6px;
+    font-size: 12.5px; color: var(--text-tertiary);
+  }
+  .legend__row { display: flex; align-items: center; gap: 8px; }
+  .legend__chip { width: 14px; height: 14px; border-radius: 30%; border: 1px solid var(--role-edge); background: var(--role-fill); }
+  .legend__line { width: 22px; height: 0; border-top: 1.5px solid var(--text-muted); }
+  .legend__line[data-dash] { border-top-style: dashed; }
+  .legend__line[data-rls] { border-top-color: var(--red); }
+  .foot { padding: 12px 24px 20px; font-size: 13px; color: var(--text-tertiary); border-top: 1px solid var(--border-light); }
+  .foot code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--text-secondary); }
+</style>
+<div class="top">
+  <h1>The dashboard factory</h1>
+  <p><b>Only two things run:</b> Oracle runs SQL and React shows charts. Everything between them is a file in git that a skill writes and a person confirms.</p>
+</div>
+<div class="canvas" id="canvas">
+  <div class="world" id="world"><svg class="edges" id="edges" xmlns="http://www.w3.org/2000/svg"></svg><div class="legend" id="legend"></div></div>
+</div>
+<p class="foot">Phase one, built first: <code>/import-schema</code>, <code>/business-context</code>, <code>/build-model draft</code> and the portal that renders what they wrote. Row-level security has four homes, numbered 1 to 4.</p>
+<script>
+(function () {
+  var world = document.getElementById('world'), edges = document.getElementById('edges');
+  var NS = 'http://www.w3.org/2000/svg';
+  var ICON = {
+    doc: '<path d="M3.4 4.4V3.2h9.2v1.2"/><path d="M8 3.2v9.6"/><path d="M6.2 12.8h3.6"/>',
+    db: '<ellipse cx="8" cy="4" rx="5.2" ry="2"/><path d="M2.8 4v8c0 1.1 2.3 2 5.2 2s5.2-.9 5.2-2V4"/><path d="M2.8 8c0 1.1 2.3 2 5.2 2s5.2-.9 5.2-2"/>',
+    table: '<rect x="2.2" y="2.6" width="11.6" height="10.8" rx="2.2"/><path d="M2.2 6.2h11.6"/><path d="M6.4 6.2v7.2"/>',
+    recipe: '<path d="M3 12.8V8.4"/><path d="M6.6 12.8V4.2"/><path d="M10.2 12.8V6.8"/><path d="M13.8 12.8v-3"/>',
+    shield: '<path d="M8 2.4 13 4.2v3.6c0 2.9-2 4.9-5 5.8-3-.9-5-2.9-5-5.8V4.2z"/>',
+    check: '<path d="m3.4 8.4 3 3 6.2-6.8"/>',
+    flag: '<path d="M4 13.4V3"/><path d="M4 3.6h7.4l-1.6 2.6 1.6 2.6H4"/>',
+    panel: '<rect x="2.2" y="3" width="11.6" height="10" rx="2.2"/><path d="M6.4 3v10"/>',
+    cursor: '<path d="M3.4 2.8 12.8 7 8.9 8.6 7.4 12.6z"/>',
+    layout: '<rect x="2.6" y="2.6" width="10.8" height="10.8" rx="2.4"/><path d="M2.6 7h10.8"/><path d="M8 7v6.4"/>',
+    key: '<circle cx="5.6" cy="10.4" r="2.6"/><path d="m7.6 8.6 5-5"/><path d="m10.6 5.6 1.4 1.4"/>',
+    hand: '<path d="M5 7.4V4.2a1.1 1.1 0 0 1 2.2 0v2.8m0-.4V3.4a1.1 1.1 0 0 1 2.2 0v3.2m0-.4a1.1 1.1 0 0 1 2.2 0v3.4c0 2.2-1.6 3.8-3.8 3.8-2 0-3-1-4-2.4L2.9 9.2a1.1 1.1 0 0 1 1.8-1.3z"/>'
+  };
+  function icon(name) { return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[name] + '</svg>'; }
+  var BADGE = { de: 'Data engineers', biz: 'Business', us: 'BI team + skill', file: 'File in git', run: 'Runs in production' };
+
+  var N = {};
+  function node(n) {
+    N[n.id] = n; n.h = n.h || 66;
+    var d = document.createElement('div');
+    d.className = 'node'; d.dataset.role = n.role;
+    d.style.cssText = 'left:' + n.x + 'px;top:' + n.y + 'px;width:' + n.w + 'px;height:' + n.h + 'px';
+    var chip = n.glyph ? n.glyph : icon(n.icon);
+    var title = n.mono ? '<code>' + n.title + '</code>' : n.title;
+    d.innerHTML =
+      '<div class="node__badge">' + (n.badge || BADGE[n.role]) + '</div>' +
+      '<div class="node__card"><div class="node__head"><div class="node__chip">' + chip + '</div><div class="node__title">' + title + '</div></div>' +
+      '<div class="node__foot"><span>' + (n.foot || '') + '</span>' + (n.tag ? '<span class="tag" data-tone="' + n.tag.tone + '">' + n.tag.t + '</span>' : '') + '</div></div>';
+    world.appendChild(d);
+  }
+  function pill(id, x, y, label) {
+    N[id] = { x: x - 70, y: y - 15, w: 140, h: 30 };
+    var p = document.createElement('div'); p.className = 'pill'; p.style.cssText = 'left:' + x + 'px;top:' + (y - 15) + 'px';
+    p.innerHTML = '<i></i>' + label; world.appendChild(p);
+  }
+  function col(x, t, s) { var c = document.createElement('div'); c.className = 'col'; c.style.left = x + 'px'; c.innerHTML = '<span class="col__t">' + t + '</span><span class="col__s">' + (s || '') + '</span>'; world.appendChild(c); }
+
+  col(48, '1 Tables in', 'once per source system');
+  col(352, '2 Model and recipes', 'per dashboard, reused by the next');
+  col(928, '3 Design and contract');
+  col(1248, '4 Build and ship');
+
+  // column 1
+  node({ id: 'de', role: 'de', x: 48, y: 96, w: 240, icon: 'doc', title: 'Schema export', foot: 'Excel: tables, columns, keys, joins' });
+  pill('imp', 168, 200, '/import-schema');
+  node({ id: 'src', role: 'file', x: 48, y: 246, w: 240, icon: 'db', mono: true, title: 'sources/&lt;TABLE&gt;.yaml', foot: 'one file per table, joins as stated' });
+  node({ id: 'biz', role: 'biz', x: 48, y: 380, w: 240, icon: 'doc', title: 'Request form', foot: 'Word: numbers, filters, access' });
+  pill('bc', 168, 484, '/business-context');
+  node({ id: 'ctx', role: 'file', x: 48, y: 530, w: 240, icon: 'doc', mono: true, title: 'business-context.md', foot: 'their words, verbatim' });
+
+  // column 2
+  node({ id: 'bm', role: 'us', x: 352, y: 320, w: 200, glyph: '/', title: '/build-model', foot: 'draft, then finalize' });
+  node({ id: 'portal', role: 'us', x: 352, y: 530, w: 200, icon: 'panel', title: 'Portal', foot: 'renders this column from git' });
+  node({ id: 'views', role: 'file', x: 600, y: 96, w: 256, icon: 'table', mono: true, title: 'bi_model/&lt;view&gt;.sql', foot: 'clean tables, joins once', tag: { tone: 'rls', t: '1 declared' } });
+  node({ id: 'rec', role: 'file', x: 600, y: 246, w: 256, icon: 'recipe', mono: true, title: 'catalog/kpi-registry.yaml', foot: 'recipes: one view, one sentence' });
+  node({ id: 'pol', role: 'file', x: 600, y: 380, w: 256, icon: 'shield', mono: true, title: 'security/rls-policies.yaml', foot: 'via /rls: which column per role' });
+  node({ id: 'conf', role: 'biz', x: 600, y: 530, w: 256, icon: 'check', title: 'Confirms each recipe', foot: 'Catalog page on the PR, then merge' });
+
+  // column 3
+  node({ id: 'dep', role: 'de', x: 928, y: 96, w: 256, icon: 'db', title: 'Pipeline deploys views', foot: 'into Oracle schema BI_MODEL' });
+  node({ id: 'dict', role: 'file', x: 928, y: 246, w: 256, icon: 'doc', mono: true, title: 'data-dictionary.yaml', foot: 'via /data-dictionary: what is live' });
+  node({ id: 'des', role: 'us', x: 928, y: 380, w: 256, icon: 'layout', title: 'Design the page', foot: 'Open Design, exported to git' });
+  pill('spec', 1056, 484, '/spec');
+  node({ id: 'specf', role: 'file', x: 928, y: 530, w: 256, icon: 'flag', mono: true, title: 'spec.yaml', foot: 'every chart names a recipe' });
+
+  // column 4
+  node({ id: 'build', role: 'us', x: 1248, y: 380, w: 256, glyph: '/', title: '/build', foot: 'React page and its queries' });
+  node({ id: 'ver', role: 'us', x: 1248, y: 530, w: 256, glyph: '/', title: '/verify in CI', foot: "finance's numbers match", tag: { tone: 'rls', t: '4 tested' } });
+  node({ id: 'live', role: 'run', x: 1248, y: 660, w: 256, h: 46, icon: 'cursor', title: 'Live dashboard', badge: 'Live' });
+
+  // runtime band
+  var band = document.createElement('div'); band.className = 'band'; band.style.top = '744px';
+  band.innerHTML = '<span class="band__t">At runtime, every query</span><span class="band__s">what happens each time someone opens the live dashboard</span>';
+  world.appendChild(band);
+  node({ id: 'viewer', role: 'run', x: 48, y: 830, w: 150, h: 46, icon: 'hand', title: 'A viewer', badge: 'Person' });
+  node({ id: 'react', role: 'run', x: 260, y: 830, w: 220, h: 46, icon: 'layout', title: 'React dashboard' });
+  node({ id: 'sq', role: 'run', x: 600, y: 820, w: 256, icon: 'key', title: 'semantic-query', foot: 'AND col IN (:allowed)', tag: { tone: 'rls', t: '3 enforced' } });
+  node({ id: 'ora', role: 'run', x: 928, y: 830, w: 256, h: 46, icon: 'db', title: 'Oracle, BI_MODEL views', badge: 'Read-only' });
+  node({ id: 'ent', role: 'file', x: 600, y: 920, w: 256, icon: 'shield', mono: true, title: 'BI_SECURITY.ENTITLEMENTS', foot: 'who sees which values', tag: { tone: 'rls', t: '2 entitled' }, badge: 'Table' });
+  node({ id: 'adm', role: 'us', x: 928, y: 920, w: 256, icon: 'panel', title: 'Portal, Admin tab', foot: 'add or remove values', badge: 'Admin' });
+
+  // edges
+  edges.innerHTML = '<defs>' +
+    '<marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1L8 5L1 9z" fill="#a2a4a7"/></marker>' +
+    '<marker id="r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1L8 5L1 9z" fill="#eb3b3b"/></marker></defs>';
+  function pt(id) { var n = N[id]; return { l: [n.x, n.y + n.h / 2], r: [n.x + n.w, n.y + n.h / 2], t: [n.x + n.w / 2, n.y], b: [n.x + n.w / 2, n.y + n.h] }; }
+  function draw(d, o) {
+    o = o || {};
+    var p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', d); p.setAttribute('fill', 'none');
+    p.setAttribute('stroke', o.rls ? '#eb3b3b' : '#a2a4a7'); p.setAttribute('stroke-width', '1.5');
+    p.setAttribute('marker-end', 'url(#' + (o.rls ? 'r' : 'a') + ')');
+    if (o.dash) p.setAttribute('stroke-dasharray', '4 4');
+    edges.appendChild(p);
+    if (o.label) { var t = document.createElement('span'); t.className = 'tag tag--edge'; t.style.cssText = 'left:' + o.lx + 'px;top:' + o.ly + 'px'; t.textContent = o.label; world.appendChild(t); }
+  }
+  function v(a, b, o) { var A = pt(a).b, B = pt(b).t; draw('M' + A[0] + ' ' + (A[1] + (N[a].h === 30 ? 0 : 0)) + ' L' + B[0] + ' ' + (B[1] - 2), o); }
+  function h(a, b, o) { var A = pt(a).r, B = pt(b).l, m = (A[0] + B[0]) / 2; draw('M' + A[0] + ' ' + A[1] + ' C' + m + ' ' + A[1] + ' ' + m + ' ' + B[1] + ' ' + B[0] + ' ' + B[1], o); }
+
+  v('de', 'imp'); v('imp', 'src');
+  v('biz', 'bc'); v('bc', 'ctx');
+  h('src', 'bm'); h('ctx', 'bm');
+  h('bm', 'views'); h('bm', 'rec'); h('bm', 'pol');
+  v('bm', 'portal', { dash: true });
+  v('pol', 'conf');
+  (function () { var A = pt('conf').r, B = pt('dep').l; draw('M' + A[0] + ' ' + A[1] + ' C' + (A[0] + 50) + ' ' + A[1] + ' ' + (B[0] - 50) + ' ' + B[1] + ' ' + B[0] + ' ' + B[1], { label: 'merged PR', lx: 892, ly: 330 }); })();
+  v('dep', 'dict');
+  (function () { var A = pt('dict').r, B = pt('specf').r; draw('M' + A[0] + ' ' + A[1] + ' H' + (A[0] + 16) + ' V' + B[1] + ' H' + (B[0] + 2)); })();
+  (function () { var A = pt('rec').r, B = pt('specf').l; draw('M' + A[0] + ' ' + (A[1] + 18) + ' C' + (A[0] + 40) + ' ' + (A[1] + 18) + ' ' + (B[0] - 40) + ' ' + (B[1] + 20) + ' ' + B[0] + ' ' + (B[1] + 20)); })();
+  v('des', 'spec'); v('spec', 'specf');
+  h('specf', 'build');
+  v('build', 'ver'); v('ver', 'live');
+  h('viewer', 'react'); h('react', 'sq'); h('sq', 'ora');
+  (function () { var A = pt('adm').l, B = pt('ent').r, m = (A[0] + B[0]) / 2; draw('M' + A[0] + ' ' + A[1] + ' C' + m + ' ' + A[1] + ' ' + m + ' ' + B[1] + ' ' + B[0] + ' ' + B[1], { rls: true }); })();
+  (function () { var A = pt('ent').t, B = pt('sq').b; draw('M' + (A[0] + 70) + ' ' + (A[1] - 22) + ' L' + (B[0] + 70) + ' ' + B[1], { rls: true }); })();
+  (function () { var A = pt('pol').l, B = N.sq; draw('M' + A[0] + ' ' + A[1] + ' H' + 576 + ' V' + (B.y + B.h / 2) + ' H' + (B.x - 2), { rls: true, dash: true, label: 'which column', lx: 576, ly: 700 }); })();
+  (function () { var A = pt('dep').r, B = pt('ora').t; draw('M' + A[0] + ' ' + A[1] + ' H' + 1210 + ' V' + 800 + ' H' + (B[0] + 100) + ' V' + (B[1] - 2), { dash: true, label: 'the views live here', lx: 1210, ly: 760 }); })();
+
+  // legend
+  var lg = document.getElementById('legend');
+  lg.innerHTML = [
+    ['de', 'Data engineers'], ['biz', 'Business'], ['us', 'BI team with a Claude skill'], ['file', 'A file in git'], ['run', 'Runs in production']
+  ].map(function (r) { return '<div class="legend__row node" data-role="' + r[0] + '" style="position:static"><i class="legend__chip"></i>' + r[1] + '</div>'; }).join('') +
+    '<div class="legend__row"><i class="legend__line"></i>handover, a file in git</div>' +
+    '<div class="legend__row"><i class="legend__line" data-dash></i>a copy or a lookup</div>' +
+    '<div class="legend__row"><i class="legend__line" data-rls></i>row-level security</div>';
+
+  // fit to width
+  var canvas = document.getElementById('canvas'), W = 1552, H = 1004;
+  function fit() { var s = Math.min(1, canvas.clientWidth / W); world.style.transform = 'scale(' + s + ')'; canvas.style.height = Math.round(H * s) + 'px'; }
+  fit(); window.addEventListener('resize', fit);
+})();
+</script>
+
+</html>
