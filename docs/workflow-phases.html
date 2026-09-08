@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The dashboard factory: four phases</title>
+<style id="pg">@page { size: 2240px 1400px; margin: 0; }</style>
+<style>
+  :root { --bg:#f7f7f5; --node:#ffffff; --edge:#d9dad6; --text:#1c1d1f; --sub:#6b6d72; --label:#8a8c91; --out:#7b7d83;
+    --de:#2563eb; --biz:#0f9d58; --bi:#5f6168; --file:#5f6168; --run:#0891b2; --des:#a16207; --sec:#ea580c; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; background:var(--bg); color:var(--text); font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  .world { position:relative; margin:0; }
+  svg.wires { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .node { position:absolute; background:var(--node); border:1px solid var(--edge); border-radius:0 9px 9px 9px; padding:13px 16px 12px 14px; white-space:nowrap; }
+  .node .head { display:flex; align-items:flex-start; gap:11px; }
+  .node .ic { width:17px; height:17px; flex:none; margin-top:1px; color:var(--sub); }
+  .node .t { font-size:14.5px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; }
+  .node .s { font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--sub); margin-top:5px; }
+  .node .out { margin-top:10px; padding-top:8px; border-top:1px dashed var(--edge); }
+  .node .o { display:flex; align-items:center; gap:7px; font-size:12px; letter-spacing:.03em; color:var(--out); line-height:20px; }
+  .node .o svg { width:13px; height:13px; flex:none; color:#a6a8ad; }
+  .node .o b { font-weight:500; color:#4f5157; }
+  .tag { position:absolute; left:-1px; top:-23px; height:24px; line-height:22px; padding:0 11px 0 10px; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    border:1px solid var(--edge); border-bottom:none; border-radius:8px 8px 0 0; background:#f1f1ef; color:var(--file); }
+  .node[data-cat=de] .tag { color:var(--de); background:#e8efff; border-color:#c7d7fb; } .node[data-cat=de] .ic { color:var(--de); }
+  .node[data-cat=biz] .tag { color:var(--biz); background:#e6f6ec; border-color:#bfe6cd; } .node[data-cat=biz] .ic { color:var(--biz); }
+  .node[data-cat=bi] .tag { color:var(--bi); background:#f1f1ef; border-color:var(--edge); } .node[data-cat=bi] .ic { color:var(--sub); }
+  .node[data-cat=des] .tag { color:var(--des); background:#fdf6dc; border-color:#efdfa3; } .node[data-cat=des] .ic { color:var(--des); }
+  .node[data-cat=sec] .tag { color:var(--sec); background:#fdeee4; border-color:#f7c9ad; } .node[data-cat=sec] .ic { color:var(--sec); }
+  .node[data-cat=run] .tag { color:var(--run); background:#e4f5f9; border-color:#bde3ec; } .node[data-cat=run] .ic { color:var(--run); }
+  .phase { position:absolute; border:1px dashed #c9cac6; border-radius:14px; }
+  .phase .ph { position:absolute; left:16px; top:-11px; padding:0 8px; background:var(--bg); font-size:14px; letter-spacing:.14em; text-transform:uppercase; color:var(--text); }
+  .phase .phs { position:absolute; left:24px; top:18px; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--label); }
+  .lbl { font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; fill:var(--label); }
+</style>
+</head>
+<body>
+<div class="world" id="world">
+  <svg class="wires" id="wires"><defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8a8c91"/></marker>
+    <marker id="d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#a3a5aa"/></marker>
+  </defs></svg>
+</div>
+<script>
+const ICONS = {
+  doc: '<path d="M4 2h6l4 4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M10 2v4h4"/>',
+  table: '<rect x="2" y="3" width="12" height="10" rx="1"/><path d="M2 7h12M6 3v10"/>',
+  db: '<ellipse cx="8" cy="4" rx="5.5" ry="2"/><path d="M2.5 4v8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2V4"/><path d="M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2"/>',
+  term: '<rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M4.5 6l2.5 2-2.5 2M8.5 10h3"/>',
+  check: '<path d="M3 8.5 6.5 12 13 4.5"/>',
+  shield: '<path d="M8 1.5 13.5 3.5v4.5c0 3-2.3 5.3-5.5 6.5C4.8 13.3 2.5 11 2.5 8V3.5z"/>',
+  layout: '<rect x="2" y="2.5" width="12" height="11" rx="1"/><path d="M2 6.5h12M7 6.5v7"/>',
+  recipe: '<path d="M3 13V6M8 13V3M13 13V8"/>',
+  play: '<path d="M4 2.5v11l9-5.5z"/>',
+  git: '<circle cx="4" cy="4" r="1.8"/><circle cx="4" cy="12" r="1.8"/><circle cx="12" cy="6" r="1.8"/><path d="M4 5.8v4.4M12 7.8c0 2.5-3 2-8 3"/>',
+  panel: '<rect x="2" y="2.5" width="12" height="11" rx="1"/><path d="M5.5 2.5v11"/>',
+  users: '<circle cx="6" cy="5.5" r="2.5"/><path d="M1.5 13.5c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4"/><path d="M11 3.5a2.3 2.3 0 0 1 0 4.4M12.5 9.8c1.3.6 2 1.8 2 3.7"/>',
+};
+const N = {}; const world = document.getElementById('world'), wires = document.getElementById('wires'); const svgNS = 'http://www.w3.org/2000/svg';
+const ico = (k, cls) => `<svg class="${cls}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>`;
+
+// A card is one step. Its outputs sit in a muted footer inside the card, never as cards of their own.
+function node(o) {
+  const el = document.createElement('div'); el.className = 'node'; el.dataset.cat = o.cat; el.id = o.id; el.style.width = CW + 'px';
+  const outs = (o.out || []).map(([k, txt]) => `<div class="o">${ico(k, '')}<span>${txt}</span></div>`).join('');
+  el.innerHTML = `<span class="tag">${o.tag}</span><div class="head">${ico(o.icon, 'ic')}<div><div class="t">${o.t}</div>${o.s ? `<div class="s">${o.s}</div>` : ''}</div></div>${outs ? `<div class="out">${outs}</div>` : ''}`;
+  world.appendChild(el);
+  const w = el.offsetWidth, h = el.offsetHeight; const x = o.x, y = o.y;
+  el.style.left = x + 'px'; el.style.top = y + 'px';
+  N[o.id] = { x, y, w, h, l: [x, y + h / 2], r: [x + w, y + h / 2], t: [x + w / 2, y], b: [x + w / 2, y + h] };
+  return y + h;
+}
+function phase(x, y, w, h, title, sub) {
+  const g = document.createElement('div'); g.className = 'phase'; g.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${h}px`;
+  g.innerHTML = `<span class="ph">${title}</span><span class="phs">${sub}</span>`; world.appendChild(g);
+}
+const R = 14;
+function path(pts) {
+  let d = `M${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const [px, py] = pts[i - 1], [cx, cy] = pts[i], [nx, ny] = pts[i + 1];
+    const d1 = Math.hypot(cx - px, cy - py), d2 = Math.hypot(nx - cx, ny - cy), r = Math.min(R, d1 / 2, d2 / 2);
+    const ux = (cx - px) / d1, uy = (cy - py) / d1, vx = (nx - cx) / d2, vy = (ny - cy) / d2;
+    d += ` L${cx - ux * r} ${cy - uy * r} Q${cx} ${cy} ${cx + vx * r} ${cy + vy * r}`;
+  }
+  const [lx, ly] = pts[pts.length - 1]; return d + ` L${lx} ${ly}`;
+}
+// Labels sit on empty canvas only: in a gap between panels, in a side lane, or above the panels. Never under a card.
+function label(txt, at, anchor = 'middle') {
+  const lines = txt.split('\n');
+  const t = document.createElementNS(svgNS, 'text'); t.setAttribute('class', 'lbl'); t.setAttribute('text-anchor', anchor);
+  const y0 = at[1] + 4 - (lines.length - 1) * 8;
+  lines.forEach((ln, i) => { const s = document.createElementNS(svgNS, 'tspan'); s.setAttribute('x', at[0]); s.setAttribute('y', y0 + i * 16); s.textContent = ln; t.appendChild(s); });
+  wires.appendChild(t);
+  const w = Math.max(t.getBBox().width, Math.max(...lines.map(l => l.length)) * 8.4);
+  const x0 = anchor === 'start' ? at[0] : anchor === 'end' ? at[0] - w : at[0] - w / 2;
+  const bg = document.createElementNS(svgNS, 'rect'); bg.setAttribute('x', x0 - 6); bg.setAttribute('y', y0 - 13); bg.setAttribute('width', w + 12); bg.setAttribute('height', 16 * lines.length + 4); bg.setAttribute('fill', '#f7f7f5'); wires.insertBefore(bg, t);
+}
+function wire(pts, o = {}) {
+  const p = document.createElementNS(svgNS, 'path'); p.setAttribute('d', path(pts)); p.setAttribute('fill', 'none');
+  p.setAttribute('stroke', o.dash ? '#b3b5ba' : '#a3a5aa'); p.setAttribute('stroke-width', '1.3');
+  if (o.dash) p.setAttribute('stroke-dasharray', '5 5'); if (!o.noArrow) p.setAttribute('marker-end', `url(#${o.dash ? 'd' : 'a'})`);
+  wires.appendChild(p);
+  if (o.label) label(o.label, o.at, o.anchor);
+}
+const down = (a, b) => wire([[N[a].b[0], N[a].b[1] + 1], [N[b].t[0], N[b].t[1] - 24]]);
+const ENG = 'Eng. team', SK = 'Eng. team', DE = 'Data engineers';
+
+// Geometry. One column per phase; cards stacked; a lane on one side of each column for the repeat loops.
+const M = 40, TOP = 100, PW = 520, CW = 460, GAPX = 170, GAPV = 82, FIRST = 78;
+const X = [M, M + PW + GAPX, M + 2 * (PW + GAPX), M + 3 * (PW + GAPX)];
+const G = [X[0] + PW + GAPX / 2, X[1] + PW + GAPX / 2, X[2] + PW + GAPX / 2]; // gap centres
+const cardX = (i) => X[i] + (PW - CW) / 2;
+const WIDTH = M + 4 * PW + 3 * GAPX + M;
+
+// Phase 1: intake
+let y = TOP + FIRST;
+y = node({ id: 'exp', cat: 'de', tag: DE, icon: 'doc', x: cardX(0), y, t: 'Schema export', s: 'Excel or CSV · tables, columns, keys' }) + GAPV;
+y = node({ id: 'imp', cat: 'bi', tag: SK, icon: 'term', x: cardX(0), y, t: '/import-schema', s: 'parser writes · validator checks',
+  out: [['db', '<b>sources/&lt;TABLE&gt;.yaml</b> · one per table'], ['doc', '<b>_import-report.md</b> · questions for the data team']] }) + GAPV + 40;
+y = node({ id: 'form', cat: 'biz', tag: 'Business', icon: 'doc', x: cardX(0), y, t: 'Request form or notes', s: 'Word form · or meeting notes' }) + GAPV;
+y = node({ id: 'bc', cat: 'bi', tag: SK, icon: 'term', x: cardX(0), y, t: '/business-context', s: 'sorts their words · checker proves verbatim',
+  out: [['doc', '<b>dashboards/&lt;name&gt;/business-context.md</b>'], ['doc', 'section 8 · one open question per ? cell']] });
+const bottom1 = y;
+
+// Phase 2: modeling
+y = TOP + FIRST;
+y = node({ id: 'draft', cat: 'bi', tag: SK, icon: 'term', x: cardX(1), y, t: '/build-model draft', s: 'clean tables · DRAFT recipes · proof queries',
+  out: [['table', '<b>bi_model/&lt;view&gt;.sql</b> · joins once, renames once'], ['recipe', '<b>catalog/kpi-registry.yaml</b> · DRAFT'], ['doc', '<b>proofs/&lt;view&gt;.sql</b> · grain, fan-out, conservation'], ['check', 'view lint in CI · header, renames, joins on the key']] }) + GAPV;
+y = node({ id: 'run', cat: 'de', tag: DE, icon: 'play', x: cardX(1), y, t: 'Run the proofs', s: 'read-only · on the replica',
+  out: [['check', '<b>proofs/&lt;view&gt;.md</b> · the counts, beside the query']] }) + GAPV;
+y = node({ id: 'fin', cat: 'bi', tag: SK, icon: 'term', x: cardX(1), y, t: '/build-model finalize', s: 'judges the counts · fills the checklists',
+  out: [['recipe', '<b>catalog/kpi-registry.yaml</b> · CONFIRMED'], ['doc', '<b>docs/review/</b> · view and registry checklists']] }) + GAPV;
+y = node({ id: 'rls', cat: 'sec', tag: ENG + ' · row-level security', icon: 'shield', x: cardX(1), y, t: '/rls', s: 'one policy per clean table',
+  out: [['shield', '<b>security/rls-policies.yaml</b> · column per role'], ['db', 'applied by <b>semantic-query</b> at query time only']] }) + GAPV;
+y = node({ id: 'dep', cat: 'de', tag: DE, icon: 'db', x: cardX(1), y, t: 'Deploy the views', s: 'their pipeline · from bi_model/ only',
+  out: [['git', 'merged by pull request · both teams review'], ['db', 'views live in Oracle'], ['doc', '<b>catalog/data-dictionary.yaml</b> · generated'], ['panel', 'Portal · Model Explorer shows the model']] });
+const bottom2 = y;
+
+// Phase 3: design and contract
+y = TOP + FIRST;
+y = node({ id: 'des', cat: 'des', tag: 'Business + Design', icon: 'layout', x: cardX(2), y, t: 'Open Design', s: 'pages drawn over what is live',
+  out: [['doc', '<b>dashboards/&lt;name&gt;/design-export/</b>']] }) + GAPV;
+y = node({ id: 'spec', cat: 'bi', tag: SK, icon: 'term', x: cardX(2), y, t: '/spec', s: 'every widget names a recipe',
+  out: [['doc', '<b>dashboards/&lt;name&gt;/spec.yaml</b> · the contract'], ['check', 'a number with no recipe stops here']] });
+const bottom3 = y;
+
+// Phase 4: build and ship
+y = TOP + FIRST;
+y = node({ id: 'build', cat: 'bi', tag: SK, icon: 'term', x: cardX(3), y, t: '/build', s: 'spec plus recipes · no SQL by hand',
+  out: [['panel', 'the page · in apps/portal'], ['doc', '<b>dashboards/&lt;name&gt;/queries.sql</b> · generated'], ['shield', 'RLS applied in semantic-query only']] }) + GAPV;
+y = node({ id: 'ver', cat: 'bi', tag: SK, icon: 'term', x: cardX(3), y, t: '/verify', s: 'every number against finance',
+  out: [['recipe', 'reads <b>catalog/acceptance.yaml</b> · finance\'s number'], ['check', '<b>dashboards/&lt;name&gt;/verify.md</b> · the evidence']] }) + GAPV;
+y = node({ id: 'live', cat: 'bi', tag: ENG, icon: 'users', x: cardX(3), y, t: 'Live', s: 'the business opens it',
+  out: [['shield', 'who sees it · BI_SECURITY.ENTITLEMENTS'], ['doc', 'a change is an edit to spec.yaml or a recipe']] });
+const bottom4 = y;
+
+const PH = Math.max(bottom1, bottom2, bottom3, bottom4) - TOP + 44;
+const HEIGHT = TOP + PH + M;
+phase(X[0], TOP, PW, PH, 'Phase 1 · Discovery', 'the tables, and the ask in their words');
+phase(X[1], TOP, PW, PH, 'Phase 2 · Modeling', 'once per dashboard · reused by the next');
+phase(X[2], TOP, PW, PH, 'Phase 3 · Design', 'per dashboard');
+phase(X[3], TOP, PW, PH, 'Phase 4 · Build and ship', 'per dashboard');
+world.style.width = WIDTH + 'px'; world.style.height = HEIGHT + 'px';
+document.getElementById('pg').textContent = `@page { size: ${WIDTH}px ${HEIGHT}px; margin: 0; }`;
+world.dataset.size = `${WIDTH}x${HEIGHT}`;
+
+// Phase 1
+down('exp', 'imp'); down('form', 'bc');
+const lane1 = cardX(0) - 26;
+wire([[N.imp.l[0] - 1, N.imp.l[1]], [lane1, N.imp.l[1]], [lane1, N.exp.l[1]], [N.exp.l[0] - 1, N.exp.l[1]]], { dash: true, label: 'answers come back:\nimport again', at: [lane1 + 10, (N.exp.b[1] + N.imp.y) / 2], anchor: 'start' });
+wire([[N.bc.l[0] - 1, N.bc.l[1]], [lane1, N.bc.l[1]], [lane1, N.form.l[1]], [N.form.l[0] - 1, N.form.l[1]]], { dash: true, label: 'answers come back:\nrun again', at: [lane1 + 10, (N.form.b[1] + N.bc.y) / 2], anchor: 'start' });
+// into the model: the tables and their words
+wire([[N.imp.r[0] + 1, N.imp.r[1]], [G[0] - 30, N.imp.r[1]], [G[0] - 30, N.draft.l[1] - 12], [N.draft.l[0] - 1, N.draft.l[1] - 12]], { label: 'the tables', at: [G[0] - 30, (N.imp.r[1] + N.draft.l[1]) / 2] });
+wire([[N.bc.r[0] + 1, N.bc.r[1]], [G[0] + 30, N.bc.r[1]], [G[0] + 30, N.draft.l[1] + 12], [N.draft.l[0] - 1, N.draft.l[1] + 12]], { label: 'their words', at: [G[0] + 30, (N.bc.r[1] + N.imp.r[1]) / 2] });
+
+// Phase 2
+down('draft', 'run'); down('run', 'fin'); down('fin', 'rls'); down('rls', 'dep');
+const lane2 = cardX(1) + CW + 26;
+wire([[N.run.r[0] + 1, N.run.r[1]], [lane2, N.run.r[1]], [lane2, N.draft.r[1]], [N.draft.r[0] + 1, N.draft.r[1]]], { dash: true, label: 'a failed proof:\nback to draft', at: [lane2 - 10, (N.draft.b[1] + N.run.y) / 2], anchor: 'end' });
+// what is live goes to design; the recipes and the dictionary go to build, under phase 3
+const corridor = bottom3 + 70;
+wire([[N.dep.r[0] + 1, N.dep.r[1]], [G[1] - 30, N.dep.r[1]], [G[1] - 30, N.des.l[1]], [N.des.l[0] - 1, N.des.l[1]]], { label: 'kpi registry +\ndata dictionary +\nbusiness context', at: [G[1], (corridor + N.des.b[1]) / 2 + 40] });
+wire([[N.dep.r[0] + 1, N.dep.r[1]], [G[1] + 30, N.dep.r[1]], [G[1] + 30, corridor], [G[2] + 30, corridor], [G[2] + 30, N.build.l[1] + 12], [N.build.l[0] - 1, N.build.l[1] + 12]], { label: 'the recipes and the dictionary', at: [X[2] + PW / 2, corridor] });
+
+// Phase 3
+down('des', 'spec');
+wire([[N.spec.r[0] + 1, N.spec.r[1] + 12], [G[2] - 30, N.spec.r[1] + 12], [G[2] - 30, N.build.l[1] - 12], [N.build.l[0] - 1, N.build.l[1] - 12]], { label: 'the spec\nand design', at: [G[2] - 30, (N.spec.r[1] + N.build.b[1]) / 2 + 10] });
+// blocked: back to the model, over the top of the panels
+const lane3 = cardX(2) + CW + 26, ceil = TOP - 34, into = N.draft.t[0] + 110;
+wire([[N.spec.r[0] + 1, N.spec.r[1] - 12], [lane3, N.spec.r[1] - 12], [lane3, ceil], [into, ceil], [into, N.draft.t[1] - 1]], { dash: true, label: 'blocked: a number with no recipe goes back to the model', at: [X[1] + PW + GAPX / 2 + 40, ceil] });
+
+// Phase 4
+down('build', 'ver'); down('ver', 'live');
+</script>
+</body>
+</html>

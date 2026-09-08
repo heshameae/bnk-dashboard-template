@@ -2,7 +2,7 @@
 
 Every handover between steps is a file in git. No emails, no tickets. Step numbers are flat; there are no sub-steps.
 
-The one-page picture of all of this, for sharing with the team, is `docs/workflow-diagram.html` (open it in a browser).
+Two pictures of all of this, for sharing: `docs/workflow-diagram.html` (one flow, with the question loops and the proof loop) and `docs/workflow-phases.html` (the same flow split into four phases). PNG and PDF exports sit beside them. The Confluence pages are drafted in `docs/confluence/` (one for the team, one for leadership).
 
 | # | Step | Owner | Skill / tool | Hands over |
 |---|------|-------|--------------|------------|
