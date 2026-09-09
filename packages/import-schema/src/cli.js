@@ -39,7 +39,7 @@ function inventory(exportPath) {
   const rec = recogniseExport(exp.sheets);
   const lines = [];
   for (const s of rec.all) {
-    const role = rec.columns === s ? 'columns' : rec.keys === s ? 'keys' : 'ignored';
+    const role = rec.columns === s ? 'columns' : rec.keys === s ? 'keys' : rec.joins === s ? 'joins' : 'ignored';
     if (role === 'ignored') { lines.push(`sheet "${s.name}": ignored (headers: ${s.headers.map((h) => JSON.stringify(String(h))).join(', ') || 'none'})`); continue; }
     const mapped = Object.keys(s.map).map((f) => `${f}=${JSON.stringify(fieldName(s, f))}`).join(' ');
     const extras = s.extras.length ? `; kept in notes: ${s.extras.map((x) => JSON.stringify(x.header)).join(', ')}` : '';
@@ -63,6 +63,15 @@ function inventory(exportPath) {
       const t = String(row[rec.keys.map.table] ?? '').trim().toUpperCase() || prev; prev = t;
       if (rec.keys.map.pk !== undefined) pks.set(t, String(row[rec.keys.map.pk] ?? '').trim());
       if (rec.keys.map.fk !== undefined) fks.set(t, String(row[rec.keys.map.fk] ?? '').trim().replace(/\s+/g, ' '));
+    }
+  }
+  if (rec.joins) {
+    rows[0][4] = 'joins (from the joins sheet)';
+    for (const row of rec.joins.rows) {
+      const g = (f) => String(row[rec.joins.map[f]] ?? '').trim().toUpperCase();
+      const [ft, fc, tt, tc] = ['from_table', 'from_column', 'to_table', 'to_column'].map(g);
+      if (!ft || !fc || !tt || !tc) continue;
+      fks.set(ft, [fks.get(ft), `${fc} -> ${tt}.${tc}`].filter(Boolean).join('; '));
     }
   }
   const all = [...new Set([...tables.map((t) => t.table), ...report.skipped.map((s) => s.table)])].sort();
@@ -92,7 +101,7 @@ function importCmd(exportPath, opts) {
   const before = new Set(readdirSync(dir).filter((f) => f.endsWith('.yaml')));
   for (const t of tables) { writeFileSync(join(dir, `${t.table}.yaml`), emitSource(t)); before.delete(`${t.table}.yaml`); }
   const stale = [...before].sort();
-  const sheets = rec.all.map((s) => ({ name: s.name, role: rec.columns === s ? 'columns' : rec.keys === s ? 'keys' : 'ignored', reason: rec.ignored.find((x) => x.name === s.name)?.reason, rows: s.rows, headerRow: s.headerRow }));
+  const sheets = rec.all.map((s) => ({ name: s.name, role: rec.columns === s ? 'columns' : rec.keys === s ? 'keys' : rec.joins === s ? 'joins' : 'ignored', reason: rec.ignored.find((x) => x.name === s.name)?.reason, rows: s.rows, headerRow: s.headerRow }));
   const handover = relative(root, target);
   writeFileSync(join(dir, '_import-report.md'), emitReport({ handover, sha256: sha, date, system, sheets, written: tables, stale, skipped: report.skipped, questions: report.questions, notes: report.notes }));
   const lines = [

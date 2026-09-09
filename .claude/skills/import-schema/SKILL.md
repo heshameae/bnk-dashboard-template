@@ -10,7 +10,7 @@ Step 1. The parser in `packages/import-schema` reads the export and writes the f
 
 ## Run it
 `/import-schema <export> <SYSTEM>`
-- `<export>`: the workbook (`.xlsx`) or a folder with one `.csv` per sheet.
+- `<export>`: the workbook (`.xlsx`) or a folder with one `.csv` per sheet. Two sheets: one row per column, one row per join. The templates the data team fills are `docs/templates/schema-export-columns.csv` and `docs/templates/schema-export-joins.csv`. An older export with the key as a list and the joins as free text is read too.
 - `<SYSTEM>`: the source system code, written as `system:` in every file. The export does not carry it. When it is not given, ask; never derive it from the schema name, because a derived code looks exactly like one the data team gave.
 
 ## Reads
@@ -22,7 +22,7 @@ Through the parser only: `sources/_handover/<date>-<SYSTEM>-schema[.xlsx]`, `sou
 ## Steps
 Run each command, print its output in full, and check the done line before the next command.
 
-1. **Inventory.** `npm run import-schema -- inventory <export>`. Done when every sheet line reads `columns`, `keys` or `ignored` with a reason, and every table the data team said they sent is in the table. Point the user at two things in the output: the header mapping (which header was taken as table, column, type, pk, description), because a wrong mapping writes wrong files silently; and the two PK columns side by side, because a disagreement is cheapest to see before any file exists. A needed sheet that reads `ignored` stops here: the fix is a header synonym in `src/recognise.js` with a fixture, or a corrected export from the data team, never an edit to the export.
+1. **Inventory.** `npm run import-schema -- inventory <export>`. Done when every sheet line reads `columns`, `joins`, `keys` or `ignored` with a reason, and every table the data team said they sent is in the table. Point the user at two things in the output: the header mapping (which header was taken as table, column, type, pk, description), because a wrong mapping writes wrong files silently; and the two PK columns side by side, because a disagreement is cheapest to see before any file exists. When the export has a joins sheet, the last column lists the joins it read; a join the data team said they sent that is not there is a row the parser set aside, and the report names the line. A needed sheet that reads `ignored` stops here: the fix is a header synonym in `src/recognise.js` with a fixture, or a corrected export from the data team, never an edit to the export.
 
 2. **Import.** `npm run import-schema -- import <export> --system <SYSTEM>`. Done when every line of the last block reads `PASS`. The command copies the export under `sources/_handover/`, writes the files and the report, then validates them. A `FAIL` line names the check and the first cells that differ: it is a parser bug or an export shape the parser has not met. Fix the parser with a test in `packages/import-schema/test/`, then re-run. Never fix the file.
    - `exists with different content`: a handover with this date and system is already filed. Pass `--date <YYYY-MM-DD>` with the date on the new export. A handover is never deleted or overwritten; it is the evidence every value traces to.

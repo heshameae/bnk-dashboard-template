@@ -1,0 +1,9 @@
+Schema,Table,Column,Data type,PK flag,Nullable,Business definition
+EXAMPLE,EXAMPLE_ACCOUNT,BUSINESS_DT,DATE,Y,N,"The business day this row belongs to. One full set of rows per day."
+EXAMPLE,EXAMPLE_ACCOUNT,ACCT_NUM,VARCHAR2(20),Y,N,"The account number. Unique within a business day."
+EXAMPLE,EXAMPLE_ACCOUNT,CUST_NUM,VARCHAR2(20),N,N,"The customer who owns the account."
+EXAMPLE,EXAMPLE_ACCOUNT,PROD_CD,VARCHAR2(10),N,Y,"Product code as held in the core system."
+EXAMPLE,EXAMPLE_ACCOUNT,BALANCE_AMT,"NUMBER(18,2)",N,Y,"Ledger balance in account currency at close of the business day."
+EXAMPLE,EXAMPLE_CUSTOMER,BUSINESS_DT,DATE,Y,N,"The business day this row belongs to."
+EXAMPLE,EXAMPLE_CUSTOMER,CUST_NUM,VARCHAR2(20),Y,N,"The customer number."
+EXAMPLE,EXAMPLE_CUSTOMER,CUST_SEGMENT,VARCHAR2(30),N,Y,"Segment the customer is classified in."

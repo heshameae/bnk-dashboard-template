@@ -1,0 +1,13 @@
+Schema,Table,Column,Data type,PK flag,Nullable,Business definition
+raw,acct_balance,BUSINESS_DT,DATE,Y,N,One full set of rows per business day
+raw,acct_balance,acct_num,VARCHAR2 (20),Y,N,Account number
+raw,acct_balance,prod_cd,VARCHAR2(10),N,Y,Product code
+raw,acct_balance,gl_cd,VARCHAR2(10),N,Y,General ledger code
+raw,acct_balance,cust_num,VARCHAR2(20),N,N,Owning customer
+raw,acct_balance,balance_amt,"NUMBER (18, 2)",N,Y,Ledger balance at close
+raw,customer,BUSINESS_DT,DATE,Y,N,One full set of rows per business day
+raw,customer,cust_num,VARCHAR2(20),Y,N,Customer number
+raw,customer,segment,VARCHAR2(30),N,Y,Customer segment
+raw,product_map,prod_cd,VARCHAR2(10),Y,N,Product code
+raw,product_map,gl_cd,VARCHAR2(10),Y,N,General ledger code
+raw,product_map,family,VARCHAR2(40),N,Y,Product family

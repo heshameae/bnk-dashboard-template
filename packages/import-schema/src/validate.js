@@ -18,7 +18,7 @@ export function validate({ root, handover }) {
   const check = (name, failures, count) => results.push(failures.length ? { name, pass: false, detail: failures.slice(0, 5).join('; ') + (failures.length > 5 ? ` (+${failures.length - 5} more)` : '') } : { name, pass: true, count });
 
   const exp = readExport(handover);
-  const { columns, keys } = recogniseExport(exp.sheets);
+  const { columns, keys, joins } = recogniseExport(exp.sheets);
   if (!columns) { results.push({ name: 'export has a columns sheet', pass: false, detail: 'no sheet with table and column headers' }); return results; }
 
   // The export as cells: per table, its column rows in order; its PK flags, PK list, FK text.
@@ -53,8 +53,16 @@ export function validate({ root, handover }) {
       if (fk) t.fk = t.fk ? `${t.fk}; ${fk}` : fk;
     }
   }
+  // The joins sheet as cells: one key per column pair, so a relationship in a file must be a row.
+  const joinPairs = new Set();
+  if (joins) {
+    for (const row of joins.rows) {
+      const four = ['from_table', 'from_column', 'to_table', 'to_column'].map((f) => up(at(row, joins, f)));
+      if (four.every(Boolean)) joinPairs.add(four.join('|'));
+    }
+  }
   const allCells = new Set();
-  for (const row of [...columns.rows, ...(keys?.rows ?? [])]) for (const c of row) if (String(c).trim()) allCells.add(String(c).trim());
+  for (const row of [...columns.rows, ...(keys?.rows ?? []), ...(joins?.rows ?? [])]) for (const c of row) if (String(c).trim()) allCells.add(String(c).trim());
 
   // The files as YAML.
   const dir = join(root, 'sources');
@@ -123,13 +131,26 @@ export function validate({ root, handover }) {
       relCount++;
       const [refTable, refCol] = String(r.references).split('.');
       if (r.status !== 'stated') refFails.push(`${name}.${r.column}: status ${r.status}; only constraints or a count make a relationship proven`);
-      if (!fkTokens.has(r.column) || !fkTokens.has(refTable) || !fkTokens.has(refCol)) refFails.push(`${name}.${r.column} -> ${r.references}: not in the FK cell`);
+      if (joins) {
+        if (!joinPairs.has([name, r.column, refTable, refCol].join('|'))) refFails.push(`${name}.${r.column} -> ${r.references}: not a row on the joins sheet`);
+      } else if (!fkTokens.has(r.column) || !fkTokens.has(refTable) || !fkTokens.has(refCol)) refFails.push(`${name}.${r.column} -> ${r.references}: not in the FK cell`);
       if (!colNames.has(r.column) && !notes.includes(`FK column ${r.column}`)) refFails.push(`${name}.${r.column}: not a column and not in notes`);
       if (!files.has(refTable) && !notes.includes(`table ${refTable} is not in this handover`)) refFails.push(`${name}.${r.column} -> ${refTable}: no file and not in notes`);
     }
     for (const k of doc.key ?? []) if (!colNames.has(k) && !notes.includes(`key column ${k}`)) refFails.push(`${name}: key column ${k} not a column and not in notes`);
   }
-  check('every relationship traces to the FK cell, is stated, and any gap is in notes', refFails, relCount);
+  check(joins ? 'every relationship is a row on the joins sheet, is stated, and any gap is in notes' : 'every relationship traces to the FK cell, is stated, and any gap is in notes', refFails, relCount);
+
+  // Every complete row of the joins sheet reaches a file, unless its from-table has no columns.
+  const joinFails = [];
+  for (const pair of joinPairs) {
+    const [fromT, fromC, toT, toC] = pair.split('|');
+    if (!expTables.has(fromT)) continue;
+    const doc = files.get(fromT);
+    if (!doc) { joinFails.push(`${fromT}: no file for a joins sheet row`); continue; }
+    if (!(doc.relationships ?? []).some((r) => r.column === fromC && String(r.references) === `${toT}.${toC}`)) joinFails.push(`${fromT}.${fromC} -> ${toT}.${toC}: on the joins sheet, not in the file`);
+  }
+  if (joins) check('every row of the joins sheet is a relationship in its file', joinFails, joinPairs.size);
 
   check('no file carries a profile block (the export has no counts)', [...files].filter(([, d]) => d.profile !== undefined).map(([n]) => n), files.size);
 
