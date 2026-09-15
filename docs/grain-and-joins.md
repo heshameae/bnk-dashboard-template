@@ -21,6 +21,6 @@ A join copies a row once per match on the other side. Join accounts to a custome
 
 Rules that make fan-out impossible:
 1. Know the grain of both sides before writing the join. `sources/*.yaml` says it, and its counts prove it: `profile.rows` equal to `profile.distinct_key`. Counts missing or unequal means prove it first.
-2. Join only to tables whose key is one row per value (a dimension). Never join two fact tables.
+2. Join on the joined table's full key, as `sources/*.yaml` declares it. When that key includes a date (a customer table that is one row per customer per day), the join includes the date: the customer as it stood on the fact's day. Never join two fact tables. The cases are in `.claude/skills/build-model/references/joins.md`.
 3. Count rows before and after the join in the proof file. Equal or the join is wrong.
 4. Joins live in the view. Recipes never join; the app never joins.

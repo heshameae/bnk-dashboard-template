@@ -26,6 +26,14 @@ Anything else: print these two lines and stop.
 - `draft`: `bi_model/<view>.sql`, `bi_model/proofs/<view>.sql`, DRAFT entries in `kpi-registry.yaml` (creating the file on the first dashboard), policy stubs in `rls-policies.yaml`, and the portal graph.
 - `finalize`: header fixes in `bi_model/<view>.sql`, the PR body. Files only; the database is never written.
 
+## References
+The judgment in this skill lives in `references/`, as decision procedures, so two runs make the same call. A step that needs one names it; never decide a table's kind, a join's shape, a subject's cut or a recipe's class without walking the reference.
+- [`references/table-kinds.md`](references/table-kinds.md): what a raw table is, decided from its key. Snapshot, flow, versioned dimension, dimension, mapping, hierarchy, calendar. What each means for grain, join, proof and class.
+- [`references/joins.md`](references/joins.md): the one rule (the full key) and its seven cases: plain, as-of, mapping, hierarchy, fact-to-fact, role-playing, LEFT or inner.
+- [`references/subjects.md`](references/subjects.md): the numbers table to a set of views. Widen or add, which columns to expose, the choices that are questions, where a calculation lives.
+- [`references/recipes.md`](references/recipes.md): each recipe field from the row's words. Class from kind and verb, filters from the Leave out cell, compare, format, the near-miss rule.
+- [`references/anti-patterns.md`](references/anti-patterns.md): sixteen ways a view produces a confident wrong number, what catches each, and the fix. Read before drafting and when a proof fails.
+
 ## Rules for both modes
 - Every database access is read-only and only through a configured read-only account. Without one, the proof pack is the only way to touch data, and a data engineer runs it.
 - A recipe names exactly one clean table and never joins. Joins and renames live in the view (`docs/CONVENTIONS.md`, "The one-view rule").

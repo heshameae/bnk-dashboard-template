@@ -105,11 +105,15 @@ export function lintViews({ root }) {
     }
     add(fileName, 'RLS line names an exposed column (or none with a reason) and the policy entry matches', rls);
 
-    // Cross-view: one raw column, one business name.
+    // Cross-view: one raw column, one business name. A table joined more than once in this view is
+    // role-playing (the same dimension under two roles), and each role needs its own name, so its
+    // columns are left out of the map: .claude/skills/build-model/references/joins.md, case 6.
+    const timesJoined = new Map();
+    for (const t of v.tables) timesJoined.set(t.table, (timesJoined.get(t.table) ?? 0) + 1);
     for (const it of v.items) {
       if (!it.source || !it.alias) continue;
       const t = aliases.get(it.source.alias);
-      if (!t) continue;
+      if (!t || timesJoined.get(t.table) > 1) continue;
       const key = `${t.table}.${it.source.column.toUpperCase()}`;
       const seen = renames.get(key);
       if (seen && seen.name !== it.alias) results.push({ view: '*', name: 'one raw column, one business name across views', pass: false, count: 1, detail: `${key} is ${seen.name} in ${seen.view} and ${it.alias} in ${fileName}` });

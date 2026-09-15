@@ -95,3 +95,29 @@ test('one raw column, one business name across views', () => {
   }));
   assert.match(r2.text, /FAIL \*: one raw column, one business name.*CBS_BRNCH\.BR_CD is branch_id in dim_branch and branch_code in dim_region/);
 });
+
+test('role-playing: a table joined twice in one view may name its columns per role', () => {
+  const rolePlay = (root) => {
+    writeFileSync(view(root, 'v_accounts'), `-- view: v_accounts
+-- grain: one row per account (CBS_BRNCH joined twice: home and service branch)
+-- RLS: branch_code
+-- sources: CBS_ACCT, CBS_BRNCH
+-- refresh: daily with CBS_ACCT
+-- proof: bi_model/proofs/v_accounts.md (pending)
+CREATE OR REPLACE VIEW bi_model.v_accounts AS
+SELECT acc.ACCT_NO  AS account_id,
+       acc.BR_CD    AS branch_code,
+       hb.BR_NM     AS home_branch_name,
+       sb.BR_NM     AS service_branch_name
+FROM   RAW_CBS.CBS_ACCT acc
+JOIN   RAW_CBS.CBS_BRNCH hb ON hb.BR_CD = acc.BR_CD
+JOIN   RAW_CBS.CBS_BRNCH sb ON sb.BR_CD = acc.BR_CD;
+`);
+    const pol = join(root, 'security', 'rls-policies.yaml');
+    writeFileSync(pol, readFileSync(pol, 'utf8').replace('exemptions: []', '  v_accounts:\n    column: branch_code\n    head_office: all\n    default: none\nexemptions: []'));
+  };
+  const r = run(repo(rolePlay));
+  assert.equal(r.code, 0, r.text);
+  assert.ok(!r.text.includes('CBS_BRNCH.BR_NM'), r.text);
+  assert.match(r.text, /PASS \*: one raw column, one business name/);
+});

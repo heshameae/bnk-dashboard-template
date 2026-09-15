@@ -17,7 +17,7 @@ For every `bi_model/*.sql`, the lines of `docs/review/view-checklist.md` and `do
 5. Every table read has a `sources/<TABLE>.yaml`, and every JOIN lands on the joined table's full `key` from that file. A join off the full key multiplies rows. RIGHT, FULL and CROSS joins fail.
 6. A fact view (`v_*`) has no aggregate, window function, GROUP BY or WHERE: sums belong in recipes, and a filter in a view drops rows silently. A dimension view (`dim_*`) may use a window (a calendar derives flags) but no GROUP BY.
 7. The `RLS` line names a column the view exposes, or `none, <reason>`; `security/rls-policies.yaml` has a matching entry.
-8. Across views: one raw column (`TABLE.COL`) has one business name.
+8. Across views: one raw column (`TABLE.COL`) has one business name. A table a view joins more than once is role-playing (the same dimension under two roles), and its columns are left out of this check for that view; the names carry the role instead. See `.claude/skills/build-model/references/joins.md`, case 6.
 
 The checklist lines that stay with the reviewer: one subject per view, dates through `dim_date`.
 
