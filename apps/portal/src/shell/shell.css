@@ -33,6 +33,13 @@
 .shell-nav__item[aria-current='page'] { background: var(--ds-bg-active); color: var(--ds-text); }
 .shell-nav__sep { border: 0; height: 1px; background: var(--ds-border); margin: var(--ds-space-2) 0; width: 100%; }
 .shell-nav__group { color: var(--ds-text-3); padding: var(--ds-space-1) var(--ds-space-3); }
+/* Recently opened dashboards: quieter rows than the places above them, and long titles cut short. */
+.shell-nav__item--recent { height: var(--ds-control-md); min-width: 0; }
+.shell-nav__item--recent .ds-label { flex: 1; min-width: 0; font-weight: 400; }
+.shell-nav__mark {
+  flex: none; display: grid; place-items: center; width: 16px; height: 16px; border-radius: var(--ds-radius-sm);
+  background: var(--ds-bg-subtle); box-shadow: var(--ds-shadow-border); font-size: 10px; font-weight: 600; color: var(--ds-text-2);
+}
 
 .shell-sidebar__foot { display: flex; align-items: center; gap: var(--ds-space-2); height: 52px; padding: 0 var(--ds-space-3) 0 var(--ds-space-4); border-top: 1px solid var(--ds-border); }
 

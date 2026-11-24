@@ -6,14 +6,18 @@ React app. Read-only. The shell is modelled on Vercel's dashboard and built on o
 
 | Page | Route | State |
 |---|---|---|
-| Dashboards (home) | `#/` | Built. Search, filter, grid or list, and recently opened. |
-| One dashboard | `#/d/<name>` | The frame only: title, state, owner, refresh, blocked and draft notices, and the slot the dashboard's own app loads into. Dashboards are separate apps; their pages are not designed here. |
+| Dashboards (home) | `#/` | Built. Every published dashboard the viewer can open, once: search, grid or list. Recently opened lives in the sidebar. |
+| One dashboard | `#/d/<name>` | The frame only: title, owner, refresh, a draft-number notice, and the slot the dashboard's own app loads into. Dashboards are separate apps; their pages are not designed here. |
 | Analytics | `#/analytics`, `#/analytics/<name>` | The layout only. Pick a dashboard, then viewers, views and return rate over a date range, a chart, and breakdowns by role, person, filter, number and export. The row names are real; every count is empty because the portal does not record usage yet. |
 | Catalog | `#/catalog` | Built, read-only. Every number in the owner's words, with Draft or Confirmed. Confirming from the portal is not wired; the business confirms on the pull request. |
 | Access | `#/access` | Placeholder. The roles table is real; granting, people, requests and the audit log are not built. |
 | Model Explorer | `#/model` | Built (Eng. team). Unchanged, now inside the shell. |
 
 **View as.** The switch at the top of the sidebar stands in for sign-in until SSO is wired. It offers the Eng. team plus every role in `security/rls-policies.yaml`, and it changes navigation only: business viewers do not see Access or Model Explorer, and the catalog shows them only numbers on dashboards they can open. It never changes which rows anyone sees; that is RLS, in `packages/semantic-query` only. The rules are in `src/shell/access.ts`. Which role may open which dashboard is not decided yet, so every viewer sees every dashboard for now.
+
+**Published only.** The portal shows a dashboard only once it is published: its `spec.yaml` says `status: READY` and `verify.md` exists. Anything still being built (no spec, a blocked widget, not verified) is not shown to anyone, the Eng. team included; `/ask-leap-bi` tracks it. So no dashboard in the portal carries a Blocked, In progress or In review badge.
+
+**Recent.** The sidebar lists the last five dashboards the viewer opened, kept in the browser. A dashboard the viewer can no longer open drops out.
 
 **Find.** Press F or ⌘K: dashboards, numbers and pages the viewer can open.
 
@@ -34,13 +38,25 @@ Add `-- --sample` to either data script to render `docs/sample/` instead of the 
 
 | What you see | Where it is read from |
 |---|---|
-| Dashboard title, audience, state, numbers, filters, blocked widgets | `dashboards/<name>/spec.yaml` |
-| A dashboard with no spec yet ("In progress"), its title and owner | `dashboards/<name>/business-context.md` |
-| "Live" rather than "In review" | `dashboards/<name>/verify.md` exists |
+| Whether a dashboard shows at all | `status: READY` in `dashboards/<name>/spec.yaml`, and `dashboards/<name>/verify.md` exists |
+| Dashboard title, audience, numbers, filters | `dashboards/<name>/spec.yaml` |
+| The owner | `dashboards/<name>/business-context.md` |
 | "Refreshes ..." | the `refresh:` of the first clean table the dashboard's recipes read, in `catalog/data-dictionary.yaml` |
 | Catalog meaning, status, owner, what it leaves out | `catalog/kpi-registry.yaml` |
 | The "view as" roles and the Access roles table | `security/rls-policies.yaml` |
 | "Data as of" | nothing yet: it needs the query service to read Oracle, so it says "not connected" |
+
+## Decided
+
+**Where recently opened lives** (2026-11-24, from a five-way prototype of the home page).
+- Direction: in the sidebar, under the places, as "Recent". Up to five, newest first. The home page is one grid, each dashboard once.
+- On a dashboard that is in Recent, its row is highlighted, not Dashboards as well.
+- Rejected: a "Recently opened" column beside the grid (the old page). Every recent dashboard showed twice.
+- Rejected: sorting the grid by last opened. No duplicate, but the cards move as you use them.
+- Rejected: a "Jump back in" strip above the grid. Still a duplicate, only smaller.
+- Rejected: splitting the grid into "Recently opened" and "Everything else". Two headings to scan, and a dashboard jumps sections when you open it.
+
+**No dashboard states on screen** (2026-11-24). A dashboard is in the portal only when it is published, so Blocked, In progress, In review and "widgets wait for a recipe" were removed, with the status filter.
 
 ## What the Model Explorer reads
 

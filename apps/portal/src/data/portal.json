@@ -1,35 +1,6 @@
 {
   "from": "docs/sample",
-  "dashboards": [
-    {
-      "id": "cashboard",
-      "title": "Cash position",
-      "owner": "Head of Treasury",
-      "audience": "treasury",
-      "status": "BLOCKED",
-      "verified": true,
-      "numbers": [
-        "kpi.casa_balance",
-        "kpi.casa_accounts"
-      ],
-      "drafts": [
-        "kpi.casa_accounts"
-      ],
-      "filters": [
-        "branch_code",
-        "customer_segment"
-      ],
-      "widgets": 5,
-      "blocked": [
-        {
-          "widget": "w5",
-          "needs": "a recipe for average daily net inflow; no transaction view exists yet (business-context section 8, question 1)",
-          "backTo": 3
-        }
-      ],
-      "refresh": "daily after CBS load, ~02:30"
-    }
-  ],
+  "dashboards": [],
   "recipes": [
     {
       "id": "kpi.casa_balance",
@@ -38,9 +9,7 @@
       "owner": "head_of_treasury",
       "excludes": "dormant accounts (account_status = 'D')",
       "format": "aed_millions",
-      "dashboards": [
-        "cashboard"
-      ]
+      "dashboards": []
     },
     {
       "id": "kpi.total_balance",
@@ -58,9 +27,7 @@
       "owner": "head_of_treasury",
       "excludes": "zero and negative balances",
       "format": "integer",
-      "dashboards": [
-        "cashboard"
-      ]
+      "dashboards": []
     },
     {
       "id": "kpi.casa_share",

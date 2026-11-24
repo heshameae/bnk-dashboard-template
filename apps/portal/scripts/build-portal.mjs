@@ -1,6 +1,7 @@
 // Generates apps/portal/src/data/portal.json, the shell's data, from the files that own the truth:
-//   dashboards/<name>/spec.yaml              -> the dashboards grid (title, status, numbers, blocked items)
-//   dashboards/<name>/business-context.md    -> a dashboard still in steps 2 to 8 (no spec yet): title and owner
+//   dashboards/<name>/spec.yaml              -> the dashboards grid (title, audience, numbers, filters)
+//   dashboards/<name>/business-context.md    -> the owner
+//   dashboards/<name>/verify.md              -> whether the dashboard is published
 //   catalog/kpi-registry.yaml                -> the catalog (meaning verbatim, status, owner)
 //   catalog/data-dictionary.yaml             -> refresh sentence per clean table
 //   security/rls-policies.yaml               -> the roles the "view as" switch offers
@@ -34,7 +35,12 @@ const names = has('dashboards')
   ? readdirSync(join(repo, 'dashboards'), { withFileTypes: true }).filter((d) => d.isDirectory() && !d.name.startsWith('_')).map((d) => d.name)
   : [];
 
-const dashboards = names.map((name) => {
+// The portal shows published dashboards only: the spec is READY and verify.md exists.
+// A dashboard still being built (no spec, a blocked widget, not verified) is tracked by /ask-leap-bi, not shown here.
+const published = (name) => yaml(`dashboards/${name}/spec.yaml`)?.status === 'READY' && has(`dashboards/${name}/verify.md`);
+const unpublished = names.filter((n) => !published(n));
+
+const dashboards = names.filter(published).map((name) => {
   const spec = yaml(`dashboards/${name}/spec.yaml`);
   const context = text(`dashboards/${name}/business-context.md`);
   const widgets = spec?.widgets ?? [];
@@ -45,14 +51,10 @@ const dashboards = names.map((name) => {
     title: spec?.title ?? titleFrom(context) ?? name,
     owner: ownerFrom(context),
     audience: spec?.audience ?? null,
-    // No spec yet means the dashboard is somewhere in steps 2 to 8.
-    status: spec?.status ?? 'IN_PROGRESS',
-    verified: has(`dashboards/${name}/verify.md`),
     numbers,
     drafts: numbers.filter((id) => kpiById[id]?.status === 'DRAFT'),
     filters: (spec?.filters ?? []).map((f) => f.dimension),
     widgets: widgets.length,
-    blocked: (spec?.blocked ?? []).map((b) => ({ widget: b.widget, needs: b.needs, backTo: b.back_to ?? null })),
     refresh: views.map((v) => refreshOf[v]).find(Boolean) ?? null,
   };
 });
@@ -73,4 +75,4 @@ const out = { from: sample ? 'docs/sample' : 'repo', dashboards, recipes, roles 
 const target = join(here, '..', 'src', 'data', 'portal.json');
 mkdirSync(dirname(target), { recursive: true });
 writeFileSync(target, JSON.stringify(out, null, 2) + '\n');
-console.log(`portal.json: ${dashboards.length} dashboards, ${recipes.length} recipes, ${roles.length} roles (from ${out.from})`);
+console.log(`portal.json: ${dashboards.length} published dashboards (${unpublished.length} not published, not shown), ${recipes.length} recipes, ${roles.length} roles (from ${out.from})`);

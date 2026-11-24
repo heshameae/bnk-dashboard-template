@@ -1,8 +1,8 @@
-/* The sidebar: workspace and "view as" switch, Find, the places, the viewer. */
+/* The sidebar: workspace and "view as" switch, Find, the places, recently opened dashboards, the viewer. */
 import { useState } from 'react';
 import { Avatar, Badge, Button, Icon, Kbd, Menu, MenuItem } from '../ds';
-import { canOpen, type Page } from './access';
-import { href } from './router';
+import { canOpen, dashboardsFor, type Page } from './access';
+import { href, useRoute } from './router';
 import { useSession, viewers } from './session';
 
 const WORKSPACE = 'Leap BI';
@@ -10,8 +10,16 @@ const WORKSPACE = 'Leap BI';
 type Nav = { page: Page; label: string; to: string; icon: React.ReactNode };
 
 export function Sidebar({ active, onFind, onNavigate }: { active: Page | null; onFind: () => void; onNavigate: () => void }) {
-  const { viewer, setViewer, theme, toggleTheme } = useSession();
+  const { viewer, setViewer, theme, toggleTheme, recent } = useSession();
   const [switching, setSwitching] = useState(false);
+  const route = useRoute();
+
+  // Only dashboards this viewer can still open: one unpublished since, or another role's, drops out.
+  const openable = dashboardsFor(viewer);
+  const recents = recent.map((id) => openable.find((d) => d.id === id)).filter((d) => d !== undefined);
+  const here = route.page === 'dashboard' ? route.id : null;
+  // On a dashboard in Recent, that row is the one highlighted, not Dashboards as well.
+  const isCurrent = (n: Nav) => active === n.page && !(n.page === 'home' && recents.some((d) => d.id === here));
 
   const main: Nav[] = [
     { page: 'home', label: 'Dashboards', to: href.home, icon: <Icon.LayoutGrid size={16} /> },
@@ -24,7 +32,7 @@ export function Sidebar({ active, onFind, onNavigate }: { active: Page | null; o
   ];
   const link = (n: Nav) =>
     canOpen(viewer, n.page) && (
-      <a key={n.page} href={n.to} className="shell-nav__item" aria-current={active === n.page ? 'page' : undefined} onClick={onNavigate}>
+      <a key={n.page} href={n.to} className="shell-nav__item" aria-current={isCurrent(n) ? 'page' : undefined} onClick={onNavigate}>
         {n.icon}
         <span className="ds-label">{n.label}</span>
       </a>
@@ -61,6 +69,18 @@ export function Sidebar({ active, onFind, onNavigate }: { active: Page | null; o
 
       <nav className="shell-nav">
         {main.map(link)}
+        {recents.length > 0 && (
+          <>
+            <hr className="shell-nav__sep" />
+            <div className="shell-nav__group ds-caption">Recent</div>
+            {recents.map((d) => (
+              <a key={d.id} href={href.dashboard(d.id)} className="shell-nav__item shell-nav__item--recent" title={d.title} aria-current={here === d.id ? 'page' : undefined} onClick={onNavigate}>
+                <span className="shell-nav__mark" aria-hidden="true">{d.title.charAt(0).toUpperCase()}</span>
+                <span className="ds-label ds-truncate">{d.title}</span>
+              </a>
+            ))}
+          </>
+        )}
         {viewer.eng && (
           <>
             <hr className="shell-nav__sep" />

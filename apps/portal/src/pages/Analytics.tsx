@@ -7,7 +7,6 @@ import { dashboardsFor } from '../shell/access';
 import { humanize, roles, type Dashboard } from '../shell/data';
 import { go, href } from '../shell/router';
 import { useSession } from '../shell/session';
-import { DashboardBadge } from './status';
 
 /* ------------------------------------------------------------- the picker */
 export function AnalyticsPicker() {
@@ -24,8 +23,8 @@ export function AnalyticsPicker() {
         <p className="ds-muted an-pick__text">Choose a dashboard to continue</p>
         {all.length === 0 ? (
           <Card className="an-pick__list">
-            <EmptyState icon={<Icon.LayoutDashboard size={18} />} title="No dashboards yet">
-              A dashboard shows here once its folder exists under dashboards/.
+            <EmptyState icon={<Icon.LayoutDashboard size={18} />} title="No dashboards published yet">
+              A dashboard shows here once its spec is ready and it has passed verify.
             </EmptyState>
           </Card>
         ) : (
@@ -101,7 +100,6 @@ export function AnalyticsPage({ d }: { d: Dashboard }) {
           <span className="ds-truncate">{d.title}</span>
           <Icon.ArrowUpRight size={14} className="ds-muted" />
         </a>
-        <DashboardBadge d={d} />
         <span style={{ flex: 1 }} />
         <div style={{ position: 'relative' }}>
           <Button size="lg" onClick={() => setRanging((r) => !r)} aria-haspopup="menu" aria-expanded={ranging}>

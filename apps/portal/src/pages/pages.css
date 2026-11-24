@@ -3,9 +3,6 @@
 /* ------------------------------------------------------------------- home */
 .home-toolbar { display: flex; gap: var(--ds-space-2); align-items: center; margin-bottom: var(--ds-space-8); }
 .home-toolbar__search { flex: 1; }
-.home-toolbar .ds-button[data-on] { color: var(--ds-accent); }
-.home-columns { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: var(--ds-space-6); align-items: start; }
-.home-side { display: grid; gap: var(--ds-space-8); }
 .home-list { display: grid; }
 .home-row { display: flex; align-items: center; gap: var(--ds-space-3); min-height: 48px; padding: var(--ds-space-2) var(--ds-space-4); min-width: 0; }
 .home-list > .home-row + .home-row { border-top: 1px solid var(--ds-border); }
@@ -101,8 +98,6 @@
 
 /* ------------------------------------------------------------------ phone */
 @media (max-width: 1000px) {
-  .home-columns { grid-template-columns: minmax(0, 1fr); }
-  .home-main { order: -1; }
   .an-grid--2 { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 640px) {

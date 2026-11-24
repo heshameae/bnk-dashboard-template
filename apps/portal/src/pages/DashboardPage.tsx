@@ -1,11 +1,11 @@
 /* One dashboard. The portal draws only the frame: its title, state and freshness, and the slot the
-   dashboard's own app loads into. Dashboards are separate apps; their pages are not designed here. */
+   dashboard's own app loads into. Only published dashboards reach here. Dashboards are separate apps; their pages are not designed here. */
 import { useEffect } from 'react';
 import { Card, EmptyState, Icon, Notice } from '../ds';
 import { humanize, recipeById, type Dashboard } from '../shell/data';
 import { href } from '../shell/router';
 import { useSession } from '../shell/session';
-import { DashboardBadge, RecipeBadge } from './status';
+import { RecipeBadge } from './status';
 
 export function DashboardPage({ d }: { d: Dashboard }) {
   const { touch } = useSession();
@@ -22,7 +22,6 @@ export function DashboardPage({ d }: { d: Dashboard }) {
     <div className="shell-page">
       <div className="dash-head">
         <h1 className="ds-h1">{d.title}</h1>
-        <DashboardBadge d={d} />
       </div>
       <dl className="dash-meta">
         {meta.map(([k, v]) => (
@@ -31,12 +30,6 @@ export function DashboardPage({ d }: { d: Dashboard }) {
       </dl>
 
       <div className="dash-notices">
-        {d.blocked.length > 0 && (
-          <Notice tone="amber" icon={<Icon.TriangleAlert size={16} />}>
-            <strong className="ds-label">{d.blocked.length === 1 ? 'One widget is' : `${d.blocked.length} widgets are`} blocked.</strong>{' '}
-            {d.blocked.map((b) => `${b.widget} needs ${b.needs}`).join(' ')}
-          </Notice>
-        )}
         {d.drafts.length > 0 && (
           <Notice tone="blue" icon={<Icon.Info size={16} />}>
             {d.drafts.length === 1 ? 'One number is' : `${d.drafts.length} numbers are`} still a draft. Its values are a preview until the business confirms the meaning in the <a href={href.catalog('drafts')} className="dash-link">catalog</a>.
