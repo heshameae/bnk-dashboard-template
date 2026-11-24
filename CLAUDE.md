@@ -39,7 +39,7 @@ Be exact about this; it has caused confusion before.
 | Ten skills in `.claude/skills/` | Written from the design. **None has been run on a real input yet.** Expect them to be wrong in places; fixing them is the work. |
 | `docs/contracts/*` | The file shapes every skill reads and writes. The source of truth when a skill and a contract disagree. |
 | `docs/sample/` | The **sample world**: one dashboard (the Cashboard) with arbitrary values, showing what every file looks like part-way through the flow. Same tree as the root. No skill reads it. The root folders `sources/`, `bi_model/`, `catalog/`, `security/`, `dashboards/` start empty and are filled only by the skills. |
-| `apps/portal` | The Model Explorer is built and reads `sources/` and `catalog/` only. Dashboards, Catalog, Explore and Admin tabs are not built. |
+| `apps/portal` | The shell is built (Vercel-style, design system in `src/ds/`): dashboards home, a frame per dashboard, usage analytics (layout only; no usage is recorded yet), a read-only catalog, Find, and a "view as" switch standing in for sign-in. Access is a placeholder. The Model Explorer is built and sits inside the shell. Explore is not built. Everything reads the repo's files through two scripts; nothing is fetched from Oracle. |
 | `packages/import-schema`, `packages/business-context` | Built, with tests. Step 1's parser and validator; step 2's `.docx` reader and checker. |
 | `packages/registry-lint` | The view checks are built and tested (`npm run lint:registry -- views`). The registry, acceptance, policy and spec rules are not. |
 | `packages/semantic-query` | README only. No code. `package.json` scripts and `.github/workflows/ci.yml` point at files that do not exist yet. |
@@ -75,7 +75,7 @@ bi_model/           steps 3 to 7 · clean tables as SQL; proofs/ holds the evide
 catalog/            kpi-registry.yaml (recipes), data-dictionary.yaml (generated), acceptance.yaml (finance)
 security/           rls-policies.yaml, test-users.yaml, entitlements.sql
 packages/           import-schema (step 1 parser + validator; built), business-context (step 2 docx reader + checker; built), registry-lint (view checks built; registry rules to build), semantic-query (recipe + user to SQL)
-apps/portal/        React; Model Explorer built, other tabs to build
+apps/portal/        React; the shell, catalog and Model Explorer built; analytics and access placeholders
 docs/               WORKFLOW.md, contracts/, templates/ (the form the business fills), review/, rls.md, proofs.md, CONVENTIONS.md, sample/ (the filled example, read by nothing)
 .claude/skills/     one skill per step, plus ask-leap-bi (the map) and vocabulary
 ```

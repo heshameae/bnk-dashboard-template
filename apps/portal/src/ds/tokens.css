@@ -1,0 +1,185 @@
+/* The portal's design tokens. One home for every colour, size, radius, shadow and font.
+   Values were measured off the reference (Vercel's dashboard, captured 2026-09-29) and then made ours:
+   Inter instead of Geist, and our accent. Change a value here, never in a component.
+
+   Three layers, read top to bottom:
+   1. Primitives: raw scales (gray, blue, red, amber, green). Named by step, not by use.
+   2. Semantic: what a value is for (text, surface, border, accent, status). Components read only these.
+   3. Scales: type, space, radius, shadow, motion, layout.
+   Dark mode redefines layer 1 only, so layers 2 and 3 follow on their own.
+   Every name starts with --ds- so nothing collides with the Model Explorer's older tokens. */
+
+:root {
+  /* ---------------------------------------------------------------- 1. primitives */
+  --ds-background-100: hsl(0 0% 100%);
+  --ds-background-200: hsl(0 0% 98%);
+
+  --ds-gray-100: hsl(0 0% 95%);
+  --ds-gray-200: hsl(0 0% 92%);
+  --ds-gray-300: hsl(0 0% 90%);
+  --ds-gray-400: hsl(0 0% 92%);
+  --ds-gray-500: hsl(0 0% 79%);
+  --ds-gray-600: hsl(0 0% 66%);
+  --ds-gray-700: hsl(0 0% 56%);
+  --ds-gray-800: hsl(0 0% 49%);
+  --ds-gray-900: hsl(0 0% 30%);
+  --ds-gray-1000: hsl(0 0% 9%);
+
+  --ds-gray-alpha-100: #0000000d;
+  --ds-gray-alpha-200: #00000014;
+  --ds-gray-alpha-300: #0000001a;
+  --ds-gray-alpha-400: #00000014;
+  --ds-gray-alpha-500: #00000036;
+  --ds-gray-alpha-600: #00000057;
+
+  --ds-blue-100: hsl(212 100% 97%);
+  --ds-blue-200: hsl(210 100% 96%);
+  --ds-blue-300: hsl(210 100% 94%);
+  --ds-blue-700: hsl(212 100% 48%);
+  --ds-blue-900: hsl(211 100% 42%);
+
+  --ds-red-100: hsl(0 100% 97%);
+  --ds-red-200: hsl(0 100% 96%);
+  --ds-red-300: hsl(0 100% 95%);
+  --ds-red-700: hsl(358 75% 59%);
+  --ds-red-900: hsl(358 66% 48%);
+
+  --ds-amber-100: hsl(39 100% 95%);
+  --ds-amber-200: hsl(44 100% 92%);
+  --ds-amber-300: hsl(43 96% 90%);
+  --ds-amber-700: hsl(39 100% 57%);
+  --ds-amber-900: hsl(30 100% 32%);
+
+  --ds-green-100: hsl(120 60% 96%);
+  --ds-green-200: hsl(120 60% 95%);
+  --ds-green-300: hsl(120 60% 91%);
+  --ds-green-700: hsl(131 41% 46%);
+  --ds-green-900: hsl(133 50% 32%);
+
+  /* The bank's accent. The one value to change to rebrand: links, focus ring, selection. */
+  --ds-brand: #266df0;
+  --ds-brand-100: #266df01a;
+
+  /* ------------------------------------------------------------------ 2. semantic */
+  --ds-bg: var(--ds-background-200);            /* page and chrome */
+  --ds-bg-raised: var(--ds-background-100);     /* cards, menus, inputs */
+  --ds-bg-subtle: var(--ds-gray-100);           /* filled inputs, skeletons, card footers */
+  --ds-bg-hover: var(--ds-gray-alpha-100);
+  --ds-bg-active: var(--ds-gray-200);           /* the selected nav item */
+
+  --ds-text: var(--ds-gray-1000);
+  --ds-text-2: var(--ds-gray-900);              /* secondary: descriptions, idle nav */
+  --ds-text-3: var(--ds-gray-700);              /* tertiary: placeholders, meta */
+  --ds-text-on-inverse: var(--ds-background-100);
+
+  --ds-border: var(--ds-gray-alpha-400);
+  --ds-border-strong: var(--ds-gray-alpha-500);
+
+  --ds-accent: var(--ds-brand);
+  --ds-accent-bg: var(--ds-brand-100);
+
+  --ds-button-primary-bg: var(--ds-gray-1000);
+  --ds-button-primary-bg-hover: hsl(0 0% 22%);
+  --ds-button-primary-text: var(--ds-background-100);
+
+  --ds-success: var(--ds-green-700);   --ds-success-text: var(--ds-green-900);   --ds-success-bg: var(--ds-green-200);
+  --ds-warning: var(--ds-amber-700);   --ds-warning-text: var(--ds-amber-900);   --ds-warning-bg: var(--ds-amber-200);
+  --ds-danger:  var(--ds-red-700);     --ds-danger-text:  var(--ds-red-900);     --ds-danger-bg:  var(--ds-red-200);
+  --ds-info:    var(--ds-blue-700);    --ds-info-text:    var(--ds-blue-900);    --ds-info-bg:    var(--ds-blue-200);
+
+  --ds-focus-ring: 0 0 0 2px var(--ds-background-100), 0 0 0 4px var(--ds-accent);
+
+  /* ------------------------------------------------------------------- 3. scales */
+  --ds-font: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ds-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+
+  /* Type: size / line height. Weights are 400 (body), 500 (labels, titles in lists), 600 (headings). */
+  --ds-text-12: 12px;  --ds-leading-12: 16px;
+  --ds-text-13: 13px;  --ds-leading-13: 18px;
+  --ds-text-14: 14px;  --ds-leading-14: 20px;
+  --ds-text-16: 16px;  --ds-leading-16: 24px;
+  --ds-text-20: 20px;  --ds-leading-20: 28px;
+  --ds-text-24: 24px;  --ds-leading-24: 32px;
+  --ds-text-32: 32px;  --ds-leading-32: 40px;
+  /* Inter runs wider than Geist, so the tracking is half the reference's. */
+  --ds-tracking-label: -0.01em;
+  --ds-tracking-heading: -0.02em;
+
+  /* Space: a 4px grid. */
+  --ds-space-1: 4px;   --ds-space-2: 8px;   --ds-space-3: 12px;  --ds-space-4: 16px;
+  --ds-space-5: 20px;  --ds-space-6: 24px;  --ds-space-8: 32px;  --ds-space-10: 40px;
+  --ds-space-12: 48px; --ds-space-16: 64px;
+
+  --ds-radius-sm: 4px;
+  --ds-radius: 6px;        /* controls and cards */
+  --ds-radius-lg: 12px;    /* menus and dialogs */
+  --ds-radius-full: 999px;
+
+  /* Borders are drawn as shadows, so a card's edge never shifts its layout. */
+  --ds-shadow-border: 0 0 0 1px var(--ds-border);
+  --ds-shadow-card: 0 0 0 1px var(--ds-border), 0 2px 2px #0000000a;
+  --ds-shadow-menu: 0 0 0 1px var(--ds-border), 0 1px 1px #00000005, 0 4px 8px -4px #0000000a, 0 16px 24px -8px #0000000f;
+  --ds-shadow-modal: 0 0 0 1px var(--ds-border), 0 1px 1px #00000005, 0 8px 16px -4px #0000000a, 0 24px 32px -8px #0000000f;
+
+  --ds-ease: cubic-bezier(0.2, 0, 0, 1);
+  --ds-duration: 150ms;
+
+  /* Control heights. */
+  --ds-control-sm: 24px;
+  --ds-control-md: 32px;
+  --ds-control-lg: 36px;
+
+  /* Layout. */
+  --ds-sidebar-w: 256px;
+  --ds-topbar-h: 56px;
+  --ds-page-max: 1200px;
+
+  color-scheme: light;
+}
+
+/* Dark: primitives only. */
+:root[data-theme='dark'] {
+  --ds-background-100: hsl(0 0% 4%);
+  --ds-background-200: hsl(0 0% 0%);
+
+  --ds-gray-100: hsl(0 0% 10%);
+  --ds-gray-200: hsl(0 0% 12%);
+  --ds-gray-300: hsl(0 0% 16%);
+  --ds-gray-400: hsl(0 0% 18%);
+  --ds-gray-500: hsl(0 0% 27%);
+  --ds-gray-600: hsl(0 0% 53%);
+  --ds-gray-700: hsl(0 0% 56%);
+  --ds-gray-800: hsl(0 0% 49%);
+  --ds-gray-900: hsl(0 0% 63%);
+  --ds-gray-1000: hsl(0 0% 93%);
+
+  --ds-gray-alpha-100: #ffffff0f;
+  --ds-gray-alpha-200: #ffffff17;
+  --ds-gray-alpha-300: #ffffff21;
+  --ds-gray-alpha-400: #ffffff24;
+  --ds-gray-alpha-500: #ffffff3d;
+  --ds-gray-alpha-600: #ffffff82;
+
+  --ds-blue-100: hsl(216 50% 12%);
+  --ds-blue-200: hsl(214 59% 15%);
+  --ds-blue-300: hsl(213 71% 20%);
+  --ds-blue-900: hsl(210 100% 66%);
+  --ds-red-100: hsl(357 37% 12%);
+  --ds-red-200: hsl(357 46% 16%);
+  --ds-red-300: hsl(356 54% 22%);
+  --ds-red-900: hsl(358 100% 69%);
+  --ds-amber-100: hsl(35 100% 8%);
+  --ds-amber-200: hsl(32 100% 10%);
+  --ds-amber-300: hsl(33 100% 15%);
+  --ds-amber-900: hsl(39 90% 50%);
+  --ds-green-100: hsl(136 50% 9%);
+  --ds-green-200: hsl(137 50% 12%);
+  --ds-green-300: hsl(136 50% 14%);
+  --ds-green-900: hsl(131 43% 57%);
+
+  --ds-brand: #4d8af5;
+  --ds-brand-100: #4d8af526;
+  --ds-button-primary-bg-hover: hsl(0 0% 80%);
+
+  color-scheme: dark;
+}

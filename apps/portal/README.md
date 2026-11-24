@@ -1,23 +1,46 @@
 # portal
 
-React app. Read-only except the Admin tab's ENTITLEMENTS table.
+React app. Read-only. The shell is modelled on Vercel's dashboard and built on one design system, `src/ds/` (see its README). Every screen is made from its components and tokens.
 
-- **Model Explorer** (built): the two layers of the model as a graph you can walk. `Sources` is the
-  raw tables the DEs filed in `sources/*.yaml`; `BI model` is the clean tables in
-  `catalog/data-dictionary.yaml` with the recipes that read them. Click a table for its grain,
-  profile, relationships and what every column means.
-- **Dashboards**: generated pages under `src/dashboards/<name>/` from `dashboards/<name>/spec.yaml`; every number comes through semantic-query.
-- **Catalog**: `kpi-registry.yaml` and `data-dictionary.yaml` rendered; lineage raw table → clean table → recipe → dashboard; business confirms DRAFT recipes here (phase 1: the PR preview of the same page).
-- **Explore**: drag a recipe and a dimension from one clean table; the same semantic-query, the same RLS.
-- **Admin**: the "RLS portal". Grant and revoke entitlement values, maker-checker, audit log, view-as-user. Values are picked from the dimension's list, never typed.
+## What is built
+
+| Page | Route | State |
+|---|---|---|
+| Dashboards (home) | `#/` | Built. Search, filter, grid or list, and recently opened. |
+| One dashboard | `#/d/<name>` | The frame only: title, state, owner, refresh, blocked and draft notices, and the slot the dashboard's own app loads into. Dashboards are separate apps; their pages are not designed here. |
+| Analytics | `#/analytics`, `#/analytics/<name>` | The layout only. Pick a dashboard, then viewers, views and return rate over a date range, a chart, and breakdowns by role, person, filter, number and export. The row names are real; every count is empty because the portal does not record usage yet. |
+| Catalog | `#/catalog` | Built, read-only. Every number in the owner's words, with Draft or Confirmed. Confirming from the portal is not wired; the business confirms on the pull request. |
+| Access | `#/access` | Placeholder. The roles table is real; granting, people, requests and the audit log are not built. |
+| Model Explorer | `#/model` | Built (Eng. team). Unchanged, now inside the shell. |
+
+**View as.** The switch at the top of the sidebar stands in for sign-in until SSO is wired. It offers the Eng. team plus every role in `security/rls-policies.yaml`, and it changes navigation only: business viewers do not see Access or Model Explorer, and the catalog shows them only numbers on dashboards they can open. It never changes which rows anyone sees; that is RLS, in `packages/semantic-query` only. The rules are in `src/shell/access.ts`. Which role may open which dashboard is not decided yet, so every viewer sees every dashboard for now.
+
+**Find.** Press F or ⌘K: dashboards, numbers and pages the viewer can open.
 
 ## Run it
 
 ```sh
 npm install
-npm run graph -w @bank-dashboards/portal   # rebuild src/data/graph.json from the yaml
-npm run dev   -w @bank-dashboards/portal   # http://localhost:5173
+npm run portal-data -w @bank-dashboards/portal   # rebuild src/data/portal.json (dashboards, catalog, roles)
+npm run graph -w @bank-dashboards/portal         # rebuild src/data/graph.json (Model Explorer)
+npm run dev   -w @bank-dashboards/portal         # http://localhost:5173
 ```
+
+Add `-- --sample` to either data script to render `docs/sample/` instead of the repo's own files.
+
+## What the shell reads
+
+`scripts/build-portal.mjs` writes `src/data/portal.json`. Every input is optional; a field the files do not hold shows as "not given".
+
+| What you see | Where it is read from |
+|---|---|
+| Dashboard title, audience, state, numbers, filters, blocked widgets | `dashboards/<name>/spec.yaml` |
+| A dashboard with no spec yet ("In progress"), its title and owner | `dashboards/<name>/business-context.md` |
+| "Live" rather than "In review" | `dashboards/<name>/verify.md` exists |
+| "Refreshes ..." | the `refresh:` of the first clean table the dashboard's recipes read, in `catalog/data-dictionary.yaml` |
+| Catalog meaning, status, owner, what it leaves out | `catalog/kpi-registry.yaml` |
+| The "view as" roles and the Access roles table | `security/rls-policies.yaml` |
+| "Data as of" | nothing yet: it needs the query service to read Oracle, so it says "not connected" |
 
 ## What the Model Explorer reads
 

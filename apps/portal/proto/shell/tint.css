@@ -1,0 +1,60 @@
+/* Shared by the three new directions: cool slate neutrals in place of pure gray, and an inky
+   primary instead of black. Primitives only, so every ds component follows. */
+:root[data-proto]:not([data-proto='current']):not([data-theme='dark']) {
+  --ds-background-100: hsl(0 0% 100%);
+  --ds-background-200: hsl(220 22% 97.5%);
+  --ds-gray-100: hsl(220 18% 95%);
+  --ds-gray-200: hsl(220 16% 92.5%);
+  --ds-gray-300: hsl(220 14% 90%);
+  --ds-gray-400: hsl(220 14% 91%);
+  --ds-gray-500: hsl(220 10% 78%);
+  --ds-gray-600: hsl(220 8% 65%);
+  --ds-gray-700: hsl(220 8% 52%);
+  --ds-gray-800: hsl(220 8% 45%);
+  --ds-gray-900: hsl(220 14% 30%);
+  --ds-gray-1000: hsl(222 30% 12%);
+  --ds-gray-alpha-100: hsl(220 40% 20% / 0.05);
+  --ds-gray-alpha-200: hsl(220 40% 20% / 0.08);
+  --ds-gray-alpha-300: hsl(220 40% 20% / 0.1);
+  --ds-gray-alpha-400: hsl(220 40% 20% / 0.09);
+  --ds-gray-alpha-500: hsl(220 40% 20% / 0.2);
+  --ds-gray-alpha-600: hsl(220 40% 20% / 0.34);
+  --ds-button-primary-bg-hover: hsl(222 24% 24%);
+}
+
+:root[data-proto]:not([data-proto='current'])[data-theme='dark'] {
+  --ds-background-100: hsl(222 14% 9%);
+  --ds-background-200: hsl(222 16% 6%);
+  --ds-gray-100: hsl(222 12% 12%);
+  --ds-gray-200: hsl(222 12% 14%);
+  --ds-gray-300: hsl(222 11% 18%);
+  --ds-gray-400: hsl(222 11% 19%);
+  --ds-gray-500: hsl(222 9% 28%);
+  --ds-gray-600: hsl(222 8% 52%);
+  --ds-gray-700: hsl(222 8% 58%);
+  --ds-gray-800: hsl(222 7% 50%);
+  --ds-gray-900: hsl(222 10% 68%);
+  --ds-gray-1000: hsl(220 20% 94%);
+  --ds-gray-alpha-100: hsl(220 60% 92% / 0.06);
+  --ds-gray-alpha-200: hsl(220 60% 92% / 0.09);
+  --ds-gray-alpha-300: hsl(220 60% 92% / 0.13);
+  --ds-gray-alpha-400: hsl(220 60% 92% / 0.12);
+  --ds-gray-alpha-500: hsl(220 60% 92% / 0.24);
+  --ds-gray-alpha-600: hsl(220 60% 92% / 0.5);
+  --ds-button-primary-bg-hover: hsl(220 14% 80%);
+}
+
+/* Pieces the three directions share. */
+.pv-mark {
+  width: 28px; height: 28px; flex: none; border-radius: 8px; display: grid; place-items: center;
+  background: var(--ds-accent); color: #fff;
+}
+.pv-crumbs { display: flex; align-items: center; gap: 2px; min-width: 0; flex: 1; }
+.pv-crumbs .shell-scope { color: var(--ds-text-3); margin-left: -8px; margin-right: -2px; }
+.pv-crumbs a.shell-scope:hover { color: var(--ds-text); background: var(--ds-bg-hover); }
+.pv-crumbs .lucide-arrow-left { display: none; }
+.pv-crumbs__sep { color: var(--ds-gray-500); padding: 0 2px; }
+.pv-crumbs__title { min-width: 0; }
+@media (max-width: 860px) {
+  .pv-crumbs > :not(.pv-crumbs__title) { display: none; }
+}

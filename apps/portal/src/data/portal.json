@@ -1,0 +1,105 @@
+{
+  "from": "docs/sample",
+  "dashboards": [
+    {
+      "id": "cashboard",
+      "title": "Cash position",
+      "owner": "Head of Treasury",
+      "audience": "treasury",
+      "status": "BLOCKED",
+      "verified": true,
+      "numbers": [
+        "kpi.casa_balance",
+        "kpi.casa_accounts"
+      ],
+      "drafts": [
+        "kpi.casa_accounts"
+      ],
+      "filters": [
+        "branch_code",
+        "customer_segment"
+      ],
+      "widgets": 5,
+      "blocked": [
+        {
+          "widget": "w5",
+          "needs": "a recipe for average daily net inflow; no transaction view exists yet (business-context section 8, question 1)",
+          "backTo": 3
+        }
+      ],
+      "refresh": "daily after CBS load, ~02:30"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "kpi.casa_balance",
+      "status": "CONFIRMED",
+      "meaning": "Total CASA balance at close of the last business day, dormant accounts excluded",
+      "owner": "head_of_treasury",
+      "excludes": "dormant accounts (account_status = 'D')",
+      "format": "aed_millions",
+      "dashboards": [
+        "cashboard"
+      ]
+    },
+    {
+      "id": "kpi.total_balance",
+      "status": "CONFIRMED",
+      "meaning": "Total ledger balance across all products at close of the last business day",
+      "owner": "head_of_treasury",
+      "excludes": "nothing; confirmed by head_of_treasury",
+      "format": "aed_millions",
+      "dashboards": []
+    },
+    {
+      "id": "kpi.casa_accounts",
+      "status": "DRAFT",
+      "meaning": "Number of CASA accounts with a positive balance at close of the last business day",
+      "owner": "head_of_treasury",
+      "excludes": "zero and negative balances",
+      "format": "integer",
+      "dashboards": [
+        "cashboard"
+      ]
+    },
+    {
+      "id": "kpi.casa_share",
+      "status": "DRAFT",
+      "meaning": "CASA balance as a share of total ledger balance, last business day",
+      "owner": "head_of_treasury",
+      "excludes": "inherits both recipes' exclusions",
+      "format": "percent_1dp",
+      "dashboards": []
+    }
+  ],
+  "roles": [
+    {
+      "id": "head_office",
+      "groups": [
+        "GRP-BI-HQ"
+      ],
+      "note": "bank-wide"
+    },
+    {
+      "id": "finance",
+      "groups": [
+        "GRP-BI-FINANCE"
+      ],
+      "note": "bank-wide, read-only"
+    },
+    {
+      "id": "region_head",
+      "groups": [
+        "GRP-BI-REGION"
+      ],
+      "note": "their regions' branches, granted as branch rows"
+    },
+    {
+      "id": "branch_manager",
+      "groups": [
+        "GRP-BI-BRANCH"
+      ],
+      "note": "their branches"
+    }
+  ]
+}
