@@ -1,0 +1,16 @@
+# Written by /spec from design-export/ + kpi-registry.yaml. Contract: docs/contracts/spec.md
+dashboard: daily-balances
+title: "Daily balances"
+audience: finance
+status: READY
+filters:
+  - { dimension: branch_code }
+  - { dimension: customer_segment }
+widgets:
+  - { id: w1, kind: kpi-card, kpi: kpi.total_balance, show: [value, compare] }
+  - { id: w2, kind: line,     kpi: kpi.total_balance, by: snapshot_date, range: last_90_business_days }
+  - { id: w3, kind: bar,      kpi: kpi.total_balance, by: product_family, sort: desc }
+  - { id: w4, kind: kpi-card, kpi: kpi.casa_balance, show: [value, compare] }
+interactions:
+  - { click: w3, sets_filter: product_family }
+blocked: []

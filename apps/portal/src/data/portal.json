@@ -1,6 +1,40 @@
 {
   "from": "docs/sample",
-  "dashboards": [],
+  "dashboards": [
+    {
+      "id": "branch-balances",
+      "title": "Branch balances",
+      "owner": "Head of Branch Network",
+      "audience": "branch_manager",
+      "numbers": [
+        "kpi.casa_balance",
+        "kpi.total_balance"
+      ],
+      "drafts": [],
+      "filters": [
+        "branch_code"
+      ],
+      "widgets": 3,
+      "refresh": "daily after CBS load, ~02:30"
+    },
+    {
+      "id": "daily-balances",
+      "title": "Daily balances",
+      "owner": "Head of Finance Reporting",
+      "audience": "finance",
+      "numbers": [
+        "kpi.total_balance",
+        "kpi.casa_balance"
+      ],
+      "drafts": [],
+      "filters": [
+        "branch_code",
+        "customer_segment"
+      ],
+      "widgets": 4,
+      "refresh": "daily after CBS load, ~02:30"
+    }
+  ],
   "recipes": [
     {
       "id": "kpi.casa_balance",
@@ -9,7 +43,10 @@
       "owner": "head_of_treasury",
       "excludes": "dormant accounts (account_status = 'D')",
       "format": "aed_millions",
-      "dashboards": []
+      "dashboards": [
+        "branch-balances",
+        "daily-balances"
+      ]
     },
     {
       "id": "kpi.total_balance",
@@ -18,7 +55,10 @@
       "owner": "head_of_treasury",
       "excludes": "nothing; confirmed by head_of_treasury",
       "format": "aed_millions",
-      "dashboards": []
+      "dashboards": [
+        "branch-balances",
+        "daily-balances"
+      ]
     },
     {
       "id": "kpi.casa_accounts",
