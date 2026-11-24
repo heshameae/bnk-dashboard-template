@@ -8,7 +8,7 @@ React app. Read-only. The shell is modelled on Vercel's dashboard and built on o
 |---|---|---|
 | Dashboards (home) | `#/` | Built. Every published dashboard the viewer can open, once: search, grid or list. Recently opened lives in the sidebar. |
 | One dashboard | `#/d/<name>` | The dashboard's own app fills the page; the portal adds no header. The info button in the topbar shows owner, audience, refresh and the numbers on it. Dashboards are separate apps; their pages are not designed here. |
-| Analytics | `#/analytics`, `#/analytics/<name>` | The layout only. Pick a dashboard, then viewers, views and return rate over a date range, a chart, and breakdowns by role, person, filter, number and export. The row names are real; every count is empty because the portal does not record usage yet. |
+| Analytics | `#/analytics`, `#/analytics/<name>` | The layout only. Pick a dashboard, then viewers, views and return rate over a date range, a chart, and breakdowns by role, person, filter, number and export. The row names are real; every count is empty because the portal does not record usage yet. A redesign is chosen and prototyped in `proto/analytics/`, not built here yet; see Decided. |
 | Catalog | `#/catalog` | Built, read-only. Every number in the owner's words, with Draft or Confirmed. Confirming from the portal is not wired; the business confirms on the pull request. |
 | Access | `#/access` | Placeholder. The roles table is real; granting, people, requests and the audit log are not built. |
 | Model Explorer | `#/model` | Built (Eng. team). Unchanged, now inside the shell. |
@@ -55,6 +55,20 @@ Add `-- --sample` to either data script to render `docs/sample/` instead of the 
 - Rejected: sorting the grid by last opened. No duplicate, but the cards move as you use them.
 - Rejected: a "Jump back in" strip above the grid. Still a duplicate, only smaller.
 - Rejected: splitting the grid into "Recently opened" and "Everything else". Two headings to scan, and a dashboard jumps sections when you open it.
+
+**The next Analytics page** (2026-11-24, from three rounds of prototypes; chosen, not built into the real page yet).
+- Direction: "Wide", one page about one dashboard. Analytics opens straight on a dashboard, with no page to choose from first. The title is the dashboard switcher.
+- Top: small figures with a change chip against the period before: people, opens, came back, busiest day.
+- Middle: a smooth line of people per day running edge to edge, per week over 90 days, with month ends and new versions marked on it. Opens is a second line, off until its figure is clicked.
+- Bottom: two cards. People by role, and a weekday-by-hour heatmap of when it is opened.
+- Reading a value: point, tap or use the arrow keys. The reading shows on the chart's axis and in the heatmap card's title. No tooltips.
+- Borrowed from visitors.now: text in a narrow column with the chart at full width, quiet figures, marks on the timeline.
+- Rejected: today's page, a copy of Vercel's analytics. A page to choose a dashboard before anything shows, then tabs, a chart and four panels.
+- Rejected: one sortable table of every dashboard (all numbers, no picture until a row is opened); a strip of day squares per dashboard (exact figures need a mouse); usage written out as sentences (slow to scan).
+- Rejected: Focus, one big number over thin day bars (calmer, says less). People, a named list of who opened it (needs sign-in, and a policy call on showing names). Today, hour by hour and live (needs opens logged as they happen).
+- Rejected: seven weekday bars in the second card. They say which day; the heatmap also says what time of day.
+- Open: the portal records no usage. Either the real page ships with sample usage behind a new contract, or it says "Usage is not recorded yet" until opens are logged.
+- The prototype: `proto/analytics/`. Throwaway, imported by nothing, and every number, name and "New version" mark in it is made up. Run `npm run dev -w @bank-dashboards/portal` and open http://localhost:5173/proto/analytics/ (1 heatmap, 2 bars, E for today's empty state, M for 60 dashboards). The variants not chosen are still in the folder, unused. Delete the folder when the real page is built.
 
 **No dashboard states on screen** (2026-11-24). A dashboard is in the portal only when it is published, so Blocked, In progress, In review and "widgets wait for a recipe" were removed, with the status filter.
 
