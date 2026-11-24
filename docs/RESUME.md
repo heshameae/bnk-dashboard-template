@@ -1,4 +1,4 @@
-# Resume note (updated 2026-09-08)
+# Resume note (updated 2026-11-24)
 
 ## Done
 - Scaffold: CLAUDE.md, README.md, docs/WORKFLOW.md (11 steps), docs/CONVENTIONS.md, docs/rls.md, docs/proofs.md, docs/grain-and-joins.md, docs/review/*, docs/contracts/* (sources, business-context, kpi-registry, acceptance, spec, rls-policies, data-dictionary).
@@ -35,6 +35,10 @@
 - `/build-model` has a `references/` folder: table kinds (decided from the key), joins (the full-key rule and seven cases, including the as-of join to a versioned dimension), subjects (widen or add, what to expose, which choices are questions), recipes (class from kind and verb), anti-patterns. Draft steps 3, 4, 6 and 7 walk them. The join rule in `docs/grain-and-joins.md` and the view checklist was corrected: the join lands on the full key, date included; "one row per value" was wrong for a table keyed by entity and day. Nothing in the skills ecosystem (skills.sh) fits; what exists is about physical warehouse tables, surrogate keys and ETL, or Power BI. Scouted and not installed.
 - Confluence drafts in `docs/confluence/`: `workflow-team.md` (the whole team: the goal, the words, each phase as goal plus a who/in/out/template table plus steps, the asks, the rules, where we are, next actions) and `workflow-leadership.md` (the short version). Four phase names used everywhere: discovery (the tables and the ask, each with its question loop), modeling, design, build and ship.
 
+## Decisions on 2026-11-24
+- The portal shows published dashboards only: `spec.yaml` says READY and `verify.md` exists. The sample has twelve of them beside the blocked Cashboard. Detail and the choices behind the portal's pages: `apps/portal/README.md`, Decided.
+- New contract `docs/contracts/usage.md`: `usage/opens.csv`, one row per open of a dashboard (`at`, `dashboard`, `person`, `role`). The portal's Analytics page is counted from it by `apps/portal/scripts/usage.mjs`, which has tests (`npm test` runs them) and stops the build on a line that breaks the contract. The sample has a made-up file; the root has none, and the page then says "Usage is not recorded yet".
+
 ## Not done
 0. `/import-schema` and `/business-context` have not been run on a real input yet. The sample `docs/sample/dashboards/cashboard/business-context.md` predates the checker and would fail it (reworded cells); it is read by nothing. `/import-schema` Expect header synonyms and FK shapes to need adding in `packages/import-schema/src/recognise.js` and `src/fk.js`, each with a fixture row.
 0b. Portal (2026-09-07): `build-graph.mjs` now also reads `bi_model/*.sql` headers, so a view drafted at step 3 shows in the Model Explorer with a `draft` badge until the dictionary lists it. Verified with a throwaway view; tsc clean.
@@ -45,4 +49,5 @@
    - rls-policies.md vs lint rule 7: policy required for every view in bi_model/ (stricter rule wins); consider a machine-visible `status: stub` for policy stubs.
    - CONVENTIONS.md: header `proof:` line may read `(pending)` on draft branches; lint and /data-dictionary must accept it.
    - WORKFLOW/detection: nothing records which sources a dashboard depends on beyond section 5; PR-open detection needs `gh` (a registry status IN_REVIEW would remove it).
+   - usage.md: nothing records an open. A recorder needs a server in front of the portal (sign-in gives it the person and the role) and somewhere to append to. How long rows are kept is undecided; the page reads 180 days.
    - ci.yml passes `--readonly` that nothing defines. Kit component names (DataTable, StackedBar, Donut) need confirming against the kit's design.md. `page.spec-hash` location should be in apps/portal/README.md. semantic-query README should say how `compare` maps to `period`.

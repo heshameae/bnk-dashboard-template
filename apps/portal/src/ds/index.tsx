@@ -102,12 +102,16 @@ export function Tabs<K extends string>({ items, value, onChange }: { items: { ke
 }
 
 /* ------------------------------------------------------------ Segmented */
-export function Segmented<K extends string>({ items, value, onChange }: { items: { key: K; icon: ReactNode; label: string }[]; value: K; onChange: (k: K) => void }) {
+/** One choice of a few. An item with an icon shows the icon alone and is named by its label; without one it shows the label.
+    `label` names the whole group for a screen reader. */
+export function Segmented<K extends string>({ items, value, onChange, label }: { items: { key: K; label: string; icon?: ReactNode }[]; value: K; onChange: (k: K) => void; label?: string }) {
   return (
-    <div className="ds-segmented" role="group">
-      {items.map((t) => (
-        <button key={t.key} aria-pressed={t.key === value} aria-label={t.label} title={t.label} onClick={() => onChange(t.key)}>{t.icon}</button>
-      ))}
+    <div className="ds-segmented" role="group" aria-label={label}>
+      {items.map((t) =>
+        t.icon
+          ? <button key={t.key} aria-pressed={t.key === value} aria-label={t.label} title={t.label} onClick={() => onChange(t.key)}>{t.icon}</button>
+          : <button key={t.key} data-text aria-pressed={t.key === value} onClick={() => onChange(t.key)}>{t.label}</button>
+      )}
     </div>
   );
 }

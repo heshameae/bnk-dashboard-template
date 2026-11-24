@@ -21,7 +21,13 @@ Measured off Vercel's dashboard on 2026-09-29: the gray scale, the 1px shadow bo
 | The font | `--ds-font`, and the Google Fonts link in `index.html` |
 | Corner roundness | `--ds-radius`, `--ds-radius-lg` |
 | Dark mode | the `:root[data-theme='dark']` block. It redefines primitives only; everything else follows. |
+| The colour of a chart line and of a heatmap | `--ds-data`, `--ds-data-quiet`, and the steps `--ds-heat-0` to `--ds-heat-4`, which are mixed from `--ds-data` |
 | A component's look | its block in `components.css`, using tokens only |
+
+## Notes on components
+
+- `Segmented` is one choice of a few. An item with an `icon` shows the icon alone; without one it shows its `label` as words. `label` on the control names the group for a screen reader.
+- `.ds-sr` keeps text on the page for a screen reader and hides it from the eye. The Analytics chart uses it to read out the day being pointed at.
 
 ## Rules
 

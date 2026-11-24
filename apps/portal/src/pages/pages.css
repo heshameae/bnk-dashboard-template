@@ -49,53 +49,101 @@
 .acc-groups { display: flex; flex-wrap: wrap; gap: var(--ds-space-1); }
 
 /* -------------------------------------------------------------- analytics */
-.an-pick { max-width: 384px; margin: var(--ds-space-12) auto 0; display: grid; justify-items: center; gap: var(--ds-space-2); }
-.an-pick > .ds-field { width: 100%; margin-top: var(--ds-space-8); }
-.an-pick__icon { width: 36px; height: 36px; display: grid; place-items: center; border-radius: var(--ds-radius); box-shadow: var(--ds-shadow-border); background: var(--ds-bg-raised); color: var(--ds-text-2); margin-bottom: var(--ds-space-2); }
-.an-pick__title { font-size: var(--ds-text-16); line-height: var(--ds-leading-16); margin: 0; }
-.an-pick__text { margin: 0; }
-.an-pick__list { width: 100%; display: grid; gap: 2px; margin-top: var(--ds-space-3); }
-.an-pick__item { display: flex; align-items: center; gap: var(--ds-space-3); height: var(--ds-control-lg); padding: 0 var(--ds-space-2); border-radius: var(--ds-radius); min-width: 0; }
-.an-pick__item:hover, .an-pick__item:focus-visible { background: var(--ds-bg-active); }
-.an-pick__none { padding: var(--ds-space-3) var(--ds-space-2); }
+/* One page about one dashboard. Three columns: a gutter, a 720px reading column, a gutter.
+   Everything sits in the middle one; only the chart spans all three, edge to edge.
+   Hover styles sit behind (hover: hover), so a tap never leaves one stuck. Nothing on this page animates. */
+.shell-page.an-page { max-width: none; padding-inline: 0; padding-top: var(--ds-space-10); display: grid; grid-template-columns: minmax(var(--ds-space-6), 1fr) minmax(0, 720px) minmax(var(--ds-space-6), 1fr); row-gap: var(--ds-space-8); }
+.an-page > * { grid-column: 2; min-width: 0; }
+.an-page > .an-chart { grid-column: 1 / -1; }
+.an-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ds-space-3) var(--ds-space-6); flex-wrap: wrap; }
+.an-note { margin: 0; }
 
-.an-bar { display: flex; align-items: center; gap: var(--ds-space-3); margin-bottom: var(--ds-space-4); min-width: 0; }
-.an-bar__name { display: inline-flex; align-items: center; gap: var(--ds-space-2); min-width: 0; }
-.an-bar__name:hover span { text-decoration: underline; }
-.an-bar + .ds-notice { margin-bottom: var(--ds-space-4); }
+/* The title is the way to another dashboard. One line of it sits on the centre line of the period control beside it. */
+.an-switch { position: relative; flex: 1 1 320px; min-width: 0; }
+.an-title { display: flex; align-items: center; min-height: var(--ds-control-lg); margin: 0; }
+.an-title button { position: relative; display: inline-flex; align-items: center; gap: var(--ds-space-2); min-height: var(--ds-control-lg); padding: var(--ds-space-1) var(--ds-space-2); margin: 0 calc(-1 * var(--ds-space-2)); border-radius: var(--ds-radius); font: inherit; letter-spacing: inherit; text-align: left; text-wrap: balance; touch-action: manipulation; }
+.an-title svg { flex: none; color: var(--ds-text-3); }
+.an-switch__menu { top: calc(100% + var(--ds-space-2)); left: calc(-1 * var(--ds-space-2)); width: min(380px, calc(100vw - var(--ds-space-8))); }
+.an-switch__menu .ds-field { margin-bottom: var(--ds-space-1); }
+.an-switch__cap { display: flex; justify-content: space-between; gap: var(--ds-space-4); padding-inline: var(--ds-space-3); }
+.an-switch__list { max-height: 324px; overflow-y: auto; }
 
-.an-chart { overflow: hidden; }
-.an-stats { display: flex; background: var(--ds-bg); box-shadow: inset 0 -1px 0 var(--ds-border); overflow-x: auto; }
-.an-stat { display: grid; gap: var(--ds-space-2); width: 220px; flex: none; padding: var(--ds-space-4); text-align: left; border-bottom: 2px solid transparent; }
-.an-stat + .an-stat { box-shadow: inset 1px 0 0 var(--ds-border); }
-.an-stat[aria-selected='true'] { background: var(--ds-bg-raised); border-bottom-color: var(--ds-text); }
-.an-stat:hover:not([aria-selected='true']) { background: var(--ds-bg-hover); }
-.an-stat__label { font-size: var(--ds-text-14); line-height: var(--ds-leading-14); font-weight: 600; letter-spacing: var(--ds-tracking-label); color: var(--ds-text-2); }
-.an-stat__value { font-size: var(--ds-text-32); line-height: var(--ds-leading-32); font-weight: 600; letter-spacing: var(--ds-tracking-heading); }
+/* Figures: small and quiet, so the chart is what the eye lands on. Two of them switch a line on the chart. */
+.an-stats { display: flex; flex-wrap: wrap; gap: var(--ds-space-5) var(--ds-space-10); }
+.an-stat { display: grid; justify-items: start; align-content: start; gap: 2px; min-width: 44px; text-align: left; border-radius: var(--ds-radius-sm); touch-action: manipulation; }
+.an-stat__label { display: inline-flex; align-items: center; gap: 6px; font-size: var(--ds-text-13); line-height: var(--ds-leading-13); color: var(--ds-text-2); }
+.an-stat__dot { width: 8px; height: 8px; border-radius: var(--ds-radius-full); background: var(--ds-data); }
+.an-stat__dot[data-tone='quiet'] { background: var(--ds-text-3); }
+.an-stat__value { font-size: var(--ds-text-20); line-height: var(--ds-leading-20); font-weight: 600; letter-spacing: var(--ds-tracking-heading); white-space: nowrap; }
+.an-stat__sub { display: flex; align-items: center; min-height: 20px; font-size: var(--ds-text-12); line-height: var(--ds-leading-12); color: var(--ds-text-2); white-space: nowrap; }
+/* A line switched off: its dot goes hollow and its figure steps back. The weight does not change, so nothing shifts. */
+button.an-stat[aria-pressed='false'] .an-stat__dot { background: none; box-shadow: inset 0 0 0 1.5px var(--ds-border-strong); }
+button.an-stat[aria-pressed='false'] .an-stat__value { color: var(--ds-text-3); }
 
-.an-plot { position: relative; height: 360px; padding: var(--ds-space-10) var(--ds-space-6) var(--ds-space-4); display: grid; grid-template-rows: 1fr auto; gap: var(--ds-space-3); }
-.an-plot__grid { display: grid; grid-template-rows: repeat(2, 1fr) 0; }
-.an-plot__grid > span { border-top: 1px solid var(--ds-border); }
-.an-plot__grid > span:last-child { border-top-color: var(--ds-border-strong); }
-.an-plot__note { position: absolute; inset: 0 0 var(--ds-space-8); display: grid; place-content: center; justify-items: center; gap: var(--ds-space-1); text-align: center; }
-.an-plot__note > div { display: grid; gap: var(--ds-space-1); padding: var(--ds-space-2) var(--ds-space-4); background: var(--ds-bg-raised); }
-.an-plot__x { display: flex; justify-content: space-between; }
+/* The chart. --marks is the room above the line for two rows of marks, so two close ones never sit on each other. */
+.an-chart { --plot: 220px; --marks: 60px; border-radius: var(--ds-radius-xs); touch-action: pan-y; user-select: none; -webkit-tap-highlight-color: transparent; }
+.an-chart__plot { position: relative; height: calc(var(--plot) + var(--marks)); }
+.an-chart__area { position: absolute; inset: var(--marks) 0 0; }
+.an-chart__area svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.an-chart__area stop { stop-color: var(--ds-data); }
+.an-chart__people, .an-chart__opens { fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+.an-chart__people { stroke: var(--ds-data); stroke-width: 2; }
+.an-chart__opens { stroke: var(--ds-data-quiet); stroke-width: 1.5; }
+.an-chart__guide { position: absolute; top: 0; bottom: 0; width: 1px; margin-left: -0.5px; background: var(--ds-border-strong); pointer-events: none; }
+.an-chart__guide i { position: absolute; left: 50%; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: var(--ds-radius-full); background: var(--ds-data); box-shadow: 0 0 0 2px var(--ds-bg); }
+.an-chart__guide i[data-tone='quiet'] { background: var(--ds-text-3); }
 
-.an-grid { display: grid; gap: var(--ds-space-4); margin-top: var(--ds-space-4); }
-.an-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.an-panel { display: flex; flex-direction: column; min-height: 320px; }
-.an-panel__head { display: flex; align-items: flex-end; gap: var(--ds-space-4); padding: var(--ds-space-1) var(--ds-space-5) 0; border-bottom: 1px solid var(--ds-border); }
-.an-panel__tabs { display: flex; gap: var(--ds-space-6); flex: 1; min-width: 0; }
-.an-panel__tabs .ds-tab { margin-bottom: -1px; }
-.an-panel__unit { align-self: center; text-transform: uppercase; letter-spacing: 0.02em; }
-.an-panel .ds-empty { flex: 1; align-content: center; }
-.an-panel__rows { display: grid; gap: var(--ds-space-2); padding: var(--ds-space-3); }
-.an-row { display: flex; align-items: center; justify-content: space-between; gap: var(--ds-space-4); height: 32px; padding: 0 10px; border-radius: var(--ds-radius); background: var(--ds-bg-subtle); min-width: 0; }
+/* A mark: something that happened on a day and explains the line. A dashed line and a named chip. */
+.an-mark { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px dashed var(--ds-border-strong); pointer-events: none; }
+.an-mark__chip { position: absolute; top: 0; left: 0; transform: translateX(-50%); display: inline-flex; align-items: center; gap: var(--ds-space-1); height: 22px; padding: 0 var(--ds-space-2); border-radius: var(--ds-radius-full); background: var(--ds-bg-raised); box-shadow: var(--ds-shadow-border); color: var(--ds-text-2); font-size: var(--ds-text-12); line-height: 1; white-space: nowrap; }
+.an-mark[data-row='1'] .an-mark__chip { top: 28px; }
+.an-mark[data-edge='start'] .an-mark__chip { transform: translateX(-12px); }
+.an-mark[data-edge='end'] .an-mark__chip { transform: translateX(calc(-100% + 12px)); }
+
+.an-axis { position: relative; height: 24px; margin-top: var(--ds-space-2); }
+.an-axis > i { position: absolute; top: 50%; width: 3px; height: 3px; margin: -1.5px 0 0 -1.5px; border-radius: var(--ds-radius-full); background: var(--ds-border-strong); }
+.an-axis__end, .an-axis__pill { position: absolute; top: 0; height: 24px; display: inline-flex; align-items: center; font-size: var(--ds-text-12); white-space: nowrap; }
+/* The two names run from the page's edge inwards, so no dot is left stranded outside them. */
+.an-axis__end { padding: 0 var(--ds-space-2); background: var(--ds-bg); color: var(--ds-text-3); }
+.an-axis__end[data-side='start'] { left: 0; padding-left: var(--ds-space-6); }
+.an-axis__end[data-side='end'] { right: 0; padding-right: var(--ds-space-6); }
+.an-axis__pill { left: 0; transform: translateX(-50%); padding: 0 10px; border-radius: var(--ds-radius-full); background: var(--ds-button-primary-bg); color: var(--ds-button-primary-text); pointer-events: none; }
+.an-axis__pill[data-edge='start'] { transform: translateX(-16px); }
+.an-axis__pill[data-edge='end'] { transform: translateX(calc(-100% + 16px)); }
+
+/* Two cards: who opens it, and when. A card's title is a sentence; the part that matters is inked. */
+.an-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ds-space-4); }
+.an-card { display: grid; grid-template-rows: auto 1fr; gap: var(--ds-space-4); padding: var(--ds-space-5); }
+.an-card__title { margin: 0; font-size: var(--ds-text-14); line-height: var(--ds-leading-14); font-weight: 400; color: var(--ds-text-2); }
+.an-card__title b { font-weight: 500; letter-spacing: var(--ds-tracking-label); color: var(--ds-text); }
+.an-rows { list-style: none; margin: 0; padding: 0; display: grid; align-content: start; gap: var(--ds-space-1); }
+.an-rows li { position: relative; display: flex; align-items: center; justify-content: space-between; gap: var(--ds-space-3); min-height: var(--ds-control-lg); padding: 0 var(--ds-space-3); }
+.an-rows li > i { position: absolute; inset: 0 auto 0 0; min-width: var(--ds-space-1); border-radius: var(--ds-radius); background: var(--ds-bg-subtle); }
+.an-rows li > span { position: relative; }
+.an-rows li[data-none] { color: var(--ds-text-3); }
+.an-rows li[data-none] > i { display: none; }
+/* The heatmap: a narrow column of weekday letters, then 24 hours. Its rows stretch, so it is as tall as the card beside it. */
+.an-heat { display: grid; grid-template-columns: var(--ds-space-4) repeat(24, minmax(0, 1fr)); grid-template-rows: repeat(7, minmax(12px, 1fr)) auto; gap: 2px; min-height: 124px; border-radius: var(--ds-radius-xs); touch-action: manipulation; user-select: none; -webkit-tap-highlight-color: transparent; }
+.an-heat__day { align-self: center; font-size: var(--ds-text-12); line-height: 1; color: var(--ds-text-3); }
+.an-heat i { border-radius: var(--ds-radius-xs); background: var(--ds-heat-0); }
+.an-heat i[data-l='1'] { background: var(--ds-heat-1); }
+.an-heat i[data-l='2'] { background: var(--ds-heat-2); }
+.an-heat i[data-l='3'] { background: var(--ds-heat-3); }
+.an-heat i[data-l='4'] { background: var(--ds-heat-4); }
+.an-heat i[data-on] { outline: 2px solid var(--ds-text); outline-offset: 1px; }
+.an-heat__hour { grid-column: span 6; padding-top: var(--ds-space-1); font-size: var(--ds-text-12); line-height: var(--ds-leading-12); color: var(--ds-text-3); font-variant-numeric: tabular-nums; }
+
+@media (hover: hover) and (pointer: fine) {
+  .an-title button:hover { background: var(--ds-bg-hover); }
+}
+/* Small to the eye, 44px to a finger. */
+@media (pointer: coarse) {
+  .an-title button::before { content: ''; position: absolute; inset: -4px 0; }
+  /* 16px stops iOS zooming the page when the search field takes focus. */
+  .an-switch__menu .ds-field input { font-size: var(--ds-text-16); }
+}
 
 /* ------------------------------------------------------------------ phone */
-@media (max-width: 1000px) {
-  .an-grid--2 { grid-template-columns: minmax(0, 1fr); }
-}
 @media (max-width: 640px) {
   .home-toolbar { flex-wrap: wrap; }
   .home-toolbar__search { flex-basis: 100%; }
@@ -104,7 +152,10 @@
   .cat-search { width: auto; }
   .cat-row { flex-direction: column; }
   .acc-grant__fields { grid-template-columns: 1fr; }
-  .an-stat { width: auto; flex: 1; min-width: 120px; }
-  .an-plot { height: 280px; padding-inline: var(--ds-space-4); }
-  .an-plot__x > :not(:first-child):not(:last-child) { display: none; }
+  .shell-page.an-page { grid-template-columns: var(--ds-space-4) minmax(0, 1fr) var(--ds-space-4); }
+  .an-stats { gap: var(--ds-space-4) var(--ds-space-8); }
+  .an-chart { --plot: 180px; }
+  .an-axis__end[data-side='start'] { padding-left: var(--ds-space-4); }
+  .an-axis__end[data-side='end'] { padding-right: var(--ds-space-4); }
+  .an-cards { grid-template-columns: minmax(0, 1fr); }
 }

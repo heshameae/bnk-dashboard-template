@@ -6,6 +6,7 @@
       "title": "Branch balances",
       "owner": "Head of Branch Network",
       "audience": "branch_manager",
+      "verified": "2026-10-14",
       "numbers": [
         "kpi.casa_balance",
         "kpi.total_balance"
@@ -21,6 +22,7 @@
       "title": "Card balances",
       "owner": "Head of Cards",
       "audience": "head_office",
+      "verified": "2026-10-15",
       "numbers": [
         "kpi.card_balance"
       ],
@@ -35,6 +37,7 @@
       "title": "Active customers and accounts",
       "owner": "Head of Retail Banking",
       "audience": "head_office",
+      "verified": "2026-10-30",
       "numbers": [
         "kpi.active_customers",
         "kpi.active_accounts"
@@ -51,6 +54,7 @@
       "title": "Daily balances",
       "owner": "Head of Finance Reporting",
       "audience": "finance",
+      "verified": "2026-10-09",
       "numbers": [
         "kpi.total_balance",
         "kpi.casa_balance"
@@ -67,6 +71,7 @@
       "title": "Dormant accounts and the balances they hold",
       "owner": "Head of Operations",
       "audience": "head_office",
+      "verified": "2026-10-17",
       "numbers": [
         "kpi.dormant_accounts",
         "kpi.dormant_balance"
@@ -83,6 +88,7 @@
       "title": "Foreign currency balances",
       "owner": "Head of Treasury",
       "audience": "treasury",
+      "verified": "2026-10-22",
       "numbers": [
         "kpi.fcy_balance"
       ],
@@ -98,6 +104,7 @@
       "title": "Lending book by branch and customer segment",
       "owner": "Head of Retail Lending",
       "audience": "head_office",
+      "verified": "2026-10-13",
       "numbers": [
         "kpi.loan_balance"
       ],
@@ -113,6 +120,7 @@
       "title": "Available versus ledger balance, bank-wide, by branch, customer segment and product family",
       "owner": "Head of ALM",
       "audience": "finance",
+      "verified": "2026-10-24",
       "numbers": [
         "kpi.available_balance",
         "kpi.total_balance"
@@ -130,6 +138,7 @@
       "title": "Product mix",
       "owner": "Head of Finance Reporting",
       "audience": "finance",
+      "verified": "2026-11-12",
       "numbers": [
         "kpi.total_balance",
         "kpi.td_balance",
@@ -147,6 +156,7 @@
       "title": "Region overview",
       "owner": "Head of Branch Network",
       "audience": "region_head",
+      "verified": "2026-11-03",
       "numbers": [
         "kpi.casa_balance",
         "kpi.total_balance",
@@ -163,6 +173,7 @@
       "title": "Customer segment mix",
       "owner": "Head of Strategy",
       "audience": "head_office",
+      "verified": "2026-11-06",
       "numbers": [
         "kpi.total_balance",
         "kpi.casa_balance",
@@ -179,6 +190,7 @@
       "title": "Term deposits",
       "owner": "Head of Treasury",
       "audience": "treasury",
+      "verified": "2026-10-09",
       "numbers": [
         "kpi.td_balance"
       ],

@@ -33,6 +33,8 @@ a { color: inherit; text-decoration: none; }
 .ds-faint { color: var(--ds-text-3); }
 .ds-num { font-variant-numeric: tabular-nums; }
 .ds-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+/* On the page for a screen reader, not for the eye: a live reading that sighted users see elsewhere. */
+.ds-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* ------------------------------------------------------------------ button */
 .ds-button {
@@ -146,8 +148,14 @@ a { color: inherit; text-decoration: none; }
 /* ------------------------------------------------------- segmented control */
 .ds-segmented { display: inline-flex; padding: 3px; gap: 2px; border-radius: var(--ds-radius); background: var(--ds-bg-raised); box-shadow: var(--ds-shadow-border); height: var(--ds-control-lg); flex: none; }
 .ds-segmented button { width: 30px; display: grid; place-items: center; border-radius: var(--ds-radius-sm); color: var(--ds-text-3); }
-.ds-segmented button:hover { color: var(--ds-text); }
+@media (hover: hover) and (pointer: fine) { .ds-segmented button:hover { color: var(--ds-text); } }
 .ds-segmented button[aria-pressed='true'] { background: var(--ds-bg-active); color: var(--ds-text); }
+/* Words instead of an icon. The weight is the same pressed or not, so the control never changes width. */
+.ds-segmented button[data-text] { position: relative; width: auto; padding: 0 var(--ds-space-3); color: var(--ds-text-2); font-size: var(--ds-text-13); font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ds-segmented button[data-text][aria-pressed='true'] { color: var(--ds-text); }
+.ds-segmented button { touch-action: manipulation; }
+/* 30px tall to the eye, 44px to a finger. */
+@media (pointer: coarse) { .ds-segmented button { position: relative; } .ds-segmented button::before { content: ''; position: absolute; inset: -7px 0; } }
 
 /* -------------------------------------------------------------------- menu */
 .ds-menu {

@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "graph": "node scripts/build-graph.mjs",
-    "portal-data": "node scripts/build-portal.mjs"
+    "portal-data": "node scripts/build-portal.mjs",
+    "test": "node --test scripts/usage.test.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.48.0",

@@ -6,7 +6,7 @@ import { href, useRoute, type Route } from './shell/router';
 import { SessionProvider, useSession } from './shell/session';
 import { Shell, type Top } from './shell/Shell';
 import { Access } from './pages/Access';
-import { AnalyticsPage, AnalyticsPicker, DashboardSwitch } from './pages/Analytics';
+import { Analytics, AnalyticsOpen } from './pages/Analytics';
 import { Catalog } from './pages/Catalog';
 import { DashboardInfo, DashboardPage } from './pages/DashboardPage';
 import { Home } from './pages/Home';
@@ -53,12 +53,10 @@ function view(route: Route): { active: Page | null; top: Top; body: React.ReactN
       if (!d) return notFound();
       return { active: 'home', top: { scope: scope('Dashboards', href.home), title: d.title, actions: <DashboardInfo key={d.id} d={d} /> }, body: <DashboardPage key={d.id} d={d} />, full: true };
     }
-    case 'analytics': {
-      if (!route.id) return { active: 'analytics', top: { scope: scope('All dashboards'), title: 'Analytics' }, body: <AnalyticsPicker /> };
-      const d = dashboardById(route.id);
-      if (!d) return notFound();
-      return { active: 'analytics', top: { scope: <DashboardSwitch d={d} />, title: 'Analytics' }, body: <AnalyticsPage key={d.id} d={d} /> };
-    }
+    case 'analytics':
+      // One page about one dashboard. With no dashboard in the address the page picks one: the last opened, else the first.
+      if (route.id && !dashboardById(route.id)) return notFound();
+      return { active: 'analytics', top: { title: 'Analytics', actions: <AnalyticsOpen id={route.id} /> }, body: <Analytics id={route.id} /> };
     case 'catalog':
       return { active: 'catalog', top: { title: 'Catalog' }, body: <Catalog show={route.filter} /> };
     case 'access':
