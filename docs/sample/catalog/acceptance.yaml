@@ -10,3 +10,48 @@
   as_of: 2026-08-31
   source: "finance daily position report"
   given_by: head_of_finance_reporting
+- kpi: kpi.td_balance
+  value: 14822650100.40
+  as_of: 2026-08-31
+  source: "finance daily position report"
+  given_by: head_of_finance_reporting
+- kpi: kpi.loan_balance
+  value: 5233108455.10
+  as_of: 2026-08-31
+  source: "finance daily position report"
+  given_by: head_of_finance_reporting
+- kpi: kpi.card_balance
+  value: 2584653445.05
+  as_of: 2026-08-31
+  source: "finance daily position report"
+  given_by: head_of_finance_reporting
+- kpi: kpi.dormant_balance
+  value: 912400300.00
+  as_of: 2026-08-31
+  source: "finance daily position report"
+  given_by: head_of_finance_reporting
+- kpi: kpi.dormant_accounts
+  value: 38215
+  as_of: 2026-08-31
+  source: "finance daily position report"
+  given_by: head_of_finance_reporting
+- kpi: kpi.fcy_balance
+  value: 9870115320.85
+  as_of: 2026-08-31
+  source: "finance daily position report"
+  given_by: head_of_finance_reporting
+- kpi: kpi.available_balance
+  value: 58113702440.30
+  as_of: 2026-08-31
+  source: "finance daily position report"
+  given_by: head_of_finance_reporting
+- kpi: kpi.active_accounts
+  value: 612480
+  as_of: 2026-08-31
+  source: "finance daily position report"
+  given_by: head_of_finance_reporting
+- kpi: kpi.active_customers
+  value: 301775
+  as_of: 2026-08-31
+  source: "finance daily position report"
+  given_by: head_of_finance_reporting

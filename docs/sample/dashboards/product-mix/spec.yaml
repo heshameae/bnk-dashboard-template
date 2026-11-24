@@ -1,0 +1,14 @@
+# Written by /spec from design-export/ + kpi-registry.yaml. Contract: docs/contracts/spec.md
+dashboard: product-mix
+title: "Product mix"
+audience: finance
+status: READY
+filters:
+  - { dimension: branch_code }
+widgets:
+  - { id: w1, kind: donut, kpi: kpi.total_balance, by: product_family }
+  - { id: w2, kind: kpi-card, kpi: kpi.td_balance, show: [value, compare] }
+  - { id: w3, kind: kpi-card, kpi: kpi.loan_balance, show: [value, compare] }
+  - { id: w4, kind: kpi-card, kpi: kpi.card_balance, show: [value, compare] }
+interactions: []
+blocked: []

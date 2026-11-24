@@ -52,7 +52,6 @@ const dashboards = names.filter(published).map((name) => {
     owner: ownerFrom(context),
     audience: spec?.audience ?? null,
     numbers,
-    drafts: numbers.filter((id) => kpiById[id]?.status === 'DRAFT'),
     filters: (spec?.filters ?? []).map((f) => f.dimension),
     widgets: widgets.length,
     refresh: views.map((v) => refreshOf[v]).find(Boolean) ?? null,

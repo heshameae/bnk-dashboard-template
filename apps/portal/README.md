@@ -7,7 +7,7 @@ React app. Read-only. The shell is modelled on Vercel's dashboard and built on o
 | Page | Route | State |
 |---|---|---|
 | Dashboards (home) | `#/` | Built. Every published dashboard the viewer can open, once: search, grid or list. Recently opened lives in the sidebar. |
-| One dashboard | `#/d/<name>` | The frame only: title, owner, refresh, a draft-number notice, and the slot the dashboard's own app loads into. Dashboards are separate apps; their pages are not designed here. |
+| One dashboard | `#/d/<name>` | The dashboard's own app fills the page; the portal adds no header. The info button in the topbar shows owner, audience, refresh and the numbers on it. Dashboards are separate apps; their pages are not designed here. |
 | Analytics | `#/analytics`, `#/analytics/<name>` | The layout only. Pick a dashboard, then viewers, views and return rate over a date range, a chart, and breakdowns by role, person, filter, number and export. The row names are real; every count is empty because the portal does not record usage yet. |
 | Catalog | `#/catalog` | Built, read-only. Every number in the owner's words, with Draft or Confirmed. Confirming from the portal is not wired; the business confirms on the pull request. |
 | Access | `#/access` | Placeholder. The roles table is real; granting, people, requests and the audit log are not built. |
@@ -17,7 +17,7 @@ React app. Read-only. The shell is modelled on Vercel's dashboard and built on o
 
 **Published only.** The portal shows a dashboard only once it is published: its `spec.yaml` says `status: READY` and `verify.md` exists. Anything still being built (no spec, a blocked widget, not verified) is not shown to anyone, the Eng. team included; `/ask-leap-bi` tracks it. So no dashboard in the portal carries a Blocked, In progress or In review badge.
 
-**Recent.** The sidebar lists the last five dashboards the viewer opened, kept in the browser. A dashboard the viewer can no longer open drops out.
+**Recent.** The sidebar lists the last seven dashboards the viewer opened, kept in the browser. A dashboard the viewer can no longer open drops out.
 
 **Find.** Press F or ⌘K: dashboards, numbers and pages the viewer can open.
 
@@ -49,7 +49,7 @@ Add `-- --sample` to either data script to render `docs/sample/` instead of the 
 ## Decided
 
 **Where recently opened lives** (2026-11-24, from a five-way prototype of the home page).
-- Direction: in the sidebar, under the places, as "Recent". Up to five, newest first. The home page is one grid, each dashboard once.
+- Direction: in the sidebar, under the places, as "Recent". Up to seven, newest first. The home page is one grid, each dashboard once.
 - On a dashboard that is in Recent, its row is highlighted, not Dashboards as well.
 - Rejected: a "Recently opened" column beside the grid (the old page). Every recent dashboard showed twice.
 - Rejected: sorting the grid by last opened. No duplicate, but the cards move as you use them.

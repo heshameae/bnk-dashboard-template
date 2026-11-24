@@ -1,0 +1,17 @@
+# Written by /spec from design-export/ + kpi-registry.yaml. Contract: docs/contracts/spec.md
+dashboard: liquidity
+title: "Available versus ledger balance, bank-wide, by branch, customer segment and product family"
+audience: finance
+status: READY
+filters:
+  - { dimension: branch_code }
+  - { dimension: customer_segment }
+  - { dimension: product_family }
+widgets:
+  - { id: w1, kind: kpi-card, kpi: kpi.available_balance, show: [value, compare] }
+  - { id: w2, kind: kpi-card, kpi: kpi.total_balance, show: [value, compare] }
+  - { id: w3, kind: line, kpi: kpi.available_balance, by: snapshot_date, range: last_90_business_days }
+  - { id: w4, kind: bar, kpi: kpi.available_balance, by: product_family, sort: desc }
+interactions:
+  - { click: w4, sets_filter: product_family }
+blocked: []

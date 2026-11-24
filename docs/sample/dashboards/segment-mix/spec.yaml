@@ -1,0 +1,13 @@
+# Written by /spec from design-export/ + kpi-registry.yaml. Contract: docs/contracts/spec.md
+dashboard: segment-mix
+title: "Customer segment mix"
+audience: head_office
+status: READY
+filters:
+  - { dimension: customer_segment }
+widgets:
+  - { id: w1, kind: stacked-bar, kpi: kpi.total_balance, by: customer_segment }
+  - { id: w2, kind: bar, kpi: kpi.casa_balance, by: customer_segment, sort: desc }
+  - { id: w3, kind: bar, kpi: kpi.td_balance, by: customer_segment, sort: desc }
+interactions: []
+blocked: []

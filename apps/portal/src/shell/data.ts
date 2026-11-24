@@ -8,7 +8,6 @@ export type Dashboard = {
   owner: string | null;
   audience: string | null;
   numbers: string[];
-  drafts: string[];
   filters: string[];
   widgets: number;
   refresh: string | null;

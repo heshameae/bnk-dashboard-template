@@ -1,0 +1,13 @@
+# Written by /spec from design-export/ + kpi-registry.yaml. Contract: docs/contracts/spec.md
+dashboard: card-balances
+title: "Card balances"
+audience: head_office
+status: READY
+filters:
+  - { dimension: customer_segment }
+widgets:
+  - { id: w1, kind: kpi-card, kpi: kpi.card_balance, show: [value, compare] }
+  - { id: w2, kind: line, kpi: kpi.card_balance, by: snapshot_date, range: last_12_month_ends }
+  - { id: w3, kind: donut, kpi: kpi.card_balance, by: customer_segment }
+interactions: []
+blocked: []

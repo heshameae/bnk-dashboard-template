@@ -1,0 +1,16 @@
+# Written by /spec from design-export/ + kpi-registry.yaml. Contract: docs/contracts/spec.md
+dashboard: term-deposits
+title: "Term deposits"
+audience: treasury
+status: READY
+filters:
+  - { dimension: branch_code }
+  - { dimension: customer_segment }
+widgets:
+  - { id: w1, kind: kpi-card, kpi: kpi.td_balance, show: [value, compare] }
+  - { id: w2, kind: line, kpi: kpi.td_balance, by: snapshot_date, range: last_90_business_days }
+  - { id: w3, kind: bar, kpi: kpi.td_balance, by: customer_segment, sort: desc }
+  - { id: w4, kind: table, kpi: kpi.td_balance, by: currency, sort: desc }
+interactions:
+  - { click: w2, sets_filter: customer_segment }
+blocked: []

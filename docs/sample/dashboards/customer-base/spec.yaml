@@ -1,0 +1,16 @@
+# Written by /spec from design-export/ + kpi-registry.yaml. Contract: docs/contracts/spec.md
+dashboard: customer-base
+title: "Active customers and accounts"
+audience: head_office
+status: READY
+filters:
+  - { dimension: branch_code }
+  - { dimension: customer_segment }
+widgets:
+  - { id: w1, kind: kpi-card, kpi: kpi.active_customers, show: [value, compare] }
+  - { id: w2, kind: kpi-card, kpi: kpi.active_accounts, show: [value, compare] }
+  - { id: w3, kind: bar, kpi: kpi.active_customers, by: customer_segment, sort: desc }
+  - { id: w4, kind: table, kpi: kpi.active_accounts, by: branch_code, sort: desc }
+interactions:
+  - { click: w3, sets_filter: customer_segment }
+blocked: []

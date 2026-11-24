@@ -1,0 +1,16 @@
+# Written by /spec from design-export/ + kpi-registry.yaml. Contract: docs/contracts/spec.md
+dashboard: dormant-accounts
+title: "Dormant accounts and the balances they hold"
+audience: head_office
+status: READY
+filters:
+  - { dimension: branch_code }
+  - { dimension: product_family }
+widgets:
+  - { id: w1, kind: kpi-card, kpi: kpi.dormant_accounts, show: [value, compare] }
+  - { id: w2, kind: kpi-card, kpi: kpi.dormant_balance, show: [value, compare] }
+  - { id: w3, kind: bar, kpi: kpi.dormant_balance, by: product_family, sort: desc }
+  - { id: w4, kind: table, kpi: kpi.dormant_accounts, by: branch_code, sort: desc }
+interactions:
+  - { click: w3, sets_filter: product_family }
+blocked: []

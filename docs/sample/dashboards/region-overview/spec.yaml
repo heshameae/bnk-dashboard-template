@@ -1,0 +1,15 @@
+# Written by /spec from design-export/ + kpi-registry.yaml. Contract: docs/contracts/spec.md
+dashboard: region-overview
+title: "Region overview"
+audience: region_head
+status: READY
+filters:
+  - { dimension: branch_code }
+widgets:
+  - { id: w1, kind: kpi-card, kpi: kpi.casa_balance, show: [value, compare] }
+  - { id: w2, kind: kpi-card, kpi: kpi.total_balance, show: [value, compare] }
+  - { id: w3, kind: table, kpi: kpi.casa_balance, by: branch_code, sort: desc }
+  - { id: w4, kind: bar, kpi: kpi.active_accounts, by: branch_code, sort: desc }
+interactions:
+  - { click: w3, sets_filter: branch_code }
+blocked: []

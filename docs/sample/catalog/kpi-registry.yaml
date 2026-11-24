@@ -61,3 +61,146 @@ kpis:
     compare: previous_month
     format: percent_1dp
     introduced_by: cashboard
+
+  - id: kpi.td_balance
+    status: CONFIRMED
+    meaning: "Total term deposit balance at close of the last business day"
+    owner: head_of_treasury
+    view: v_balances_daily
+    formula: SUM(balance_amount)
+    aggregation: balance-last-day
+    filters:
+      - product_family = 'TD'
+    excludes: "nothing; confirmed by head_of_treasury"
+    dimensions: [branch_code, customer_segment, currency]
+    compare: previous_business_day
+    format: aed_millions
+    introduced_by: term-deposits
+    confirmed: { by: head_of_treasury, at: 2026-10-08 }
+
+  - id: kpi.loan_balance
+    status: CONFIRMED
+    meaning: "Total outstanding loan balance at close of the last business day"
+    owner: head_of_retail_lending
+    view: v_balances_daily
+    formula: SUM(balance_amount)
+    aggregation: balance-last-day
+    filters:
+      - product_family = 'LOAN'
+    excludes: "nothing; confirmed by head_of_retail_lending"
+    dimensions: [branch_code, customer_segment]
+    compare: previous_month
+    format: aed_millions
+    introduced_by: lending-book
+    confirmed: { by: head_of_retail_lending, at: 2026-10-10 }
+
+  - id: kpi.card_balance
+    status: CONFIRMED
+    meaning: "Total card balance outstanding at close of the last business day"
+    owner: head_of_cards
+    view: v_balances_daily
+    formula: SUM(balance_amount)
+    aggregation: balance-last-day
+    filters:
+      - product_family = 'CARD'
+    excludes: "nothing; confirmed by head_of_cards"
+    dimensions: [branch_code, customer_segment]
+    compare: previous_month
+    format: aed_millions
+    introduced_by: card-balances
+    confirmed: { by: head_of_cards, at: 2026-10-12 }
+
+  - id: kpi.dormant_balance
+    status: CONFIRMED
+    meaning: "Total balance held in dormant accounts at close of the last business day"
+    owner: head_of_operations
+    view: v_balances_daily
+    formula: SUM(balance_amount)
+    aggregation: balance-last-day
+    filters:
+      - account_status = 'D'
+    excludes: "nothing; confirmed by head_of_operations"
+    dimensions: [branch_code, customer_segment, product_family]
+    compare: previous_month
+    format: aed_millions
+    introduced_by: dormant-accounts
+    confirmed: { by: head_of_operations, at: 2026-10-15 }
+
+  - id: kpi.dormant_accounts
+    status: CONFIRMED
+    meaning: "Number of dormant accounts at close of the last business day"
+    owner: head_of_operations
+    view: v_balances_daily
+    formula: COUNT(DISTINCT account_id)
+    aggregation: balance-last-day
+    filters:
+      - account_status = 'D'
+    excludes: "nothing; confirmed by head_of_operations"
+    dimensions: [branch_code, customer_segment, product_family]
+    compare: previous_month
+    format: integer
+    introduced_by: dormant-accounts
+    confirmed: { by: head_of_operations, at: 2026-10-15 }
+
+  - id: kpi.fcy_balance
+    status: CONFIRMED
+    meaning: "Total balance held in foreign currency accounts at close of the last business day, in AED"
+    owner: head_of_treasury
+    view: v_balances_daily
+    formula: SUM(balance_amount)
+    aggregation: balance-last-day
+    filters:
+      - currency <> 'AED'
+    excludes: "AED accounts"
+    dimensions: [branch_code, customer_segment, currency, product_family]
+    compare: previous_business_day
+    format: aed_millions
+    introduced_by: foreign-currency
+    confirmed: { by: head_of_treasury, at: 2026-10-20 }
+
+  - id: kpi.available_balance
+    status: CONFIRMED
+    meaning: "Total available balance across all products at close of the last business day"
+    owner: head_of_alm
+    view: v_balances_daily
+    formula: SUM(available_amount)
+    aggregation: balance-last-day
+    filters: []
+    excludes: "nothing; confirmed by head_of_alm"
+    dimensions: [branch_code, customer_segment, product_family]
+    compare: previous_business_day
+    format: aed_millions
+    introduced_by: liquidity
+    confirmed: { by: head_of_alm, at: 2026-10-22 }
+
+  - id: kpi.active_accounts
+    status: CONFIRMED
+    meaning: "Number of active accounts at close of the last business day"
+    owner: head_of_retail_banking
+    view: v_balances_daily
+    formula: COUNT(DISTINCT account_id)
+    aggregation: balance-last-day
+    filters:
+      - account_status = 'A'
+    excludes: "dormant and closed accounts"
+    dimensions: [branch_code, customer_segment, product_family]
+    compare: previous_month
+    format: integer
+    introduced_by: customer-base
+    confirmed: { by: head_of_retail_banking, at: 2026-10-27 }
+
+  - id: kpi.active_customers
+    status: CONFIRMED
+    meaning: "Number of customers with at least one active account at close of the last business day"
+    owner: head_of_retail_banking
+    view: v_balances_daily
+    formula: COUNT(DISTINCT customer_id)
+    aggregation: balance-last-day
+    filters:
+      - account_status = 'A'
+    excludes: "customers whose accounts are all dormant or closed"
+    dimensions: [branch_code, customer_segment]
+    compare: previous_month
+    format: integer
+    introduced_by: customer-base
+    confirmed: { by: head_of_retail_banking, at: 2026-10-27 }

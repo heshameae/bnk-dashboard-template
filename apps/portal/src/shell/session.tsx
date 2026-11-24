@@ -32,8 +32,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const viewer = viewers.find((v) => v.id === viewerId) ?? ENG;
   const setViewer = useCallback((id: string) => { setViewerId(id); save('portal.viewAs', id); }, []);
   const toggleTheme = useCallback(() => setTheme((t) => (t === 'light' ? 'dark' : 'light')), []);
+  // The sidebar's Recent list: the last seven dashboards opened, newest first.
   const touch = useCallback((id: string) => {
-    setRecent((r) => { const next = [id, ...r.filter((x) => x !== id)].slice(0, 5); save('portal.recent', JSON.stringify(next)); return next; });
+    setRecent((r) => { const next = [id, ...r.filter((x) => x !== id)].slice(0, 7); save('portal.recent', JSON.stringify(next)); return next; });
   }, []);
 
   const value = useMemo(() => ({ viewer, setViewer, theme, toggleTheme, recent, touch }), [viewer, setViewer, theme, toggleTheme, recent, touch]);

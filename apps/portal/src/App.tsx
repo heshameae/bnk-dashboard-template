@@ -8,7 +8,7 @@ import { Shell, type Top } from './shell/Shell';
 import { Access } from './pages/Access';
 import { AnalyticsPage, AnalyticsPicker, DashboardSwitch } from './pages/Analytics';
 import { Catalog } from './pages/Catalog';
-import { DashboardPage } from './pages/DashboardPage';
+import { DashboardInfo, DashboardPage } from './pages/DashboardPage';
 import { Home } from './pages/Home';
 import { ModelExplorer } from './ModelExplorer';
 import './pages/pages.css';
@@ -51,7 +51,7 @@ function view(route: Route): { active: Page | null; top: Top; body: React.ReactN
     case 'dashboard': {
       const d = dashboardById(route.id);
       if (!d) return notFound();
-      return { active: 'home', top: { scope: scope('Dashboards', href.home), title: d.title }, body: <DashboardPage key={d.id} d={d} /> };
+      return { active: 'home', top: { scope: scope('Dashboards', href.home), title: d.title, actions: <DashboardInfo key={d.id} d={d} /> }, body: <DashboardPage key={d.id} d={d} />, full: true };
     }
     case 'analytics': {
       if (!route.id) return { active: 'analytics', top: { scope: scope('All dashboards'), title: 'Analytics' }, body: <AnalyticsPicker /> };

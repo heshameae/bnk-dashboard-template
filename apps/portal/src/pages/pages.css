@@ -17,20 +17,16 @@
 .dcard { position: relative; display: grid; gap: var(--ds-space-3); padding: var(--ds-space-4); }
 .dcard__link { position: absolute; inset: 0; border-radius: var(--ds-radius); z-index: 1; }
 .dcard__head { display: flex; align-items: center; gap: var(--ds-space-3); min-width: 0; }
-.dcard__title { display: grid; flex: 1; min-width: 0; }
+.dcard__title { display: grid; gap: 2px; flex: 1; min-width: 0; }
 .dcard__line { display: flex; align-items: center; gap: var(--ds-space-2); min-width: 0; }
 .dcard__line svg { flex: none; }
 
 /* -------------------------------------------------------------- dashboard */
-.dash-head { display: flex; align-items: center; gap: var(--ds-space-3); }
-.dash-meta { display: flex; flex-wrap: wrap; gap: var(--ds-space-2) var(--ds-space-10); margin: var(--ds-space-4) 0 var(--ds-space-6); }
-.dash-meta dd { margin: 0; }
-.dash-notices { display: grid; gap: var(--ds-space-2); margin-bottom: var(--ds-space-4); }
-.dash-notices:empty { display: none; }
-.dash-frame { min-height: 420px; display: grid; place-items: center; background-image: radial-gradient(var(--ds-border) 1px, transparent 1px); background-size: 16px 16px; }
-.dash-numbers { margin-top: var(--ds-space-8); }
-.dash-link { color: var(--ds-accent); }
-.dash-link:hover { text-decoration: underline; }
+/* The dashboard's own app fills the content area; the dotted ground stands in until it loads. */
+.dash-frame { flex: 1; min-height: 0; display: grid; place-items: center; padding: var(--ds-space-6); background-image: radial-gradient(var(--ds-border) 1px, transparent 1px); background-size: 16px 16px; }
+.dash-info { display: grid; gap: var(--ds-space-2); margin: 0; padding: var(--ds-space-2); }
+.dash-info > div { display: flex; justify-content: space-between; gap: var(--ds-space-4); }
+.dash-info dd { margin: 0; text-align: right; min-width: 0; }
 
 /* ---------------------------------------------------------------- catalog */
 .cat-bar { display: flex; align-items: flex-end; gap: var(--ds-space-4); margin-bottom: var(--ds-space-4); }

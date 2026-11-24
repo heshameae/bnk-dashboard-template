@@ -73,7 +73,6 @@ export function Home() {
                   <span className="ds-label ds-truncate">{d.title}</span>
                   <span className="ds-small ds-muted ds-truncate">{d.owner ?? 'Owner not given'}</span>
                 </span>
-                <span className="ds-small ds-muted home-hide-sm">{counts(d)}</span>
               </a>
             ))}
           </div>
@@ -82,9 +81,6 @@ export function Home() {
     </div>
   );
 }
-
-const counts = (d: Dashboard) =>
-  `${d.numbers.length} ${d.numbers.length === 1 ? 'number' : 'numbers'} · ${d.filters.length} ${d.filters.length === 1 ? 'filter' : 'filters'}`;
 
 function DashboardCard({ d }: { d: Dashboard }) {
   return (
@@ -97,7 +93,6 @@ function DashboardCard({ d }: { d: Dashboard }) {
           <span className="ds-muted ds-truncate">{d.owner ?? 'Owner not given'}</span>
         </span>
       </div>
-      <div className="dcard__line"><Icon.Hash size={14} />{counts(d)}</div>
       <div className="dcard__line ds-muted">
         <Icon.Clock size={14} /><span className="ds-truncate">{d.refresh ? `Refreshes ${d.refresh}` : 'Refresh not given'}</span>
       </div>

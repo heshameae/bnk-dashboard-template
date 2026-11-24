@@ -1,0 +1,15 @@
+# Written by /spec from design-export/ + kpi-registry.yaml. Contract: docs/contracts/spec.md
+dashboard: foreign-currency
+title: "Foreign currency balances"
+audience: treasury
+status: READY
+filters:
+  - { dimension: currency }
+  - { dimension: branch_code }
+widgets:
+  - { id: w1, kind: kpi-card, kpi: kpi.fcy_balance, show: [value, compare] }
+  - { id: w2, kind: bar, kpi: kpi.fcy_balance, by: currency, sort: desc }
+  - { id: w3, kind: stacked-bar, kpi: kpi.fcy_balance, by: product_family }
+interactions:
+  - { click: w2, sets_filter: currency }
+blocked: []

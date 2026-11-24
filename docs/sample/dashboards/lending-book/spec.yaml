@@ -1,0 +1,16 @@
+# Written by /spec from design-export/ + kpi-registry.yaml. Contract: docs/contracts/spec.md
+dashboard: lending-book
+title: "Lending book by branch and customer segment"
+audience: head_office
+status: READY
+filters:
+  - { dimension: branch_code }
+  - { dimension: customer_segment }
+widgets:
+  - { id: w1, kind: kpi-card, kpi: kpi.loan_balance, show: [value, compare] }
+  - { id: w2, kind: line, kpi: kpi.loan_balance, by: snapshot_date, range: last_12_month_ends }
+  - { id: w3, kind: bar, kpi: kpi.loan_balance, by: customer_segment, sort: desc }
+  - { id: w4, kind: table, kpi: kpi.loan_balance, by: branch_code, sort: desc }
+interactions:
+  - { click: w4, sets_filter: branch_code }
+blocked: []

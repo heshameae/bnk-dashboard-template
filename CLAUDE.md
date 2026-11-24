@@ -4,7 +4,7 @@ Read this whole file before doing anything. It is short on purpose.
 
 ## What we are building
 
-A **factory for dashboards**, not a dashboard. The bank is leaving Tableau and Power BI. What replaces them is a way of working: the business says what it needs in its own words, the model is written as text in git, and every number on every screen traces back to that text. The repo carries sample dashboards (the Cashboard, and two that reuse its recipes) whose values were filled in arbitrarily to show the file shapes. It proves nothing. The factory is proven by running a real dashboard through it end to end.
+A **factory for dashboards**, not a dashboard. The bank is leaving Tableau and Power BI. What replaces them is a way of working: the business says what it needs in its own words, the model is written as text in git, and every number on every screen traces back to that text. The repo carries sample dashboards (the Cashboard and twelve published ones) whose values were filled in arbitrarily to show the file shapes. It proves nothing. The factory is proven by running a real dashboard through it end to end.
 
 So when you are asked to work in this repo, you are almost always working on the **machinery**: a skill, a contract, a parser, the query compiler, the portal, a review gate. You are almost never hand-building a page or hand-writing a metric's SQL. If you find yourself doing either, stop and ask which piece of the machinery should have done it.
 
@@ -38,7 +38,7 @@ Be exact about this; it has caused confusion before.
 |---|---|
 | Ten skills in `.claude/skills/` | Written from the design. **None has been run on a real input yet.** Expect them to be wrong in places; fixing them is the work. |
 | `docs/contracts/*` | The file shapes every skill reads and writes. The source of truth when a skill and a contract disagree. |
-| `docs/sample/` | The **sample world**: three dashboards with arbitrary values. The Cashboard shows every file part-way through the flow (blocked); Daily balances and Branch balances reuse its confirmed recipes and are published, so the portal has something to list. Same tree as the root. No skill reads it. The root folders `sources/`, `bi_model/`, `catalog/`, `security/`, `dashboards/` start empty and are filled only by the skills. |
+| `docs/sample/` | The **sample world**: thirteen dashboards with arbitrary values. The Cashboard shows every file part-way through the flow (blocked); the other twelve are published, all on the one clean table `v_balances_daily`, so the portal has something to list. Same tree as the root. No skill reads it. The root folders `sources/`, `bi_model/`, `catalog/`, `security/`, `dashboards/` start empty and are filled only by the skills. |
 | `apps/portal` | The shell is built (Vercel-style, design system in `src/ds/`): dashboards home (published dashboards only; recently opened in the sidebar), a frame per dashboard, usage analytics (layout only; no usage is recorded yet), a read-only catalog, Find, and a "view as" switch standing in for sign-in. Access is a placeholder. The Model Explorer is built and sits inside the shell. Explore is not built. Everything reads the repo's files through two scripts; nothing is fetched from Oracle. |
 | `packages/import-schema`, `packages/business-context` | Built, with tests. Step 1's parser and validator; step 2's `.docx` reader and checker. |
 | `packages/registry-lint` | The view checks are built and tested (`npm run lint:registry -- views`). The registry, acceptance, policy and spec rules are not. |

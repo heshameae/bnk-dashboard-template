@@ -10,11 +10,40 @@
         "kpi.casa_balance",
         "kpi.total_balance"
       ],
-      "drafts": [],
       "filters": [
         "branch_code"
       ],
       "widgets": 3,
+      "refresh": "daily after CBS load, ~02:30"
+    },
+    {
+      "id": "card-balances",
+      "title": "Card balances",
+      "owner": "Head of Cards",
+      "audience": "head_office",
+      "numbers": [
+        "kpi.card_balance"
+      ],
+      "filters": [
+        "customer_segment"
+      ],
+      "widgets": 3,
+      "refresh": "daily after CBS load, ~02:30"
+    },
+    {
+      "id": "customer-base",
+      "title": "Active customers and accounts",
+      "owner": "Head of Retail Banking",
+      "audience": "head_office",
+      "numbers": [
+        "kpi.active_customers",
+        "kpi.active_accounts"
+      ],
+      "filters": [
+        "branch_code",
+        "customer_segment"
+      ],
+      "widgets": 4,
       "refresh": "daily after CBS load, ~02:30"
     },
     {
@@ -26,7 +55,133 @@
         "kpi.total_balance",
         "kpi.casa_balance"
       ],
-      "drafts": [],
+      "filters": [
+        "branch_code",
+        "customer_segment"
+      ],
+      "widgets": 4,
+      "refresh": "daily after CBS load, ~02:30"
+    },
+    {
+      "id": "dormant-accounts",
+      "title": "Dormant accounts and the balances they hold",
+      "owner": "Head of Operations",
+      "audience": "head_office",
+      "numbers": [
+        "kpi.dormant_accounts",
+        "kpi.dormant_balance"
+      ],
+      "filters": [
+        "branch_code",
+        "product_family"
+      ],
+      "widgets": 4,
+      "refresh": "daily after CBS load, ~02:30"
+    },
+    {
+      "id": "foreign-currency",
+      "title": "Foreign currency balances",
+      "owner": "Head of Treasury",
+      "audience": "treasury",
+      "numbers": [
+        "kpi.fcy_balance"
+      ],
+      "filters": [
+        "currency",
+        "branch_code"
+      ],
+      "widgets": 3,
+      "refresh": "daily after CBS load, ~02:30"
+    },
+    {
+      "id": "lending-book",
+      "title": "Lending book by branch and customer segment",
+      "owner": "Head of Retail Lending",
+      "audience": "head_office",
+      "numbers": [
+        "kpi.loan_balance"
+      ],
+      "filters": [
+        "branch_code",
+        "customer_segment"
+      ],
+      "widgets": 4,
+      "refresh": "daily after CBS load, ~02:30"
+    },
+    {
+      "id": "liquidity",
+      "title": "Available versus ledger balance, bank-wide, by branch, customer segment and product family",
+      "owner": "Head of ALM",
+      "audience": "finance",
+      "numbers": [
+        "kpi.available_balance",
+        "kpi.total_balance"
+      ],
+      "filters": [
+        "branch_code",
+        "customer_segment",
+        "product_family"
+      ],
+      "widgets": 4,
+      "refresh": "daily after CBS load, ~02:30"
+    },
+    {
+      "id": "product-mix",
+      "title": "Product mix",
+      "owner": "Head of Finance Reporting",
+      "audience": "finance",
+      "numbers": [
+        "kpi.total_balance",
+        "kpi.td_balance",
+        "kpi.loan_balance",
+        "kpi.card_balance"
+      ],
+      "filters": [
+        "branch_code"
+      ],
+      "widgets": 4,
+      "refresh": "daily after CBS load, ~02:30"
+    },
+    {
+      "id": "region-overview",
+      "title": "Region overview",
+      "owner": "Head of Branch Network",
+      "audience": "region_head",
+      "numbers": [
+        "kpi.casa_balance",
+        "kpi.total_balance",
+        "kpi.active_accounts"
+      ],
+      "filters": [
+        "branch_code"
+      ],
+      "widgets": 4,
+      "refresh": "daily after CBS load, ~02:30"
+    },
+    {
+      "id": "segment-mix",
+      "title": "Customer segment mix",
+      "owner": "Head of Strategy",
+      "audience": "head_office",
+      "numbers": [
+        "kpi.total_balance",
+        "kpi.casa_balance",
+        "kpi.td_balance"
+      ],
+      "filters": [
+        "customer_segment"
+      ],
+      "widgets": 3,
+      "refresh": "daily after CBS load, ~02:30"
+    },
+    {
+      "id": "term-deposits",
+      "title": "Term deposits",
+      "owner": "Head of Treasury",
+      "audience": "treasury",
+      "numbers": [
+        "kpi.td_balance"
+      ],
       "filters": [
         "branch_code",
         "customer_segment"
@@ -45,7 +200,9 @@
       "format": "aed_millions",
       "dashboards": [
         "branch-balances",
-        "daily-balances"
+        "daily-balances",
+        "region-overview",
+        "segment-mix"
       ]
     },
     {
@@ -57,7 +214,11 @@
       "format": "aed_millions",
       "dashboards": [
         "branch-balances",
-        "daily-balances"
+        "daily-balances",
+        "liquidity",
+        "product-mix",
+        "region-overview",
+        "segment-mix"
       ]
     },
     {
@@ -77,6 +238,110 @@
       "excludes": "inherits both recipes' exclusions",
       "format": "percent_1dp",
       "dashboards": []
+    },
+    {
+      "id": "kpi.td_balance",
+      "status": "CONFIRMED",
+      "meaning": "Total term deposit balance at close of the last business day",
+      "owner": "head_of_treasury",
+      "excludes": "nothing; confirmed by head_of_treasury",
+      "format": "aed_millions",
+      "dashboards": [
+        "product-mix",
+        "segment-mix",
+        "term-deposits"
+      ]
+    },
+    {
+      "id": "kpi.loan_balance",
+      "status": "CONFIRMED",
+      "meaning": "Total outstanding loan balance at close of the last business day",
+      "owner": "head_of_retail_lending",
+      "excludes": "nothing; confirmed by head_of_retail_lending",
+      "format": "aed_millions",
+      "dashboards": [
+        "lending-book",
+        "product-mix"
+      ]
+    },
+    {
+      "id": "kpi.card_balance",
+      "status": "CONFIRMED",
+      "meaning": "Total card balance outstanding at close of the last business day",
+      "owner": "head_of_cards",
+      "excludes": "nothing; confirmed by head_of_cards",
+      "format": "aed_millions",
+      "dashboards": [
+        "card-balances",
+        "product-mix"
+      ]
+    },
+    {
+      "id": "kpi.dormant_balance",
+      "status": "CONFIRMED",
+      "meaning": "Total balance held in dormant accounts at close of the last business day",
+      "owner": "head_of_operations",
+      "excludes": "nothing; confirmed by head_of_operations",
+      "format": "aed_millions",
+      "dashboards": [
+        "dormant-accounts"
+      ]
+    },
+    {
+      "id": "kpi.dormant_accounts",
+      "status": "CONFIRMED",
+      "meaning": "Number of dormant accounts at close of the last business day",
+      "owner": "head_of_operations",
+      "excludes": "nothing; confirmed by head_of_operations",
+      "format": "integer",
+      "dashboards": [
+        "dormant-accounts"
+      ]
+    },
+    {
+      "id": "kpi.fcy_balance",
+      "status": "CONFIRMED",
+      "meaning": "Total balance held in foreign currency accounts at close of the last business day, in AED",
+      "owner": "head_of_treasury",
+      "excludes": "AED accounts",
+      "format": "aed_millions",
+      "dashboards": [
+        "foreign-currency"
+      ]
+    },
+    {
+      "id": "kpi.available_balance",
+      "status": "CONFIRMED",
+      "meaning": "Total available balance across all products at close of the last business day",
+      "owner": "head_of_alm",
+      "excludes": "nothing; confirmed by head_of_alm",
+      "format": "aed_millions",
+      "dashboards": [
+        "liquidity"
+      ]
+    },
+    {
+      "id": "kpi.active_accounts",
+      "status": "CONFIRMED",
+      "meaning": "Number of active accounts at close of the last business day",
+      "owner": "head_of_retail_banking",
+      "excludes": "dormant and closed accounts",
+      "format": "integer",
+      "dashboards": [
+        "customer-base",
+        "region-overview"
+      ]
+    },
+    {
+      "id": "kpi.active_customers",
+      "status": "CONFIRMED",
+      "meaning": "Number of customers with at least one active account at close of the last business day",
+      "owner": "head_of_retail_banking",
+      "excludes": "customers whose accounts are all dormant or closed",
+      "format": "integer",
+      "dashboards": [
+        "customer-base"
+      ]
     }
   ],
   "roles": [
